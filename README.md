@@ -1,6 +1,7 @@
-#OR Management System
+**###OR Management System
+**<br/>
 An intelligent, decentralized platform designed to modernize surgical scheduling and address the inefficiencies of traditional, centralized OT boards.
-
+<br/>
 #💡 The Problem
 Outdated, manual surgical scheduling methods create significant bottlenecks and challenges within hospitals:
 
@@ -9,8 +10,8 @@ Delayed Communication: Critical updates on a patient's status or schedule change
 Inefficient Scheduling: A lack of real-time data leads to surgical delays, wasted time, and poor resource allocation.
 
 Increased Stress: Medical staff, including surgeons, anesthesiologists, and nurses, face unnecessary stress due to uncertainty and last-minute changes.
-
-#🚀 Our Solution
+<br/>
+**#🚀 Our Solution**
 The OR Management System is a smart, collaborative platform built on a decentralized architecture. This approach ensures that crucial scheduling information is no longer locked in a single location. Instead, it is dynamically updated and accessible in real-time from any device used by the surgical team.
 
 This platform provides:
