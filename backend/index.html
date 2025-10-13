@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Custom Grid Layout</title>
+  <style>
+    body {
+      margin: 20px;
+      background: #f5f5f5;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 150px 200px 1fr; /* left narrow, middle medium, right wide */
+      grid-template-rows: 100px 300px 150px;  /* top short, middle tall, bottom medium */
+      /* gap: 10px; */
+      height: 700px;
+    }
+
+    .box {
+      border: 2px solid black;
+      background: white;
+    }
+
+    /* Define box placements */
+    .box1 { grid-row: 1 / 4; grid-column: 1 / 2; } /* tall left bar */
+    .box2 { grid-row: 1 / 2; grid-column: 2 / 4; } /* top wide */
+    .box3 { grid-row: 2 / 3; grid-column: 2 / 3; } /* middle-left small */
+    .box4 { grid-row: 2 / 3; grid-column: 3 / 4; } /* middle-right large */
+    .box5 { grid-row: 3 / 4; grid-column: 2 / 3; } /* bottom-left small */
+    .box6 { grid-row: 3 / 4; grid-column: 3 / 4; } /* bottom-right wide */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="box box1">
+        <iframe src="page1.html">
+
+        </iframe> 
+    </div>
+    <div class="box box2">
+        <iframe src="page1.html"
+        ></iframe>
+    </div>
+    <div class="box box3">
+        <iframe src="page1.html"></iframe>
+    </div>
+    <div class="box box4">
+        <iframe src="page1.html"></iframe>
+    </div>
+    <div class="box box5">
+        <iframe src="page1.html"></iframe>
+    </div>
+    <div class="box box6">
+        <iframe src="page1.html"></iframe>
+    </div>
+  </div>
+</body>
+</html>
