@@ -9,11 +9,14 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
   const isEditing = !!patient;
 
   const [formData, setFormData] = useState({
+    patient_number: '',
     patient_name: '',
-    patient_age: '',
     patient_gender: 'Male',
+    patient_age: '',
+    patient_diagonosis: '',
+    patient_medical_history: '',
     patient_contact: '',
-    patient_medical_history: ''
+    patient_emergency_contact: '',
   });
 
   const [errors, setErrors] = useState({});
@@ -22,19 +25,25 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
   useEffect(() => {
     if (patient) {
       setFormData({
+        patient_number: patient.patient_number,
         patient_name: patient.patient_name,
-        patient_age: patient.patient_age,
         patient_gender: patient.patient_gender,
+        patient_age: patient.patient_age,
+        patient_diagonosis: patient.patient_diagonosis,
+        patient_medical_history: patient.patient_medical_history,
         patient_contact: patient.patient_contact,
-        patient_medical_history: patient.patient_medical_history
+        patient_emergency_contact: patient.patient_emergency_contact,
       });
     } else {
       setFormData({
+        patient_number: '',
         patient_name: '',
-        patient_age: '',
         patient_gender: 'Male',
+        patient_age: '',
+        patient_diagonosis: '',
+        patient_medical_history: '',
         patient_contact: '',
-        patient_medical_history: ''
+        patient_emergency_contact: '',
       });
     }
     setErrors({});
@@ -98,6 +107,15 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Input
+            label="Bed Number"
+            required
+            value={formData.patient_number}
+            onChange={(e) => handleInputChange('patient_number', e.target.value)}
+            error={errors.patient_number}
+            placeholder="Enter patient's Bed Number"
+          />
+
           <Input
             label="Full Name"
             required
@@ -107,17 +125,7 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
             placeholder="Enter patient's full name"
           />
 
-          <Input
-            label="Age"
-            type="number"
-            required
-            value={formData.patient_age}
-            onChange={(e) => handleInputChange('patient_age', parseInt(e.target.value) || '')}
-            error={errors.patient_age}
-            placeholder="Enter age"
-            min="0"
-            max="120"
-          />
+          
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -135,12 +143,43 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
           </div>
 
           <Input
-            label="Contact Information"
+            label="Age"
+            type="number"
+            required
+            value={formData.patient_age}
+            onChange={(e) => handleInputChange('patient_age', parseInt(e.target.value) || '')}
+            error={errors.patient_age}
+            placeholder="Enter age"
+            min="0"
+            max="120"
+          />
+
+          <Input
+            label="Diagonosis"
+            required
+            value={formData.patient_diagonosis}
+            onChange={(e) => handleInputChange('patient_diagonosis', e.target.value)}
+            error={errors.patient_diagonosis}
+            placeholder="What is the patient diagonoised with?"
+          />
+
+          <Input
+            label="Contact"
             type="tel"
             required
             value={formData.patient_contact}
             onChange={(e) => handleInputChange('patient_contact', e.target.value)}
             error={errors.patient_contact}
+            placeholder="Phone number or email"
+          />
+
+          <Input
+            label="Emergency Contact"
+            type="tel"
+            required
+            value={formData.patient_emergency_contact}
+            onChange={(e) => handleInputChange('patient_emergency_contact', e.target.value)}
+            error={errors.patient_emergency_contact}
             placeholder="Phone number or email"
           />
         </div>
