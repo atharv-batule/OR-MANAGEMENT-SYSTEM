@@ -226,7 +226,7 @@ const Dashboard = () => {
                 </div>
               ) : (
                 <div className="text-center py-8 text-gray-500">
-                  <p>This operation room is currently closed.</p>
+                  <p>This operation room is currently closed!!</p>
                   <p className="text-sm mt-2">No surgery scheduled.</p>
                 </div>
               )}
