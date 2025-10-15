@@ -1,4 +1,4 @@
-const { Client } = require('pg');
+import { Client } from 'pg';
 
 const client = new Client({
   host: 'localhost',   // or your server IP
@@ -13,3 +13,4 @@ client.connect()
     console.log('Connected to PostgreSQL');
   })
 
+  export {client};
