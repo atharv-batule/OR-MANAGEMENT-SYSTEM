@@ -9,7 +9,7 @@ import Anesthesiologists from './pages/Anesthesiologists';
 import Nurses from './pages/Nurses';
 import OperationRooms from './pages/OperationRooms';
 import Surgeries from './pages/Surgeries';
-
+import DisplayName from './components/forms/sample';
 
 function App() {
   return (
@@ -32,6 +32,7 @@ function App() {
                 <Route path="/nurses" element={<Nurses />} />
                 <Route path="/operation-rooms" element={<OperationRooms />} />
                 <Route path="/surgeries" element={<Surgeries />} />
+                <Route path="/registration" element={<DisplayName />} />
               </Routes>
             </main>
           </div>

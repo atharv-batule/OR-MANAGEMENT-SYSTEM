@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "name": "frontend",
   "private": true,
   "version": "0.0.0",
@@ -32,15 +31,4 @@
     "tailwindcss": "^4.1.12",
     "vite": "^7.1.2"
   }
-=======
-  "name": "or-management-system",
-  "version": "1.0.0",
-  "description": "An intelligent, decentralized platform designed to modernize surgical scheduling and address the inefficiencies of traditional, centralized OT boards.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC"
->>>>>>> 4ed4a0b26f2e36612068618b19a3ccdbc7b041ed
 }

@@ -24,8 +24,21 @@ app.post("/", async(req,res)=>
 {
     const result=await client.query("SELECT * from user1");
     //res.json(`${result.rows[0]}`)
+    
     console.log(result.rows[0])
 })
+
+app.get("/registration", async(req,res)=>
+{
+    const result=await client.query("SELECT current_database()");
+   // res.send(`${result.rows[0]}`)
+    res.json([
+  { "id": 1, "name": "John" },
+  { "id": 2, "name": "Sarah" }
+])
+})
+
+
 //server running 
 app.listen(port,()=>
 {
