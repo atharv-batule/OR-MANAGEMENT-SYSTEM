@@ -38,7 +38,13 @@ app.get("/registration", async(req,res)=>
 ])
 })
 
-
+//patient data retrieval
+app.get("/registration", async(req,res)=>
+{
+    const result=await client.query("SELECT current_database()");
+   // res.send(`${result.rows[0]}`)
+    res.send()
+})
 //server running 
 app.listen(port,()=>
 {
