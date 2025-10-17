@@ -2,6 +2,7 @@ import express from "express"
 import cors from "cors"
 import dotenev from "dotenv"
 import { client } from "../db/db.js";
+import surgeonRoutes from "../controllers/employee.js";
 dotenev.config();
 
 const app=express();
@@ -45,8 +46,16 @@ app.get("/registration", async(req,res)=>
    // res.send(`${result.rows[0]}`)
     res.send()
 })
+app.use("/surgeons", surgeonRoutes);
 //server running 
 app.listen(port,()=>
 {
     console.log(`server is running on http:localhost:${port}`)
 })
+
+
+
+
+
+
+//export default app
