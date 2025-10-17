@@ -51,28 +51,43 @@ const Anesthesiologists = () => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredAnesthesiologists.map((anesthesiologist) => (
-          <Card key={anesthesiologist.anaesth_id} hover>
-            <Card.Content>
-              <div className="flex justify-between items-start mb-2">
-                <h4 className="font-medium text-gray-900">{anesthesiologist.anaesth_name}</h4>
-                <div className="flex space-x-1">
-                  <button onClick={() => handleEdit(anesthesiologist)} className="p-1 text-gray-400 hover:text-blue-600">
-                    <Edit className="w-4 h-4" />
-                  </button>
-                  <button onClick={() => handleDelete(anesthesiologist.anaesth_id)} className="p-1 text-gray-400 hover:text-red-600">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-              <p className="text-sm text-gray-600 mb-1">{anesthesiologist.anaesth_certification}</p>
-              <p className="text-sm text-gray-600 mb-1">{anesthesiologist.anaesth_experience_years} years experience</p>
-              <p className="text-sm text-gray-600">{anesthesiologist.anaesth_contact}</p>
-            </Card.Content>
-          </Card>
-        ))}
-      </div>
+      
+
+      <Card>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Certification</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Experience</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredAnesthesiologists.map((anesthesiologist) => (
+                <tr key={anesthesiologist.anaesth_id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{anesthesiologist.anaesth_name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_certification}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_experience_years} years</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_contact}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div className="flex justify-end space-x-2">
+                      <button onClick={() => handleEdit(anesthesiologist)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => handleDelete(anesthesiologist.anaesth_id)} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
 
       <AnesthesiologistForm isOpen={showForm} onClose={handleCloseForm} anesthesiologist={editingAnesthesiologist} />
     </div>

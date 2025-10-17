@@ -64,7 +64,7 @@ const OperationRooms = () => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredRooms.map((room) => (
           <Card key={room.or_id} hover>
             <Card.Content>
@@ -95,7 +95,47 @@ const OperationRooms = () => {
             </Card.Content>
           </Card>
         ))}
-      </div>
+      </div> */}
+
+      <Card>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">OR Number</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipments List</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>\
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredRooms.map((room) => (
+                <tr key={room.or_id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{room.room_number}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><ul className="text-sm text-gray-600 list-disc list-inside">
+                  {room.equipment_list.map((equipment, index) => (
+                    <li key={index}>{equipment}</li>
+                  ))}
+                </ul></td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(room.availability_status)}`}>
+                    {room.availability_status}
+                  </span></td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div className="flex justify-end space-x-2">
+                      <button onClick={() => handleEdit(room)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => handleDelete(room.room_id)} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
 
       <OperationRoomForm isOpen={showForm} onClose={handleCloseForm} operationRoom={editingRoom} />
     </div>

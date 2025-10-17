@@ -51,7 +51,7 @@ const Nurses = () => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredNurses.map((nurse) => (
           <Card key={nurse.nurse_id} hover>
             <Card.Content>
@@ -72,7 +72,43 @@ const Nurses = () => {
             </Card.Content>
           </Card>
         ))}
-      </div>
+      </div> */}
+
+      <Card>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Certification</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Experience</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredNurses.map((nurse) => (
+                <tr key={nurse.nurse_id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{nurse.nurse_name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_department}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_shift} Shift</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_contact}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div className="flex justify-end space-x-2">
+                      <button onClick={() => handleEdit(nurse)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => handleDelete(nurse.nurse_id)} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
 
       <NurseForm isOpen={showForm} onClose={handleCloseForm} nurse={editingNurse} />
     </div>

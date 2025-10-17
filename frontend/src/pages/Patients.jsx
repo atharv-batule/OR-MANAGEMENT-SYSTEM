@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { Plus, Search } from 'lucide-react';
+import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import Button from '../components/ui/Button';
+import Card from '../components/ui/Card';
 import PatientForm from '../components/forms/PatientForm';
 import PatientTable from '../components/tables/PatientTable';
 
@@ -68,6 +69,7 @@ const Patients = () => {
         onDelete={handleDelete}
         onView={handleView}
       />
+
 
       {/* Patient Form Modal */}
       <PatientForm
