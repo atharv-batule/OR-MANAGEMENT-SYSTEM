@@ -30,18 +30,53 @@ router.get("/", async (req, res) => {
     designation VARCHAR(255) 
     )
     `);
-
-    async function addEmployee(empid,fname,lname,dob,salary,gender,superid,designation)
+  //add employee
+    async function addSurgeon(empid,fname,lname,dob,salary,gender,superid,designation)
     {
-const addEmp= await client.query(`
+    const addSrg= await client.query(`
    INSERT INTO Employees (empid,Fname,lname,dob,salary,gender,superid,designation) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
     `,[empid,fname,lname,dob,salary,gender,superid,designation]);
     }
 
-    addEmployee(11,"Atharv","Batule","2005-07-05",20000,"male",1234,"Attending");
+    //update employe
+    async function updateSurgeon(empid, fname, lname, dob, salary, gender, superid, designation)
+     {
+        const updateEmp = await client.query(
+        ` UPDATE Employees
+          SET 
+            fname = $1,
+            lname = $2,
+            dob = $3,
+            salary = $4,
+            gender = $5,
+            superid = $6,
+            designation = $7
+          WHERE empid = $8
+          `
+          ,[fname, lname, dob, salary, gender, superid, designation, empid] );
+    }
+    //delete surgeon querry
+    async function deleteSurgeon(empid)
+     {
+        const deleteSrg = await client.query(
+        ` DELETE FROM Employees
+          WHERE empid = $1 `
+          ,[empid]);
+    }  
+    deleteSurgeon(11)
+    
+
+    async function displaySurgeon(empid)
+     {
+        const result=await client.query(`
+        SeLECT * FROM Employees
+        WHERE empid=$1`,[empid]);
+    }  
+    //addEmployee(11,"Atharv","Batule","2005-07-05",20000,"male",1234,"Attending");
+    //updateEmployee(11,"Sameer","Naik","2005-07-05",20000,"male",1234,"Attending");
 
     const result=await client.query(`
     select * from Employees
-    `);
+    `); 
     console.log(result.rows)
     console.log("Employees table created successfully");
