@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import Modal from '../ui/Modal';
+import axios from 'axios';
 // Convert "yyyy-mm-dd" → "dd-mm-yyyy"
 const formatDateToDisplay = (dateStr) => {
   if (!dateStr) return '';
@@ -88,24 +89,56 @@ const SurgeonForm = ({ isOpen, onClose, surgeon = null }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!validateForm()) return;
 
-    setIsSubmitting(true);
-    try {
-      if (isEditing) {
-        updateSurgeon(surgeon.surgeon_id, formData);
-      } else {
-        addSurgeon(formData);
-      }
-      onClose();
-    } catch (error) {
-      console.error('Error saving surgeon:', error);
-    } finally {
-      setIsSubmitting(false);
+  //   setIsSubmitting(true);
+  //   try {
+  //     if (isEditing) {
+  //       updateSurgeon(surgeon.surgeon_id, formData);
+  //     } else {
+  //       addSurgeon(formData);
+  //     }
+  //     onClose();
+  //   } catch (error) {
+  //     console.error('Error saving surgeon:', error);
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!validateForm()) return;
+
+  setIsSubmitting(true);
+
+  try {
+    if (isEditing) {
+      // Update not yet implemented on backend
+      console.log("Update logic pending");
+    } else {
+       const payload = {
+  employee_id: parseInt(formData.employee_id),
+  surgeon_salary: parseInt(formData.surgeon_salary),
+  supervisor_id: parseInt(formData.supervisor_id),
+  surgeon_name: formData.surgeon_name,
+  surgeon_dob: formData.surgeon_dob,
+  surgeon_gender: formData.surgeon_gender,
+  surgeon_designation: formData.surgeon_designation,
+};
+await axios.post("http://localhost:3000/surgeons", payload);
+      console.log("✅ Surgeon added successfully");
     }
-  };
+
+    onClose();
+  } catch (err) {
+    console.error("❌ Error saving surgeon:", err);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
