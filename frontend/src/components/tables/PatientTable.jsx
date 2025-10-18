@@ -1,88 +1,76 @@
 import React from 'react';
 import { Edit, Trash2, Eye } from 'lucide-react';
-import Card from '../ui/Card';
+import Button from '../ui/Button';
 
 const PatientTable = ({ patients, onEdit, onDelete, onView }) => {
   return (
-    <Card>
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Age
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Gender
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Contact
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {patients.map((patient) => (
-              <tr key={patient.patient_id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{patient.patient_name}</div>
+    <div className="overflow-x-auto rounded-lg shadow">
+      <table className="min-w-full bg-white border border-gray-200">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Patient ID</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Name</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Age</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Gender</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Contact</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Address</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Surgery ID</th>
+            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Medical History</th>
+            <th className="px-4 py-2 text-center text-sm font-semibold text-gray-700">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {patients.length > 0 ? (
+            patients.map((patient) => (
+              <tr
+                key={patient.patient_id}
+                className="border-t hover:bg-gray-50 transition-colors"
+              >
+                <td className="px-4 py-2 text-sm text-gray-800">{patient.patient_id}</td>
+                <td className="px-4 py-2 text-sm text-gray-800">{patient.patient_name}</td>
+                <td className="px-4 py-2 text-sm text-gray-800">{patient.patient_age}</td>
+                <td className="px-4 py-2 text-sm text-gray-800">{patient.patient_gender}</td>
+                <td className="px-4 py-2 text-sm text-gray-800">{patient.patient_contact}</td>
+                <td className="px-4 py-2 text-sm text-gray-800">{patient.patient_address}</td>
+                <td className="px-4 py-2 text-sm text-gray-800">{patient.surgery_id}</td>
+                <td className="px-4 py-2 text-sm text-gray-800 truncate max-w-xs">
+                  {patient.patient_medical_history || '—'}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{patient.patient_age}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{patient.patient_gender}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{patient.patient_contact}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <div className="flex justify-end space-x-2">
-                    <button
-                      onClick={() => onView(patient)}
-                      className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
-                      title="View Details"
-                    >
-                      <Eye className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => onEdit(patient)}
-                      className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
-                      title="Edit"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => onDelete(patient.patient_id)}
-                      className="p-2 text-gray-400 hover:text-red-600 transition-colors"
-                      title="Delete"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
+                <td className="px-4 py-2 text-center space-x-2">
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onEdit(patient)}
+                    title="Edit"
+                  >
+                    <Edit className="w-4 h-4 text-green-600" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onDelete(patient.patient_id)}
+                    title="Delete"
+                  >
+                    <Trash2 className="w-4 h-4 text-red-600" />
+                  </Button>
                 </td>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {patients.length === 0 && (
-        <div className="text-center py-12">
-          <div className="text-gray-400 mb-4">
-            <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-          </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No patients found</h3>
-          <p className="text-gray-500">Get started by adding a new patient.</p>
-        </div>
-      )}
-    </Card>
+            ))
+          ) : (
+            <tr>
+              <td
+                colSpan="9"
+                className="text-center text-gray-500 py-6 text-sm"
+              >
+                No patients found.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

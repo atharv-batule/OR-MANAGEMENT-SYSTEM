@@ -108,6 +108,10 @@ const Surgeries = () => {
                   <span className="text-gray-500">Duration:</span>
                   <span className="font-medium text-gray-900">{surgery.surgery_duration} minutes</span>
                 </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Duration:</span>
+                  <span className="font-medium text-gray-900">{surgery.surgery_duration} minutes</span>
+                </div>
               </div>
 
               {surgery.surgery_notes && (
