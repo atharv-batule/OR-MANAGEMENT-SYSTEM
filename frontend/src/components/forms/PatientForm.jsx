@@ -9,11 +9,14 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
   const isEditing = !!patient;
 
   const [formData, setFormData] = useState({
+    patient_id: '',
     patient_name: '',
     patient_age: '',
     patient_gender: 'Male',
     patient_contact: '',
-    patient_medical_history: ''
+    patient_address: '',
+    patient_medical_history: '',
+    surgery_id: ''
   });
 
   const [errors, setErrors] = useState({});
@@ -22,19 +25,25 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
   useEffect(() => {
     if (patient) {
       setFormData({
-        patient_name: patient.patient_name,
-        patient_age: patient.patient_age,
-        patient_gender: patient.patient_gender,
-        patient_contact: patient.patient_contact,
-        patient_medical_history: patient.patient_medical_history
+        patient_id: patient.patient_id || '',
+        patient_name: patient.patient_name || '',
+        patient_age: patient.patient_age || '',
+        patient_gender: patient.patient_gender || 'Male',
+        patient_contact: patient.patient_contact || '',
+        patient_address: patient.patient_address || '',
+        patient_medical_history: patient.patient_medical_history || '',
+        surgery_id: patient.surgery_id || ''
       });
     } else {
       setFormData({
+        patient_id: '',
         patient_name: '',
         patient_age: '',
         patient_gender: 'Male',
         patient_contact: '',
-        patient_medical_history: ''
+        patient_address: '',
+        patient_medical_history: '',
+        surgery_id: ''
       });
     }
     setErrors({});
@@ -42,6 +51,10 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
 
   const validateForm = () => {
     const newErrors = {};
+
+    if (!formData.patient_id.trim()) {
+      newErrors.patient_id = 'Patient ID is required';
+    }
 
     if (!formData.patient_name.trim()) {
       newErrors.patient_name = 'Patient name is required';
@@ -55,16 +68,21 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
       newErrors.patient_contact = 'Contact information is required';
     }
 
+    if (!formData.patient_address.trim()) {
+      newErrors.patient_address = 'Address is required';
+    }
+
+    if (!formData.surgery_id.trim()) {
+      newErrors.surgery_id = 'Surgery ID is required';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setIsSubmitting(true);
 
@@ -97,7 +115,26 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
       size="medium"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* First row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Input
+            label="Patient ID"
+            required
+            value={formData.patient_id}
+            onChange={(e) => handleInputChange('patient_id', e.target.value)}
+            error={errors.patient_id}
+            placeholder="Enter patient ID"
+          />
+
+          <Input
+            label="Surgery ID"
+            required
+            value={formData.surgery_id}
+            onChange={(e) => handleInputChange('surgery_id', e.target.value)}
+            error={errors.surgery_id}
+            placeholder="Enter related surgery ID"
+          />
+
           <Input
             label="Full Name"
             required
@@ -143,8 +180,20 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
             error={errors.patient_contact}
             placeholder="Phone number or email"
           />
+
+          <Input
+            label="Address"
+            required
+            value={formData.patient_address}
+            onChange={(e) => handleInputChange('patient_address', e.target.value)}
+            error={errors.patient_address}
+            placeholder="Enter patient's address"
+          />
+
+          
         </div>
 
+        {/* Medical history */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Medical History
@@ -158,18 +207,12 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
           />
         </div>
 
+        {/* Buttons */}
         <div className="flex justify-end space-x-4 pt-6">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onClose}
-          >
+          <Button type="button" variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-          >
+          <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Saving...' : isEditing ? 'Update Patient' : 'Add Patient'}
           </Button>
         </div>
