@@ -80,3 +80,5 @@ router.get("/", async (req, res) => {
     `); 
     console.log(result.rows)
     console.log("Employees table created successfully");
+
+    export default router;
