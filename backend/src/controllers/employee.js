@@ -39,7 +39,7 @@ router.get("/", async (req, res) => {
     }
 
     //update employe
-    async function updateSurgeon(empid, fname, lname, dob, salary, gender, superid, designation)
+    async function updateSurgeon(empid, fname, lname, dob, salary, gender, superid, designation,phone)
      {
         const updateEmp = await client.query(
         ` UPDATE Employees
@@ -50,10 +50,11 @@ router.get("/", async (req, res) => {
             salary = $4,
             gender = $5,
             superid = $6,
-            designation = $7
-          WHERE empid = $8
+            designation = $7,
+            phone=$8
+          WHERE empid = $9
           `
-          ,[fname, lname, dob, salary, gender, superid, designation, empid] );
+          ,[fname, lname, dob, salary, gender, superid, designation, phone,empid] );
     }
     //delete surgeon querry
     async function deleteSurgeon(empid)
@@ -78,5 +79,43 @@ router.get("/", async (req, res) => {
     const result=await client.query(`
     select * from Employees
     `); 
+    // const alt=client.query(`
+    //   ALTER TABLE Employees
+    //   ADD Phone VARCHAR (255)
+
+    //   `)
     console.log(result.rows)
     console.log("Employees table created successfully");
+
+   router.post("/", async (req, res) => {
+  try {
+    const empid = parseInt(req.body.employee_id);
+    const salary = parseInt(req.body.surgeon_salary);
+    const superid = parseInt(req.body.supervisor_id);
+
+    if (isNaN(empid) || isNaN(salary) || isNaN(superid)) {
+      return res.status(400).send("Employee ID, Salary, and Supervisor ID must be numbers");
+    }
+
+    await addSurgeon(
+      empid,
+      req.body.surgeon_name,
+      "", // lname
+      req.body.surgeon_dob,
+      salary,
+      req.body.surgeon_gender,
+      superid,
+      req.body.surgeon_designation
+    );
+
+    res.send("Surgeon added successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+
+
+
+    export default router;
