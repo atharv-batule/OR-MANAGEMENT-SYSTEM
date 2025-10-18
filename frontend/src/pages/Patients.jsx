@@ -29,12 +29,6 @@ const Patients = () => {
     }
   };
 
-  const handleView = (patient) => {
-    // For now, just open edit form - can be expanded to a detail view
-    setEditingPatient(patient);
-    setShowForm(true);
-  };
-
   const handleCloseForm = () => {
     setShowForm(false);
     setEditingPatient(null);
@@ -67,7 +61,6 @@ const Patients = () => {
         patients={filteredPatients}
         onEdit={handleEdit}
         onDelete={handleDelete}
-        onView={handleView}
       />
 
 

@@ -9,75 +9,73 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
   const isEditing = !!patient;
 
   const [formData, setFormData] = useState({
-    patient_id: '',
+    patient_num: '',
     patient_name: '',
     patient_age: '',
     patient_gender: 'Male',
+    patient_dob: '',
     patient_contact: '',
     patient_address: '',
     patient_medical_history: '',
-    surgery_id: ''
+    surgery_id: '',
   });
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Prefill form when editing
   useEffect(() => {
     if (patient) {
       setFormData({
-        patient_id: patient.patient_id || '',
+        patient_num: patient.patient_num || '',
         patient_name: patient.patient_name || '',
         patient_age: patient.patient_age || '',
         patient_gender: patient.patient_gender || 'Male',
+        patient_dob: patient.patient_dob || '',
         patient_contact: patient.patient_contact || '',
         patient_address: patient.patient_address || '',
         patient_medical_history: patient.patient_medical_history || '',
-        surgery_id: patient.surgery_id || ''
+        surgery_id: patient.surgery_id || '',
+        designation: patient.designation || 'Intern'
       });
     } else {
       setFormData({
-        patient_id: '',
+        patient_num: '',
         patient_name: '',
         patient_age: '',
         patient_gender: 'Male',
+        patient_dob: '',
         patient_contact: '',
         patient_address: '',
         patient_medical_history: '',
-        surgery_id: ''
+        surgery_id: '',
       });
     }
     setErrors({});
   }, [patient, isOpen]);
 
+  
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.patient_id.trim()) {
-      newErrors.patient_id = 'Patient ID is required';
-    }
-
-    if (!formData.patient_name.trim()) {
-      newErrors.patient_name = 'Patient name is required';
-    }
-
-    if (!formData.patient_age || formData.patient_age <= 0) {
+    if (!formData.patient_num.trim() || formData.patient_num<=0) newErrors.patient_num = 'Patient ID is required';
+    if (!formData.patient_name.trim()) newErrors.patient_name = 'Patient name is required';
+    if (!formData.patient_age || formData.patient_age <= 0)
       newErrors.patient_age = 'Valid age is required';
-    }
-
-    if (!formData.patient_contact.trim()) {
-      newErrors.patient_contact = 'Contact information is required';
-    }
-
-    if (!formData.patient_address.trim()) {
-      newErrors.patient_address = 'Address is required';
-    }
-
-    if (!formData.surgery_id.trim()) {
-      newErrors.surgery_id = 'Surgery ID is required';
-    }
+    if (!formData.patient_dob.trim()) newErrors.patient_dob = 'Date of birth is required';
+    if (!formData.patient_contact.trim()) newErrors.patient_contact = 'Contact is required';
+    if (!formData.patient_address.trim()) newErrors.patient_address = 'Address is required';
+    if (!formData.surgery_id.trim()) newErrors.surgery_id = 'Surgery ID is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  
+  const formatDate = (value) => {
+    const [year, month, day] = value.split('-');
+    if (year && month && day) return `${day}-${month}-${year}`;
+    return value;
   };
 
   const handleSubmit = async (e) => {
@@ -87,10 +85,15 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
     setIsSubmitting(true);
 
     try {
+      const formattedData = {
+        ...formData,
+        patient_dob: formatDate(formData.patient_dob)
+      };
+
       if (isEditing) {
-        updatePatient(patient.patient_id, formData);
+        updatePatient(patient.patient_id, formattedData);
       } else {
-        addPatient(formData);
+        addPatient(formattedData);
       }
       onClose();
     } catch (error) {
@@ -100,11 +103,10 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
     }
   };
 
+  
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: '' }));
   };
 
   return (
@@ -120,10 +122,10 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
           <Input
             label="Patient ID"
             required
-            value={formData.patient_id}
-            onChange={(e) => handleInputChange('patient_id', e.target.value)}
-            error={errors.patient_id}
-            placeholder="Enter patient ID"
+            value={formData.patient_num}
+            onChange={(e) => handleInputChange('patient_num', e.target.value)}
+            error={errors.patient_num}
+            placeholder="Enter patient Number"
           />
 
           <Input
@@ -132,7 +134,7 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
             value={formData.surgery_id}
             onChange={(e) => handleInputChange('surgery_id', e.target.value)}
             error={errors.surgery_id}
-            placeholder="Enter related surgery ID"
+            placeholder="Enter surgery ID"
           />
 
           <Input
@@ -149,13 +151,16 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
             type="number"
             required
             value={formData.patient_age}
-            onChange={(e) => handleInputChange('patient_age', parseInt(e.target.value) || '')}
+            onChange={(e) =>
+              handleInputChange('patient_age', parseInt(e.target.value) || '')
+            }
             error={errors.patient_age}
             placeholder="Enter age"
             min="0"
             max="120"
           />
 
+          {/* Gender */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Gender <span className="text-red-500">*</span>
@@ -165,11 +170,30 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
               onChange={(e) => handleInputChange('patient_gender', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
             </select>
           </div>
+
+          {/* DOB */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Date of Birth <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              value={formData.patient_dob}
+              onChange={(e) => handleInputChange('patient_dob', e.target.value)}
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.patient_dob ? 'border-red-500' : 'border-gray-300'
+              }`}
+            />
+            {errors.patient_dob && (
+              <p className="text-red-500 text-sm mt-1">{errors.patient_dob}</p>
+            )}
+          </div>
+
 
           <Input
             label="Contact Information"
@@ -189,8 +213,6 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
             error={errors.patient_address}
             placeholder="Enter patient's address"
           />
-
-          
         </div>
 
         {/* Medical history */}
@@ -200,10 +222,12 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
           </label>
           <textarea
             value={formData.patient_medical_history}
-            onChange={(e) => handleInputChange('patient_medical_history', e.target.value)}
+            onChange={(e) =>
+              handleInputChange('patient_medical_history', e.target.value)
+            }
             rows={4}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter relevant medical history, allergies, current medications, etc."
+            placeholder="Enter relevant medical history, allergies, etc."
           />
         </div>
 
@@ -213,7 +237,11 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
             Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Saving...' : isEditing ? 'Update Patient' : 'Add Patient'}
+            {isSubmitting
+              ? 'Saving...'
+              : isEditing
+              ? 'Update Patient'
+              : 'Add Patient'}
           </Button>
         </div>
       </form>
