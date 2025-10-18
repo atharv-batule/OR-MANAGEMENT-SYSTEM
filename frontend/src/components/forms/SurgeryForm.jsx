@@ -263,6 +263,33 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
           </div>
         </div>
 
+        {/* Surgical Team Fields */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Input
+            label="Attending"
+            value={formData.attending || ''}
+            onChange={(e) => handleInputChange('attending', e.target.value)}
+            placeholder="Dr. Rahul Mehta"
+          />
+
+          <Input
+            label="Resident"
+            value={formData.resident || ''}
+            onChange={(e) => handleInputChange('resident', e.target.value)}
+            placeholder="Dr. Nisha Patil"
+          />
+
+          <Input
+            label="Intern"
+            value={formData.intern || ''}
+            onChange={(e) => handleInputChange('intern', e.target.value)}
+            placeholder="Dr. xyz"
+          />
+
+        
+        </div>
+
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Surgery Notes</label>
           <textarea
