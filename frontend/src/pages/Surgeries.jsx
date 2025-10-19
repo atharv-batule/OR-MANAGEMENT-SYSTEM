@@ -6,6 +6,7 @@ import Card from '../components/ui/Card';
 import SurgeryForm from '../components/forms/SurgeryForm';
 
 const Surgeries = () => {
+  const [surgeries1, setSurgeries] = useState([]);
   const { surgeries, deleteSurgery, patients, surgeons, operationRooms } = useApp();
   const [showForm, setShowForm] = useState(false);
   const [editingSurgery, setEditingSurgery] = useState(null);
@@ -72,7 +73,7 @@ const Surgeries = () => {
 
       {/* Surgery Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {filteredSurgeries.map((surgery) => (
+        {surgeries1.map((surgery) => (
           <Card key={surgery.surgery_id} hover>
             <Card.Content>
               <div className="flex items-center justify-between mb-4">
@@ -108,10 +109,6 @@ const Surgeries = () => {
                   <span className="text-gray-500">Duration:</span>
                   <span className="font-medium text-gray-900">{surgery.surgery_duration} minutes</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Duration:</span>
-                  <span className="font-medium text-gray-900">{surgery.surgery_duration} minutes</span>
-                </div>
               </div>
 
               {surgery.surgery_notes && (
@@ -142,7 +139,7 @@ const Surgeries = () => {
         ))}
       </div>
 
-      {filteredSurgeries.length === 0 && (
+      {surgeries1.length === 0 && (
         <Card>
           <Card.Content>
             <div className="text-center py-12">

@@ -23,7 +23,7 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
   const isEditing = !!nurse;
 
   const [formData, setFormData] = useState({
-    employee_id: '',
+    empid: '',
     nurse_name: '',
     nurse_dob: '',
     nurse_gender: '',
@@ -42,7 +42,7 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.employee_id.trim()) newErrors.employee_id = 'Employee ID is required.';
+    if (!formData.empid.trim()) newErrors.empid = 'Employee ID is required.';
     if (!formData.nurse_name.trim()) newErrors.nurse_name = 'Full name is required.';
     if (!formData.nurse_dob.trim()) newErrors.nurse_dob = 'Date of Birth is required.';
     if (!formData.nurse_gender.trim()) newErrors.nurse_gender = 'Please select gender.';
@@ -69,7 +69,7 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
   useEffect(() => {
     if (nurse) {
       setFormData({
-        employee_id: nurse.employee_id || '',
+        empid: nurse.empid || '',
         nurse_name: nurse.nurse_name || '',
         nurse_dob: nurse.nurse_dob || '',
         nurse_gender: nurse.nurse_gender || '',
@@ -82,7 +82,7 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
       });
     } else {
       setFormData({
-        employee_id: '',
+        empid: '',
         nurse_name: '',
         nurse_dob: '',
         nurse_gender: '',
@@ -137,9 +137,9 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
           <Input
             label="Employee ID"
             required
-            value={formData.employee_id}
-            onChange={(e) => handleInputChange('employee_id', e.target.value)}
-            error={errors.employee_id}
+            value={formData.empid}
+            onChange={(e) => handleInputChange('empid', e.target.value)}
+            error={errors.empid}
             placeholder="EMP001"
           />
 

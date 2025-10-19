@@ -6,12 +6,13 @@ import Card from '../components/ui/Card';
 import NurseForm from '../components/forms/NurseForm';
 
 const Nurses = () => {
+  const [nurses1, setNurses] = useState([]);
   const { nurses, deleteNurse } = useApp();
   const [showForm, setShowForm] = useState(false);
   const [editingNurse, setEditingNurse] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredNurses = nurses.filter(nurse =>
+  const filteredNurses = nurses1.filter(nurse =>
     nurse.nurse_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     nurse.nurse_department.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -92,9 +93,9 @@ const Nurses = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredNurses.map((nurse) => (
+              {nurses1.map((nurse) => (
                 <tr key={nurse.nurse_id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{nurse.employee_id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{nurse.empid}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{nurse.nurse_name}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_experience_years} years</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_supervisor_id}</td>
