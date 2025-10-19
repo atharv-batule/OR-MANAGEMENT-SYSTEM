@@ -4,19 +4,19 @@ import Button from '../ui/Button';
 import Input from '../ui/Input';
 import Modal from '../ui/Modal';
 import axios from 'axios';
-// Convert "yyyy-mm-dd" → "dd-mm-yyyy"
-const formatDateToDisplay = (dateStr) => {
-  if (!dateStr) return '';
-  const [year, month, day] = dateStr.split('-');
-  return `${day}-${month}-${year}`;
-};
+// // Convert "yyyy-mm-dd" → "dd-mm-yyyy"
+// const formatDateToDisplay = (dateStr) => {
+//   if (!dateStr) return '';
+//   const [year, month, day] = dateStr.split('-');
+//   return `${day}-${month}-${year}`;
+// };
 
-// Convert "dd-mm-yyyy" → "yyyy-mm-dd" (for saving)
-const formatDateToInput = (dateStr) => {
-  if (!dateStr) return '';
-  const [day, month, year] = dateStr.split('-');
-  return `${year}-${month}-${day}`;
-};
+// // Convert "dd-mm-yyyy" → "yyyy-mm-dd" (for saving)
+// const formatDateToInput = (dateStr) => {
+//   if (!dateStr) return '';
+//   const [day, month, year] = dateStr.split('-');
+//   return `${year}-${month}-${day}`;
+// };
 
 
 const SurgeonForm = ({ isOpen, onClose, surgeon = null }) => {
@@ -177,11 +177,11 @@ await axios.post("http://localhost:3000/surgeons", payload);
             label="Date of Birth"
             type="date"
             required
-            value={formData.surgeon_dob ? formatDateToInput(formData.surgeon_dob) : ''}
+            value={formData.surgeon_dob || ''}
             onChange={(e) => {
             const dateValue = e.target.value;
-            const formatted = formatDateToDisplay(dateValue);
-            handleInputChange('surgeon_dob', formatted);
+           // const formatted = formatDateToDisplay(dateValue);
+            handleInputChange('surgeon_dob', dateValue);
             }}
             error={errors.surgeon_dob}
           />

@@ -1,8 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Edit, Trash2, Eye } from 'lucide-react';
 import Card from '../ui/Card';
+import axios from 'axios';
 
-const SurgeonTable = ({ surgeons, onEdit, onDelete, onView }) => {
+
+//////////////////////////////////////////
+const SurgeonTable = ({  onEdit, onDelete, onView }) => {
+
+const [surgeons, setSurgeons] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/surgeons")
+      .then(res => {
+        console.log("Fetched surgeons:", res.data);
+        setSurgeons(res.data);
+      })
+      .catch(err => console.error(err));
+  }, []);
+
+
+
+
+
   return (
     <Card>
       <div className="overflow-x-auto">
@@ -46,37 +66,37 @@ const SurgeonTable = ({ surgeons, onEdit, onDelete, onView }) => {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {surgeons.map((surgeon) => (
-              <tr key={surgeon.surgeon_id} className="hover:bg-gray-50">
+              <tr key={surgeon.empid} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{surgeon.surgeon_name}</div>
+                  <div className="text-sm font-medium text-gray-900">{surgeon.fname}</div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                {/* <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">{surgeon.surgeon_speciality}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                </td> */}
+                {/* <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">{surgeon.surgeon_experience_years} years</div>
-                </td>
+                </td> */}
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{surgeon.surgeon_contact}</div>
+                  <div className="text-sm text-gray-900">{surgeon.phone||123}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div className="flex justify-end space-x-2">
                     <button
-                      onClick={() => onView(surgeon)}
+                      onClick={() => onView(surgeons)}
                       className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
                       title="View Details"
                     >
                       <Eye className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => onEdit(surgeon)}
+                      onClick={() => onEdit(surgeons)}
                       className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
                       title="Edit"
                     >
                       <Edit className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => onDelete(surgeon.surgeon_id)}
+                      onClick={() => onDelete(surgeons.empid)}
                       className="p-2 text-gray-400 hover:text-red-600 transition-colors"
                       title="Delete"
                     >
