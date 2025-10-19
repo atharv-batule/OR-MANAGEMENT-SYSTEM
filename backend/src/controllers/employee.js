@@ -12,10 +12,15 @@ router.use(express.json())
 router.use(cors())
 
 router.get("/", async (req, res) => {
-  res.json([
-    { name: "atharv", age: 20 },
-    { name: "rahul", age: 25 }
-  ]);
+   try {
+    const result = await displaySurgeon(); // fetch data (e.g., from DB)
+    res.json(result); // send it to frontend as JSON
+    console.log();
+    console.log("in here")
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch data" });
+  }
 });
 
  const emp=await client.query(`
@@ -67,11 +72,13 @@ router.get("/", async (req, res) => {
     deleteSurgeon(11)
     
 
-    async function displaySurgeon(empid)
+    async function displaySurgeon()
      {
         const result=await client.query(`
-        SeLECT * FROM Employees
-        WHERE empid=$1`,[empid]);
+        SELECT * FROM Employees
+         WHERE designation IN ('Attending', 'Intern', 'Resident') 
+          `);
+          return result.rows;
     }  
     //addEmployee(11,"Atharv","Batule","2005-07-05",20000,"male",1234,"Attending");
     //updateEmployee(11,"Sameer","Naik","2005-07-05",20000,"male",1234,"Attending");
