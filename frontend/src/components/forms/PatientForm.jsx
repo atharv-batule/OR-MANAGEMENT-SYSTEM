@@ -64,8 +64,6 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
       newErrors.patient_num = 'Patient ID is required';
     if (!formData.patient_name.trim()) 
       newErrors.patient_name = 'Patient name is required';
-    if (!formData.patient_age || formData.patient_age <= 0)
-      newErrors.patient_age = 'Valid age is required';
     if (!formData.patient_dob.trim()) 
       newErrors.patient_dob = 'Date of birth is required';
     if (!formData.patient_contact.trim()) 
@@ -96,7 +94,7 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
       const payload = {
         patient_num: parseInt(formData.patient_num),
         patient_name: formData.patient_name,
-        patient_age: parseInt(formData.patient_age),
+        
         patient_gender: formData.patient_gender,
         patient_dob: formatDate(formData.patient_dob),
         patient_contact: formData.patient_contact,
@@ -107,20 +105,21 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
 
       if (isEditing) {
         // Update patient in database via backend API
-        // await axios.put(`http://localhost:3000/patients`, payload);
-        // updatePatient(patient.patient_id, payload);
-        // console.log("✅ Patient updated successfully");
+        await axios.put(`http://localhost:3000/patients`, payload);
+        updatePatient(patient.patient_num, payload);
+        console.log("✅ Patient updated successfully");
       } else {
         // Add new patient to database via backend API
         await axios.post("http://localhost:3000/patients", payload);
-       // addPatient(payload);
+        addPatient(payload);
         console.log("✅ Patient added successfully");
       }
       
       onClose();
     } catch (error) {
       console.error('❌ Error saving patient:', error);
-      alert('Failed to save patient. Please try again.');
+      console.error('Error details:', error.response?.data);
+      alert(`Failed to save patient: ${error.response?.data?.message || error.message}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -169,19 +168,7 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
             placeholder="Enter patient's full name"
           />
 
-          <Input
-            label="Age"
-            type="number"
-            required
-            value={formData.patient_age}
-            onChange={(e) =>
-              handleInputChange('patient_age', parseInt(e.target.value) || '')
-            }
-            error={errors.patient_age}
-            placeholder="Enter age"
-            min="0"
-            max="120"
-          />
+          
 
           {/* Gender */}
           <div>
