@@ -2,7 +2,8 @@ import express from "express"
 import cors from "cors"
 import dotenev from "dotenv"
 import { client } from "../db/db.js";
-import surgeonRoutes from "../controllers/employee.js";
+import surgeonRoutes from "../controllers/surgeon.js";
+import patientRoutes from"../controllers/patient.js"
 dotenev.config();
 
 const app=express();
@@ -47,6 +48,7 @@ app.get("/registration", async(req,res)=>
     res.send()
 })
 app.use("/surgeons", surgeonRoutes);
+app.use("/patients", patientRoutes);
 //server running 
 app.listen(port,()=>
 {

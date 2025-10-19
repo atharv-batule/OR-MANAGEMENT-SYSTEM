@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import Modal from '../ui/Modal';
+import axios from 'axios';
 
 const PatientForm = ({ isOpen, onClose, patient = null }) => {
   const { addPatient, updatePatient } = useApp();
@@ -12,7 +13,7 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
     patient_num: '',
     patient_name: '',
     patient_age: '',
-    patient_gender: 'Male',
+    patient_gender: '',
     patient_dob: '',
     patient_contact: '',
     patient_address: '',
@@ -36,9 +37,9 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
         patient_address: patient.patient_address || '',
         patient_medical_history: patient.patient_medical_history || '',
         surgery_id: patient.surgery_id || '',
-        designation: patient.designation || 'Intern'
       });
     } else {
+      // Reset form when not editing
       setFormData({
         patient_num: '',
         patient_name: '',
@@ -51,6 +52,7 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
         surgery_id: '',
       });
     }
+    
     setErrors({});
   }, [patient, isOpen]);
 
@@ -58,14 +60,20 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.patient_num.trim() || formData.patient_num<=0) newErrors.patient_num = 'Patient ID is required';
-    if (!formData.patient_name.trim()) newErrors.patient_name = 'Patient name is required';
+    if (!formData.patient_num.toString().trim() || formData.patient_num <= 0) 
+      newErrors.patient_num = 'Patient ID is required';
+    if (!formData.patient_name.trim()) 
+      newErrors.patient_name = 'Patient name is required';
     if (!formData.patient_age || formData.patient_age <= 0)
       newErrors.patient_age = 'Valid age is required';
-    if (!formData.patient_dob.trim()) newErrors.patient_dob = 'Date of birth is required';
-    if (!formData.patient_contact.trim()) newErrors.patient_contact = 'Contact is required';
-    if (!formData.patient_address.trim()) newErrors.patient_address = 'Address is required';
-    if (!formData.surgery_id.trim()) newErrors.surgery_id = 'Surgery ID is required';
+    if (!formData.patient_dob.trim()) 
+      newErrors.patient_dob = 'Date of birth is required';
+    if (!formData.patient_contact.trim()) 
+      newErrors.patient_contact = 'Contact is required';
+    if (!formData.patient_address.trim()) 
+      newErrors.patient_address = 'Address is required';
+    if (!formData.surgery_id.toString().trim()) 
+      newErrors.surgery_id = 'Surgery ID is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -85,19 +93,34 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
     setIsSubmitting(true);
 
     try {
-      const formattedData = {
-        ...formData,
-        patient_dob: formatDate(formData.patient_dob)
+      const payload = {
+        patient_num: parseInt(formData.patient_num),
+        patient_name: formData.patient_name,
+        patient_age: parseInt(formData.patient_age),
+        patient_gender: formData.patient_gender,
+        patient_dob: formatDate(formData.patient_dob),
+        patient_contact: formData.patient_contact,
+        patient_address: formData.patient_address,
+        patient_medical_history: formData.patient_medical_history,
+        surgery_id: parseInt(formData.surgery_id)
       };
 
       if (isEditing) {
-        updatePatient(patient.patient_id, formattedData);
+        // Update patient in database via backend API
+        // await axios.put(`http://localhost:3000/patients`, payload);
+        // updatePatient(patient.patient_id, payload);
+        // console.log("✅ Patient updated successfully");
       } else {
-        addPatient(formattedData);
+        // Add new patient to database via backend API
+        await axios.post("http://localhost:3000/patients", payload);
+       // addPatient(payload);
+        console.log("✅ Patient added successfully");
       }
+      
       onClose();
     } catch (error) {
-      console.error('Error saving patient:', error);
+      console.error('❌ Error saving patient:', error);
+      alert('Failed to save patient. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
