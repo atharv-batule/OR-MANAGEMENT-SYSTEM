@@ -10,9 +10,11 @@ import Nurses from './pages/Nurses';
 import OperationRooms from './pages/OperationRooms';
 import Surgeries from './pages/Surgeries';
 import DisplayName from './components/forms/sample';
-import SurgeonTableContainer from './components/tables/SurgeonTable';
+//import SurgeonTableContainer from './components/tables/SurgeonTable';
 
 function App() {
+
+  
   return (
     <AppProvider>
       <Router>
@@ -28,7 +30,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/patients" element={<Patients />} />
-                <Route path="/surgeons" element={<SurgeonTableContainer />} />
+                <Route path="/surgeons" element={<Surgeons />} />
                 <Route path="/anesthesiologists" element={<Anesthesiologists />} />
                 <Route path="/nurses" element={<Nurses />} />
                 <Route path="/operation-rooms" element={<OperationRooms />} />

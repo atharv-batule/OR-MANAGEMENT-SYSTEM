@@ -68,7 +68,7 @@ const [surgeons, setSurgeons] = useState([]);
             {surgeons.map((surgeon) => (
               <tr key={surgeon.empid} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{surgeon.fname}</div>
+                  <div className="text-sm font-medium text-gray-900">{surgeon.empid}</div>
                 </td>
                 {/* <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">{surgeon.surgeon_speciality}</div>
