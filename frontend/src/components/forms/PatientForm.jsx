@@ -43,8 +43,7 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
       setFormData({
         patient_num: '',
         patient_name: '',
-        patient_age: '',
-        patient_gender: 'Male',
+        patient_gender: '',
         patient_dob: '',
         patient_contact: '',
         patient_address: '',
@@ -105,13 +104,13 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
 
       if (isEditing) {
         // Update patient in database via backend API
-        await axios.put(`http://localhost:3000/patients`, payload);
-        updatePatient(patient.patient_num, payload);
+        // await axios.put(`http://localhost:3000/patients`, payload);
+        // updatePatient(patient.patient_num, payload);
         console.log("✅ Patient updated successfully");
       } else {
         // Add new patient to database via backend API
         await axios.post("http://localhost:3000/patients", payload);
-        addPatient(payload);
+        //addPatient(payload);
         console.log("✅ Patient added successfully");
       }
       
