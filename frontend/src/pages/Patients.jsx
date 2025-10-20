@@ -1,11 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import PatientForm from '../components/forms/PatientForm';
+import axios from 'axios';
+
 
 const Patients = () => {
+useEffect(() => {
+    axios
+      .get("http://localhost:3000/patients")
+      .then(res => {
+        console.log("Fetched patients:", res.data);
+        setPatients(res.data);
+      })
+      .catch(err => console.error(err));
+  }, []);
+
+
+
   const [patients1, setPatients] = useState([]);
   const { patients, deletePatient } = useApp();
   const [showForm, setShowForm] = useState(false);
@@ -17,6 +31,7 @@ const Patients = () => {
     patient.patient_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     patient.patient_contact?.includes(searchTerm) ||
     (patient.patient_medical_history?.toLowerCase().includes(searchTerm.toLowerCase()))
+    
   );
 
   const handleEdit = (patient) => {
@@ -75,13 +90,13 @@ const Patients = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {patients1.map((patient) => (
                 <tr key={patient.patient_num} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{patient.patient_num}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.surgery_id || '—'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{patient.patient_name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.patient_dob}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.patient_gender}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.patient_contact}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.patient_address}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{patient.patientid}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.surgeryid || '—'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{patient.fname+patient.lname}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.dob}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.gender}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.phone}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.address}</td>
                   <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
                     {patient.patient_medical_history || '—'}
                   </td>
