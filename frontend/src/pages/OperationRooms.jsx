@@ -6,6 +6,7 @@ import Card from '../components/ui/Card';
 import OperationRoomForm from '../components/forms/OperationRoomForm';
 
 const OperationRooms = () => {
+  const [operationRooms1, setOperationRooms] = useState([]);
   const { operationRooms, deleteOperationRoom } = useApp();
   const [showForm, setShowForm] = useState(false);
   const [editingRoom, setEditingRoom] = useState(null);
@@ -109,7 +110,7 @@ const OperationRooms = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredRooms.map((room) => (
+              {operationRooms.map((room) => (
                 <tr key={room.or_id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{room.room_number}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><ul className="text-sm text-gray-600 list-disc list-inside">

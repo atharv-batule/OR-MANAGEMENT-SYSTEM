@@ -23,7 +23,7 @@ const AnesthesiologistForm = ({ isOpen, onClose, anesthesiologist = null }) => {
   const isEditing = !!anesthesiologist;
 
   const [formData, setFormData] = useState({
-    employee_id: '',
+    empid: '',
     anaesth_name: '',
     anaesth_dob: '',
     anaesth_gender: '',
@@ -41,8 +41,8 @@ const AnesthesiologistForm = ({ isOpen, onClose, anesthesiologist = null }) => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.employee_id.trim())
-      newErrors.employee_id = 'Employee ID is required.';
+    if (!formData.empid.trim())
+      newErrors.empid = 'Employee ID is required.';
 
     if (!formData.anaesth_name.trim())
       newErrors.anaesth_name = 'Full name is required.';
@@ -82,7 +82,7 @@ const AnesthesiologistForm = ({ isOpen, onClose, anesthesiologist = null }) => {
   useEffect(() => {
     if (anesthesiologist) {
       setFormData({
-        employee_id: anesthesiologist.employee_id || '',
+        empid: anesthesiologist.empid || '',
         anaesth_name: anesthesiologist.anaesth_name || '',
         anaesth_dob: anesthesiologist.anaesth_dob || '',
         anaesth_gender: anesthesiologist.anaesth_gender || '',
@@ -94,7 +94,7 @@ const AnesthesiologistForm = ({ isOpen, onClose, anesthesiologist = null }) => {
       });
     } else {
       setFormData({
-        employee_id: '',
+        empid: '',
         anaesth_name: '',
         anaesth_dob: '',
         anaesth_gender: '',
@@ -147,8 +147,8 @@ const AnesthesiologistForm = ({ isOpen, onClose, anesthesiologist = null }) => {
           <Input
             label="Employee ID"
             required
-            value={formData.employee_id}
-            onChange={(e) => handleInputChange('employee_id', e.target.value)}
+            value={formData.empid}
+            onChange={(e) => handleInputChange('empid', e.target.value)}
             error={errors.employee_id}
             placeholder="EMP001"
           />
