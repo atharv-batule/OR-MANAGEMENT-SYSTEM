@@ -5,6 +5,7 @@ import { client } from "../db/db.js";
 import surgeonRoutes from "../controllers/surgeon.js";
 import patientRoutes from"../controllers/patient.js"
 import nurseRoutes from "../controllers/nurse.js"
+import anesthRoutes from "../controllers/anesth.js"
 dotenev.config();
 
 const app=express();
@@ -51,6 +52,7 @@ app.get("/registration", async(req,res)=>
 app.use("/surgeons", surgeonRoutes);
 app.use("/patients", patientRoutes);
 app.use("/nurses", nurseRoutes);
+app.use("/anesthesiologists", anesthRoutes);
 //server running 
 app.listen(port,()=>
 {

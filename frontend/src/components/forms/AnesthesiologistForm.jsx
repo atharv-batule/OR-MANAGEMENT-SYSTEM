@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import Modal from '../ui/Modal';
-
+import axios from 'axios';
 // Convert "yyyy-mm-dd" → "dd-mm-yyyy"
 const formatDateToDisplay = (dateStr) => {
   if (!dateStr) return '';
@@ -82,15 +82,15 @@ const AnesthesiologistForm = ({ isOpen, onClose, anesthesiologist = null }) => {
   useEffect(() => {
     if (anesthesiologist) {
       setFormData({
-        empid: anesthesiologist.empid || '',
+        empid: parseInt(anesthesiologist.empid) || '',
         anaesth_name: anesthesiologist.anaesth_name || '',
         anaesth_dob: anesthesiologist.anaesth_dob || '',
         anaesth_gender: anesthesiologist.anaesth_gender || '',
-        anaesth_salary: anesthesiologist.anaesth_salary || '',
-        anaesth_contact: anesthesiologist.anaesth_contact || '',
-        anaesth_certification: anesthesiologist.anaesth_certification || '',
+        anaesth_salary: parseInt(anesthesiologist.anaesth_salary) || '',
+        anaesth_contact: parseInt(anesthesiologist.anaesth_contact) || '',
+        //anaesth_certification: anesthesiologist.anaesth_certification || '',
         anaesth_supervisor_id: anesthesiologist.anaesth_supervisor_id || '',
-        anaesth_experience_years: anesthesiologist.anaesth_experience_years || ''
+        //anaesth_experience_years: anesthesiologist.anaesth_experience_years || ''
       });
     } else {
       setFormData({
@@ -119,7 +119,20 @@ const AnesthesiologistForm = ({ isOpen, onClose, anesthesiologist = null }) => {
       if (isEditing) {
         await updateAnesthesiologist(anesthesiologist.anaesth_id, formData);
       } else {
-        await addAnesthesiologist(formData);
+        const payload = {
+        employee_id: parseInt(formData.empid),
+        anaesth_salary: parseInt(formData.anaesth_salary),
+        supervisor_id: parseInt(formData.anaesth_supervisor_id),
+        anaesth_name: formData.anaesth_name,
+        anaesth_dob: formData.anaesth_dob,
+        anaesth_gender: formData.anaesth_gender,
+        anaesth_designation: "Anesthesiologist",
+        anaesth_contact: parseInt(formData.anaesth_contact),
+      };
+      console.log("📤 Sending payload:", payload);
+
+      await axios.post("http://localhost:3000/anesthesiologists", payload);
+      console.log("✅ Nurse added successfully");
       }
       onClose();
     } catch (error) {
@@ -164,6 +177,7 @@ const AnesthesiologistForm = ({ isOpen, onClose, anesthesiologist = null }) => {
 
           <Input
             label="Supervisor ID"
+            type="number"
             required
             value={formData.anaesth_supervisor_id}
             onChange={(e) => handleInputChange('anaesth_supervisor_id', e.target.value)}
@@ -185,6 +199,7 @@ const AnesthesiologistForm = ({ isOpen, onClose, anesthesiologist = null }) => {
 
           <Input
             label="Contact"
+            type="tel"
             required
             value={formData.anaesth_contact}
             onChange={(e) => handleInputChange('anaesth_contact', e.target.value)}
