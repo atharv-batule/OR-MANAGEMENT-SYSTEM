@@ -21,24 +21,24 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="space-y-6">
+  <div className="space-y-6">
 
-    <div className="flex-1 mx-8 ">
-    <header className="bg-white shadow-sm border-b border-gray-200 rounded-2xl">
-          <div className="bg-blue-50 p-3 rounded-2xl px-6 py-4">
-            <marquee className="text-blue-700 font-medium">
+    <div className="flex-9 mx-1">
+      <header className="bg-white shadow-sm border-b border-gray-200 rounded-2xl overflow-hidden">
+          <div className="bg-blue-50 p-3 rounded-2xl px-1 py-4 sm:p-3">
+            <marquee className="text-blue-700 font-medium text-base">
               {newsItems.join(' • ')}
             </marquee>
           </div>
       </header>
-        </div>
+    </div>
       
       
 
         {/* OR Schedule Board */}
-      <Card>
+      <Card className="overflow-hidden">
         <Card.Header>
-          <Card.Title>Operation Room Schedule</Card.Title>
+          <Card.Title className="text-base sm:text-lg font-semibold">Operation Room Schedule</Card.Title>
         </Card.Header>
         <div className="overflow-x-auto">
           <table className="min-w-full border-collapse border border-gray-300">
@@ -113,7 +113,7 @@ const Dashboard = () => {
             </Card.Header>
             <Card.Content>
               {surgery ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-hidden">
                   {/* Patient Information */}
                   <div className="border rounded-lg p-4">
                   <h3 className="font-bold text-gray-900 flex items-center gap-2 mb-3">
@@ -236,10 +236,8 @@ const Dashboard = () => {
           </Card>
         );
       })()}
-
-    
       
-    </div>
+  </div>
   );
 };
 
