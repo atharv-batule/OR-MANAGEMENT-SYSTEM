@@ -36,11 +36,11 @@ router.get("/", async (req, res) => {
     )
     `);
   //add employee
-    async function addSurgeon(empid,fname,lname,dob,salary,gender,superid,designation)
+    async function addSurgeon(empid,fname,lname,dob,salary,gender,superid,designation,phone)
     {
     const addSrg= await client.query(`
-   INSERT INTO Employees (empid,Fname,lname,dob,salary,gender,superid,designation) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
-    `,[empid,fname,lname,dob,salary,gender,superid,designation]);
+   INSERT INTO Employees (empid,Fname,lname,dob,salary,gender,superid,designation,phone) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+    `,[empid,fname,lname,dob,salary,gender,superid,designation,phone]);
     }
 
     //update employe
@@ -99,9 +99,10 @@ router.get("/", async (req, res) => {
     const empid = parseInt(req.body.employee_id);
     const salary = parseInt(req.body.surgeon_salary);
     const superid = parseInt(req.body.supervisor_id);
+    const phone1= parseInt(req.body.surgeon_contact)
 
-    if (isNaN(empid) || isNaN(salary) || isNaN(superid)) {
-      return res.status(400).send("Employee ID, Salary, and Supervisor ID must be numbers");
+    if (isNaN(empid) || isNaN(salary) || isNaN(superid)||isNaN(phone1)) {
+      return res.status(400).send("Employee ID, Salary,phone no. and Supervisor ID must be numbers");
     }
 
     await addSurgeon(
@@ -112,7 +113,8 @@ router.get("/", async (req, res) => {
       salary,
       req.body.surgeon_gender,
       superid,
-      req.body.surgeon_designation
+      req.body.surgeon_designation,
+      phone1
     );
 
     res.send("Surgeon added successfully");

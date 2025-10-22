@@ -102,22 +102,33 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
 
   // ✅ Submit handler
   const handleSubmit = async (e) => {
-    try {
+  e.preventDefault();
+
+  const isValid = validateForm();
+  if (!isValid) return;
+
+  setIsSubmitting(true);
+
+  try {
     if (isEditing) {
-      // Update not yet implemented on backend
       console.log("Update logic pending");
+      // await updateNurse(nurse.empid, formData); // when ready
     } else {
-       const payload = {
-  employee_id: parseInt(formData.employee_id),
-  nurse_salary: parseInt(formData.nurse_salary),
-  supervisor_id: parseInt(formData.supervisor_id),
-  nurse_name: formData.nurse_name,
-  nurse_dob: formData.nurse_dob,
-  nurse_gender: formData.nurse_gender,
-  nurse_designation: formData.nurse_designation,
-};
-await axios.post("http://localhost:3000/nurses", payload);
-      console.log("✅ nurses added successfully");
+      const payload = {
+        employee_id: parseInt(formData.empid),
+        nurse_salary: parseInt(formData.nurse_salary),
+        supervisor_id: parseInt(formData.nurse_supervisor_id),
+        nurse_name: formData.nurse_name,
+        nurse_dob: formData.nurse_dob,
+        nurse_gender: formData.nurse_gender,
+        nurse_designation: "Nurse",
+        nurse_contact: formData.nurse_contact,
+      };
+
+      console.log("📤 Sending payload:", payload);
+
+      await axios.post("http://localhost:3000/nurses", payload);
+      console.log("✅ Nurse added successfully");
     }
 
     onClose();
@@ -126,25 +137,8 @@ await axios.post("http://localhost:3000/nurses", payload);
   } finally {
     setIsSubmitting(false);
   }
-    e.preventDefault();
+};
 
-    const isValid = validateForm();
-    if (!isValid) return;
-
-    setIsSubmitting(true);
-    try {
-      if (isEditing) {
-        await updateNurse(nurse.empid, formData);
-      } else {
-        await addNurse(formData);
-      }
-      onClose();
-    } catch (error) {
-      console.error('Error saving nurse:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   // ✅ Handles input change + clears specific field error
   const handleInputChange = (field, value) => {
