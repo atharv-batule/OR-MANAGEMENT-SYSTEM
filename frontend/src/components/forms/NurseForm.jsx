@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import Modal from '../ui/Modal';
+import axios from 'axios';
 
 // Convert "yyyy-mm-dd" → "dd-mm-yyyy"
 const formatDateToDisplay = (dateStr) => {
@@ -19,6 +20,8 @@ const formatDateToInput = (dateStr) => {
 };
 
 const NurseForm = ({ isOpen, onClose, nurse = null }) => {
+  
+
   const { addNurse, updateNurse } = useApp();
   const isEditing = !!nurse;
 
@@ -75,7 +78,7 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
         nurse_gender: nurse.nurse_gender || '',
         nurse_salary: nurse.nurse_salary || '',
         nurse_contact: nurse.nurse_contact || '',
-        nurse_certification: nurse.nurse_certification || '',
+       // nurse_certification: nurse.nurse_certification || '',
         nurse_supervisor_id: nurse.nurse_supervisor_id || '',
         nurse_experience_years: nurse.nurse_experience_years || '',
         nurse_shift: nurse.nurse_shift || 'Morning'
@@ -88,9 +91,9 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
         nurse_gender: '',
         nurse_salary: '',
         nurse_contact: '',
-        nurse_certification: '',
+       // nurse_certification: '',
         nurse_supervisor_id: '',
-        nurse_experience_years: '',
+        nurse_experience_years: '0',
         nurse_shift: 'Morning'
       });
     }
@@ -99,6 +102,30 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
 
   // ✅ Submit handler
   const handleSubmit = async (e) => {
+    try {
+    if (isEditing) {
+      // Update not yet implemented on backend
+      console.log("Update logic pending");
+    } else {
+       const payload = {
+  employee_id: parseInt(formData.employee_id),
+  nurse_salary: parseInt(formData.nurse_salary),
+  supervisor_id: parseInt(formData.supervisor_id),
+  nurse_name: formData.nurse_name,
+  nurse_dob: formData.nurse_dob,
+  nurse_gender: formData.nurse_gender,
+  nurse_designation: formData.nurse_designation,
+};
+await axios.post("http://localhost:3000/nurses", payload);
+      console.log("✅ nurses added successfully");
+    }
+
+    onClose();
+  } catch (err) {
+    console.error("❌ Error saving nurse:", err);
+  } finally {
+    setIsSubmitting(false);
+  }
     e.preventDefault();
 
     const isValid = validateForm();
@@ -107,7 +134,7 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
     setIsSubmitting(true);
     try {
       if (isEditing) {
-        await updateNurse(nurse.nurse_id, formData);
+        await updateNurse(nurse.empid, formData);
       } else {
         await addNurse(formData);
       }

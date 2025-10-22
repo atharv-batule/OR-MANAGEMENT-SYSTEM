@@ -105,9 +105,9 @@ const Nurses = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {nurses1.map((nurse) => (
-                <tr key={nurse.nurse_id} className="hover:bg-gray-50">
+                <tr key={nurse.empid} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{nurse.empid}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{nurse.fname}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{nurse.fname+" "+nurse.lname}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_experience_years||0} years</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.superid}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_shift||"morning"} Shift</td>

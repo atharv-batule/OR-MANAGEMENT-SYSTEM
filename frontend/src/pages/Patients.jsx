@@ -97,6 +97,8 @@ useEffect(() => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.gender}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.phone}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.address}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.patient_medical_history}</td>
+
                   <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
                     {patient.patient_medical_history || '—'}
                   </td>
