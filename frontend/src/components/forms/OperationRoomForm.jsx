@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import Modal from '../ui/Modal';
-
+import axios from 'axios';
 const OperationRoomForm = ({ isOpen, onClose, operationRoom = null }) => {
   const { addOperationRoom, updateOperationRoom } = useApp();
   const isEditing = !!operationRoom;
@@ -17,9 +17,9 @@ const OperationRoomForm = ({ isOpen, onClose, operationRoom = null }) => {
   useEffect(() => {
     if (operationRoom) {
       setFormData({
-        room_number: operationRoom.room_number,
-        availability_status: operationRoom.availability_status,
-        equipment_list: operationRoom.equipment_list.join(', ')
+        room_number: operationRoom.orid,
+        availability_status: operationRoom.status,
+        equipment_list: operationRoom.equipments.join(', ')
       });
     } else {
       setFormData({
@@ -39,10 +39,17 @@ const OperationRoomForm = ({ isOpen, onClose, operationRoom = null }) => {
     };
 
     try {
+      const payload = {
+        room_number: parseInt(formData.room_number),
+        availability_status: formData.availability_status,
+        equipment_list: formData.equipment_list
+      };
       if (isEditing) {
-        updateOperationRoom(operationRoom.or_id, roomData);
+        updateOperationRoom(operationRoom.orid, roomData);
       } else {
-        addOperationRoom(roomData);
+        //addOperationRoom(roomData);
+        await axios.post("http://localhost:3000/operation-rooms", payload);
+        console.log(" OR added successfully");
       }
       onClose();
     } catch (error) {

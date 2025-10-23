@@ -23,6 +23,28 @@ router.get("/", async (req, res) => {
   }
 });
 
+ router.post("/", async (req, res) => {
+  try {
+    const orid = parseInt(req.body.room_number);
+    if (isNaN(orid) ) {
+      return res.status(400).send("Employee ID, Salary,phone no. and Supervisor ID must be numbers");
+    }
+ const { equipment_list, availability_status } = req.body;
+
+    console.log("POST payload:", { orid, equipment_list, availability_status });
+    await addOr(
+      orid,
+      req.body.equipment_list,
+      req.body.availability_status
+    );
+
+    res.send("Surgeon added successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 
 async function displayOR()
 {
@@ -30,6 +52,21 @@ async function displayOR()
     SELECT * FROM or_table 
     `);
     return result.rows;
+}
+
+async function addOr(orid, equipmentlist, status) {
+  try {
+    const result = await client.query(`
+      INSERT INTO or_table (orid, equipments, status)
+      VALUES ($1, $2, $3)
+    `, [orid, equipmentlist, status]);
+
+    console.log(`OR ${orid} added/updated successfully`);
+    return result;
+  } catch (err) {
+    console.error('Error adding/updating OR:', err);
+    throw err;
+  }
 }
 
 export default router;
