@@ -72,7 +72,7 @@ const Surgeries = () => {
       </div>
 
       {/* Surgery Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+      {/* <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {surgeries1.map((surgery) => (
           <Card key={surgery.surgery_id} hover>
             <Card.Content>
@@ -153,7 +153,61 @@ const Surgeries = () => {
         </Card>
       )}
 
+      <SurgeryForm isOpen={showForm} onClose={handleCloseForm} surgery={editingSurgery} /> */}
+
+
+
+      <Card>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">surgeon</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">OR</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Anesth</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nurse</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Surgery Type</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">surgery Notes</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {surgeries1.map((surgery) => (
+                 
+                <tr key={surgery.surgery_id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{surgery.surgery_id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{surgery.patient_id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgeon_id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.or_id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_date}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_time}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_duration}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.anesth_id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_type}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div className="flex justify-end space-x-2">
+                      <button onClick={() => handleEdit(surgery)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => handleDelete(surgery.empid)} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
       <SurgeryForm isOpen={showForm} onClose={handleCloseForm} surgery={editingSurgery} />
+
     </div>
   );
 };

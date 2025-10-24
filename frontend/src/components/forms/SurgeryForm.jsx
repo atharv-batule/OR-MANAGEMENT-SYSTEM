@@ -26,8 +26,11 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
     patient_id: '',
     or_id: '',
     surgeon_id: '',
-    anaesth_id: '',
-    nurse_id: ''
+    anesth_id: '',
+    nurse_id: '',
+    attending: '',
+    resident: '',
+    intern: ''
   });
 
   const [errors, setErrors] = useState({});
@@ -44,7 +47,7 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
         patient_id: surgery.patient_id,
         or_id: surgery.or_id,
         surgeon_id: surgery.surgeon_id,
-        anaesth_id: surgery.anaesth_id,
+        anesth_id: surgery.anaesth_id,
         nurse_id: surgery.nurse_id
       });
     } else {
@@ -57,8 +60,11 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
         patient_id: '',
         or_id: '',
         surgeon_id: '',
-        anaesth_id: '',
-        nurse_id: ''
+        anesth_id: '',
+        nurse_id: '',
+        attending: '',
+        resident: '',
+        intern: ''
       });
     }
     setErrors({});
@@ -74,7 +80,7 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
     if (!formData.patient_id) newErrors.patient_id = 'Patient selection is required';
     if (!formData.or_id) newErrors.or_id = 'Operation room selection is required';
     if (!formData.surgeon_id) newErrors.surgeon_id = 'Surgeon selection is required';
-    if (!formData.anaesth_id) newErrors.anaesth_id = 'Anesthesiologist selection is required';
+    if (!formData.anesth_id) newErrors.anesth_id = 'Anesthesiologist selection is required';
     if (!formData.nurse_id) newErrors.nurse_id = 'Nurse selection is required';
 
     setErrors(newErrors);
@@ -225,20 +231,20 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
               Anesthesiologist <span className="text-red-500">*</span>
             </label>
             <select
-              value={formData.anaesth_id}
-              onChange={(e) => handleInputChange('anaesth_id', e.target.value)}
+              value={formData.anesth_id}
+              onChange={(e) => handleInputChange('anesth_id', e.target.value)}
               className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.anaesth_id ? 'border-red-500' : 'border-gray-300'
+                errors.anesth_id ? 'border-red-500' : 'border-gray-300'
               }`}
             >
               <option value="">Select Anesthesiologist</option>
-              {anesthesiologists.map(anaesth => (
-                <option key={anaesth.anaesth_id} value={anaesth.anaesth_id}>
-                  {anaesth.anaesth_name} - {anaesth.anaesth_experience_years} years exp.
+              {anesthesiologists.map(anesth => (
+                <option key={anesth.anesth_id} value={anesth.anesth_id}>
+                  {anesth.anesth_name} - {anesth.anesth_experience_years} years exp.
                 </option>
               ))}
             </select>
-            {errors.anaesth_id && <p className="mt-1 text-sm text-red-600">{errors.anaesth_id}</p>}
+            {errors.anesth_id && <p className="mt-1 text-sm text-red-600">{errors.anesth_id}</p>}
           </div>
 
           <div>
