@@ -86,7 +86,7 @@ const Surgeons = () => {
                  
                 <tr key={surgeon.empid} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{surgeon.empid}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{surgeon.fname}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{surgeon.fname+" "+surgeon.lname}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.surgeon_speciality||"Cardio"}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.surgeon_experience_years||0} years</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.designation}</td>
