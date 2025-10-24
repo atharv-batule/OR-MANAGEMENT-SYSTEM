@@ -2,10 +2,11 @@ import { Client } from 'pg';
 
 const client = new Client({
   host: 'db.glkubgmswyjawlcgxspw.supabase.co',
-  port: 5432,
+  port: 6543,
   user: 'postgres',
   password: 'DmbgELe4GarxXkS5',
-  database: 'postgres'
+  database: 'postgres',
+  ssl: { rejectUnauthorized: false }
 });
 
 client.connect()
