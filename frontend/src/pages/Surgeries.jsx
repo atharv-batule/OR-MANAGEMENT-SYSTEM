@@ -84,7 +84,7 @@ const Surgeries = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_start}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_end}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_notes}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.emp_id}</td>
+                  
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.attending}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.intern}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.resident}</td>
