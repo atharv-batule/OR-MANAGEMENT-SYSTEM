@@ -4,7 +4,8 @@ import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import SurgeryForm from '../components/forms/SurgeryForm';
-import axios from 'axios';import axios from 'axios';
+import axios from 'axios';
+// import { empName } from '../../../backend/src/controllers/basic';
 
 const Surgeries = () => {
   useEffect(() => {
@@ -13,6 +14,7 @@ const Surgeries = () => {
           .then(res => {
             console.log("Fetched surgereis:", res.data);
             setSurgeries(res.data);
+            // console.log(empName(1))
           })
           .catch(err => console.error(err));
       }, []);
@@ -23,12 +25,12 @@ const Surgeries = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   // Fetch surgeries from backend
-  useEffect(() => {
-    axios
-      .get('http://localhost:3000/surgeries')
-      .then(res => setSurgeries(res.data))
-      .catch(err => console.error(err));
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get('http://localhost:3000/surgery')
+  //     .then(res => setSurgeries(res.data))
+  //     .catch(err => console.error(err));
+  // }, []);
 
   const handleEdit = (surgery) => {
     setEditingSurgery(surgery);
@@ -77,7 +79,7 @@ const Surgeries = () => {
               <tr>
                 {[
                   'Surgery ID', 'Patient ID', 'OR ID', 'Date', 'Start Time', 'End Time',
-                  'Notes', 'Emp ID', 'Attending', 'Intern', 'Resident', 'Nurse', 'Anesthesiologist', 'Actions'
+                  'Notes',  'Attending', 'Intern', 'Resident', 'Nurse', 'Anesthesiologist', 'Actions'
                 ].map((col) => (
                   <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{col}</th>
                 ))}
@@ -93,12 +95,12 @@ const Surgeries = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_start}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_end}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_notes}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.emp_id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.attending}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.intern}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.resident}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.nurse}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.anesthesiologist}</td>
+                  {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{empName(1)}</td> */}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.attending_name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.intern_name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.resident_name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.nurse_name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.anesthesiologist_name}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-2">
                       <button onClick={() => handleEdit(surgery)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">

@@ -24,12 +24,63 @@ router.get("/", async (req, res) => {
   }
 });
 
-async function displaySurg()
-{
-  const result= client.query(`
-    Select * from surgery;
-    `)
-    return (await result).rows;
+async function displaySurg() {
+  const result = await client.query(`
+    SELECT
+        S.surgery_id,
+        S.patient_id,
+        S.or_id,
+        S.surgery_date,
+        S.surgery_start,
+        S.surgery_end,
+        S.surgery_notes,
+        MAX(CASE WHEN E.designation = 'Attending' THEN L.emp_id END) AS attending_id,
+        MAX(CASE WHEN E.designation = 'Intern' THEN L.emp_id END) AS intern_id,
+        MAX(CASE WHEN E.designation = 'Anesthesiologist' THEN L.emp_id END) AS anesthesiologist_id,
+        MAX(CASE WHEN E.designation = 'Resident' THEN L.emp_id END) AS resident_id,
+        MAX(CASE WHEN E.designation = 'Nurse' THEN L.emp_id END) AS nurse_id
+    FROM
+        Surgery S
+    JOIN
+        surgery_staff L ON S.surgery_id = L.surgery_id
+    JOIN
+        Employees E ON L.emp_id = E.empid
+    GROUP BY
+        S.surgery_id,
+        S.patient_id,
+        S.or_id,
+        S.surgery_date,
+        S.surgery_start,
+        S.surgery_end,
+        S.surgery_notes;
+  `);
+
+  const surgeries = result.rows;
+  const updatedSurgeries = await Promise.all(
+  surgeries.map(async (surgery) => {
+    return {
+      ...surgery,
+      anesthesiologist_name: (await empName(surgery.anesthesiologist_id))[0]?.fname + " " + (await empName(surgery.anesthesiologist_id))[0]?.lname,
+      attending_name: (await empName(surgery.attending_id))[0]?.fname + " " + (await empName(surgery.attending_id))[0]?.lname,
+      intern_name: surgery.intern_id ? (await empName(surgery.intern_id))[0]?.fname + " " + (await empName(surgery.intern_id))[0]?.lname : null,
+      nurse_name: surgery.nurse_id ? (await empName(surgery.nurse_id))[0]?.fname + " " + (await empName(surgery.nurse_id))[0]?.lname : null,
+      resident_name: surgery.resident_id ? (await empName(surgery.resident_id))[0]?.fname + " " + (await empName(surgery.resident_id))[0]?.lname : null
+    };
+  })
+);
+
+return (updatedSurgeries);
+
 }
 
+async function empName(empid) {
+  const result = await client.query(`
+    SELECT
+        fname,lname
+    FROM employees
+    where empid=$1
+  `,[empid]);
+
+  return result.rows;
+}
 export default router;
