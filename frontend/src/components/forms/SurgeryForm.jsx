@@ -25,7 +25,6 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
     surgery_start: '',
     surgery_end: '',
     surgery_notes: '',
-    emp_id: '',
     attending: '',
     resident: '',
     intern: '',
@@ -48,7 +47,6 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
         surgery_start: '',
         surgery_end: '',
         surgery_notes: '',
-        emp_id: '',
         attending: '',
         resident: '',
         intern: '',
@@ -66,7 +64,6 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
     if (!formData.surgery_date) newErrors.surgery_date = 'Surgery date is required';
     if (!formData.surgery_start) newErrors.surgery_start = 'Start time is required';
     if (!formData.surgery_end) newErrors.surgery_end = 'End time is required';
-    if (!formData.emp_id) newErrors.emp_id = 'Employee ID is required';
     if (!formData.role.trim()) newErrors.role = 'Role is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -176,11 +173,7 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
             onChange={(e) => handleInputChange('surgery_end', e.target.value)}
           />
 
-          <Input
-            label="Employee ID"
-            value={formData.emp_id}
-            onChange={(e) => handleInputChange('emp_id', e.target.value)}
-          />
+          
 
           
 
