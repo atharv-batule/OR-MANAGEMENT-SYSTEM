@@ -18,7 +18,7 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
     patient_contact: '',
     patient_address: '',
     patient_medical_history: '',
-    surgery_id: '',
+    //surgery_id: '',
   });
 
   const [errors, setErrors] = useState({});
@@ -36,7 +36,7 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
         patient_contact: patient.patient_contact || '',
         patient_address: patient.patient_address || '',
         patient_medical_history: patient.patient_medical_history || '',
-        surgery_id: patient.surgery_id || '',
+        //surgery_id: patient.surgery_id || '',
       });
     } else {
       // Reset form when not editing
@@ -48,7 +48,7 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
         patient_contact: '',
         patient_address: '',
         patient_medical_history: '',
-        surgery_id: '',
+        //surgery_id: '',
       });
     }
     
@@ -69,8 +69,8 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
       newErrors.patient_contact = 'Contact is required';
     if (!formData.patient_address.trim()) 
       newErrors.patient_address = 'Address is required';
-    if (!formData.surgery_id.toString().trim()) 
-      newErrors.surgery_id = 'Surgery ID is required';
+    // if (!formData.surgery_id.toString().trim()) 
+    //   newErrors.surgery_id = 'Surgery ID is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -93,13 +93,12 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
       const payload = {
         patient_num: parseInt(formData.patient_num),
         patient_name: formData.patient_name,
-        
         patient_gender: formData.patient_gender,
-        patient_dob: formatDate(formData.patient_dob),
+        patient_dob: formData.patient_dob,
         patient_contact: formData.patient_contact,
         patient_address: formData.patient_address,
-        patient_medical_history: formData.patient_medical_history,
-        surgery_id: parseInt(formData.surgery_id)
+        patient_medical_history: formData.patient_medical_history
+        // surgery_id: parseInt(formData.surgery_id)
       };
 
       if (isEditing) {
@@ -149,14 +148,14 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
             placeholder="Enter patient Number"
           />
 
-          <Input
+          {/* <Input
             label="Surgery ID"
             required
             value={formData.surgery_id}
             onChange={(e) => handleInputChange('surgery_id', e.target.value)}
             error={errors.surgery_id}
             placeholder="Enter surgery ID"
-          />
+          /> */}
 
           <Input
             label="Full Name"

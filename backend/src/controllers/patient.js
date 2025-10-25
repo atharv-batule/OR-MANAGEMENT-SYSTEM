@@ -28,10 +28,10 @@ router.post("/", async (req, res) => {
   try {
     const patientid = parseInt(req.body.patient_num);
    // const salary = parseInt(req.body.surgeon_salary);
-    const srgid = parseInt(req.body.surgery_id);
+    //const srgid = parseInt(req.body.surgery_id);
     const phone=parseInt(req.body.patient_contact)
 
-    if (isNaN(patientid) || isNaN(srgid)) {
+    if (isNaN(patientid) ) {
       return res.status(400).send("Employee ID, Salary, and Supervisor ID must be numbers");
     }
 
@@ -42,7 +42,6 @@ router.post("/", async (req, res) => {
       req.body.patient_dob,
       req.body.patient_gender,
       phone,
-      srgid,
       req.body.patient_address,
       req.body.patient_medical_history
     );
@@ -55,11 +54,11 @@ router.post("/", async (req, res) => {
 });
 
 //add patient
-async function addPatient(patientid,fname,lname,dob,gender,phone,srgid,address,medicalHistory)
+async function addPatient(patientid,fname,lname,dob,gender,phone,address,medicalHistory)
     {
     const addSrg= await client.query(`
-   INSERT INTO patients (patientid,Fname,lname,dob,gender,phone,surgeryid,address,medicalhistory) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
-    `,[patientid,fname,lname,dob,gender,phone,srgid,address,medicalHistory]);
+   INSERT INTO patients (patientid,Fname,lname,dob,gender,phone,address,medicalhistory) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+    `,[patientid,fname,lname,dob,gender,phone,address,medicalHistory]);
     }
 
     async function displayPatient()

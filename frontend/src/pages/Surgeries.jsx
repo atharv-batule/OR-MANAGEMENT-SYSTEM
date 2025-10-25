@@ -4,8 +4,17 @@ import { Plus, Search, Edit, Trash2, Calendar } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import SurgeryForm from '../components/forms/SurgeryForm';
-
+import axios from 'axios';
 const Surgeries = () => {
+  useEffect(() => {
+        axios
+          .get("http://localhost:3000/surgery")
+          .then(res => {
+            console.log("Fetched surgereis:", res.data);
+            setSurgeries(res.data);
+          })
+          .catch(err => console.error(err));
+      }, []);
   const [surgeries1, setSurgeries] = useState([]);
   const { surgeries, deleteSurgery, patients, surgeons, operationRooms } = useApp();
   const [showForm, setShowForm] = useState(false);

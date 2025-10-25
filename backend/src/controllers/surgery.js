@@ -11,21 +11,25 @@ const port=process.env.PORT||3000;
 router.use(express.json())
 router.use(cors())
 
-//create table
- const emp=await client.query(`
-    CREATE TABLE Surgeries IF NOT EXISTS(
-  surgery_id SERIAL PRIMARY KEY,
-  surgery_date DATE NOT NULL,
-  surgery_time TIME NOT NULL,
-  surgery_type VARCHAR(100) NOT NULL,
-  duration_minutes INT NOT NULL,
-  patient_id INT NOT NULL REFERENCES Patients(patient_id),
-  operation_room_id INT NOT NULL REFERENCES OperationRooms(room_id),
-  surgeon_id INT NOT NULL REFERENCES Employees(employee_id),
-  anesthesiologist_id INT REFERENCES Employees(employee_id),
-  nurse_id INT REFERENCES Employees(employee_id),
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
-)
-    `);
-    console.log("success");
+
+router.get("/", async (req, res) => {
+   try {
+    const result = await displaySurg(); // fetch data (e.g., from DB)
+    res.json(result); // send it to frontend as JSON
+    console.log();
+    console.log("in here")
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch data" });
+  }
+});
+
+async function displaySurg()
+{
+  const result= client.query(`
+    Select * from surgery;
+    `)
+    return (await result).rows;
+}
+
+export default router;

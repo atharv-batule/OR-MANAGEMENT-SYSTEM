@@ -77,7 +77,7 @@ useEffect(() => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient Number</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Surgery ID</th>
+                {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Surgery ID</th> */}
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DOB</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
@@ -91,7 +91,7 @@ useEffect(() => {
               {patients1.map((patient) => (
                 <tr key={patient.patient_num} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{patient.patientid}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.surgeryid || '—'}</td>
+                  {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.surgeryid || '—'}</td> */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{patient.fname+" "+patient.lname}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.dob}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.gender}</td>
