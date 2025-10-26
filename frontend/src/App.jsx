@@ -10,6 +10,7 @@ import Nurses from './pages/Nurses';
 import OperationRooms from './pages/OperationRooms';
 import Surgeries from './pages/Surgeries';
 import DisplayName from './components/forms/sample';
+import Login from './pages/Login';
 //import SurgeonTableContainer from './components/tables/SurgeonTable';
 
 function App() {
@@ -18,7 +19,15 @@ function App() {
   return (
     <AppProvider>
       <Router>
-        <div className="flex h-screen bg-gray-50">
+      <Routes>
+          {/* Login page (no sidebar, appears first) */}
+          <Route path="/" element={<Login/>} />
+
+          {/* All other pages (with sidebar) */}
+          <Route
+            path="/*"
+            element={
+              <div className="flex h-screen bg-gray-50">
           <Sidebar />
           <div className="flex-1 flex flex-col overflow-hidden ml-0 sm:px-0 lg:ml-63 ">
             <header className="bg-white shadow-sm border-b border-gray-200 sm:px-0">
@@ -28,7 +37,7 @@ function App() {
             </header>
             <main className="flex-1 overflow-y-auto p-6">
               <Routes>
-                <Route path="/" element={<Dashboard />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/patients" element={<Patients />} />
                 <Route path="/surgeons" element={<Surgeons />} />
                 <Route path="/anesthesiologists" element={<Anesthesiologists />} />
@@ -40,6 +49,9 @@ function App() {
             </main>
           </div>
         </div>
+        }
+        />
+        </Routes>
       </Router>
     </AppProvider>
   );
