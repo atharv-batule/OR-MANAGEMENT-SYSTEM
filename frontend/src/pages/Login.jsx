@@ -23,6 +23,12 @@ const Login = () => {
     'Anesthesiologist'
   ];
 
+  const users = [
+    { designation: 'Admin', email: 'admin@hospital.com', password: 'admin123' },
+    { designation: 'Attending Surgeon', email: 'surgeon@hospital.com', password: 'surgeon123' },
+    { designation: 'Nurse', email: 'nurse@hospital.com', password: 'nurse123' },
+  ];
+
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (error) setError('');
@@ -38,25 +44,45 @@ const Login = () => {
     }
 
     setLoading(true);
-    try {
-      // Replace with your backend endpoint
-      const res = await axios.post('http://localhost:3000/login', formData);
-      console.log('Login response:', res.data);
+//     try {
+//       // Replace with your backend endpoint
+//       const res = await axios.post('http://localhost:3000/login', formData);
+//       console.log('Login response:', res.data);
 
-      if (res.data.success) {
-        alert('Login successful!');
-        // redirect to dashboard or home
+//       if (res.data.success) {
+//         alert('Login successful!');
+//         // redirect to dashboard or home
+//         window.location.replace('/dashboard');
+
+//       } else {
+//         setError(res.data.message || 'Invalid credentials');
+//       }
+//     } catch (err) {
+//       console.error(err);
+//       setError('Login failed. Please check credentials.');
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+  const user = users.find(
+      u =>
+        u.designation === formData.designation &&
+        u.email === formData.email &&
+        u.password === formData.password
+    );
+
+    setTimeout(() => {
+      if (user) {
+        alert(`Welcome ${user.designation}!`);
+        // Store login session in localStorage (optional)
+        localStorage.setItem('user', JSON.stringify(user));
         window.location.replace('/dashboard');
-
       } else {
-        setError(res.data.message || 'Invalid credentials');
+        setError('Invalid email, password, or designation.');
       }
-    } catch (err) {
-      console.error(err);
-      setError('Login failed. Please check credentials.');
-    } finally {
       setLoading(false);
-    }
+    }, 1000);
   };
 
   return (
