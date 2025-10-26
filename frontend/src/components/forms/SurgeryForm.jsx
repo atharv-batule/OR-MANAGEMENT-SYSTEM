@@ -101,7 +101,7 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
     if (!formData.surgery_date) newErrors.surgery_date = 'Surgery date is required';
     if (!formData.surgery_start) newErrors.surgery_start = 'Start time is required';
     if (!formData.surgery_end) newErrors.surgery_end = 'End time is required';
-    if (!formData.role.trim()) newErrors.role = 'Role is required';
+   
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -113,7 +113,7 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
 
     try {
       if (isEditing) {
-        updateSurgery(formData.surgery_id, formData);
+        //updateSurgery(formData.surgery_id, formData);
       } else {
         const payload={
         surgery_id: parseInt(formData.surgery_id),
@@ -128,7 +128,7 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
         intern_id: parseInt(formData.intern),
         nurse_id: parseInt(formData.nurse),
         anesthesiologist_id: parseInt(formData.anesthesiologist)
-        }
+        };
         await axios.post("http://localhost:3000/surgery", payload);
         console.log("✅ Surgeon added successfully");
     

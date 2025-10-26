@@ -104,9 +104,68 @@ async function displaySurg() {
 );
 
 return (updatedSurgeries);
-
 }
+router.post("/",async(req,res)=>{
+  try{
+  await addSurg(
+parseInt(req.body.surgery_id),
+parseInt(req.body.patient_id),
+parseInt(req.body.or_id),
+req.body.surgery_date,
+req.body.surgery_start,
+req.body.surgery_end,
+req.body.surgery_notes,
+parseInt(req.body.attending_id),
+parseInt(req.body.resident_id),
+parseInt(req.body.intern_id),
+parseInt(req.body.nurse_id),
+parseInt(req.body.anesthesiologist_id)
 
+  )
+}
+catch(err)
+{console.log(err)}
+})
+async function addSurg(surgery_id, patient_id, or_id, surgery_date, surgery_start, surgery_end, surgery_notes, attending_id, resident_id, intern_id, nurse_id, anesthesiologist_id) {
+  try{
+  await client.query(
+  `
+  WITH conflict AS (
+      SELECT COUNT(*) AS cnt
+      FROM surgery
+      WHERE surgery_date = $4
+        AND or_id = $3
+        AND (surgery_start, surgery_end) OVERLAPS ($5::time, $6::time)
+  ),
+  ins_surgery AS (
+      INSERT INTO surgery (surgery_id, patient_id, or_id, surgery_date, surgery_start, surgery_end, surgery_notes)
+      SELECT $1, $2, $3, $4, $5, $6, $7
+      WHERE (SELECT cnt FROM conflict) = 0
+      RETURNING surgery_id
+  )
+  INSERT INTO surgery_staff (surgery_id, emp_id)
+  VALUES ($1,$8),($1,$9),($1,$10),($1,$11),($1,$12)
+  `,
+  [
+    surgery_id,        // $1
+    patient_id,        // $2
+    or_id,             // $3
+    surgery_date,      // $4
+    surgery_start,     // $5
+    surgery_end,       // $6
+    surgery_notes,     // $7
+    attending_id,      // $8
+    resident_id,       // $9
+    intern_id,         // $10
+    nurse_id,          // $11
+    anesthesiologist_id// $12
+  ]
+)
+  } catch (err) {
+    await client.query('ROLLBACK'); // rollback if anything fails
+    throw err; // propagate error to router
+  }
+}
 async function empName(empid) {
   const result = await client.query(`
     SELECT
@@ -117,8 +176,4 @@ async function empName(empid) {
 
   return result.rows;
 }
-// async function addSurg()
-// {
-
-// } 
 export default router;
