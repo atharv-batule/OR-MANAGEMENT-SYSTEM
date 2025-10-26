@@ -3,8 +3,20 @@ import { useApp } from '../../context/AppContext';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import Modal from '../ui/Modal';
+import axios from 'axios';
 
-const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
+const surgery = () => {
+ 
+};
+
+
+
+
+
+
+
+const SurgeryForm = ({ isOpen, onClose, surgery = null
+   }) => {
   const { 
     addSurgery, 
     updateSurgery, 
@@ -14,51 +26,69 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
     nurses, 
     operationRooms 
   } = useApp();
-  
+
   const isEditing = !!surgery;
 
   const [formData, setFormData] = useState({
-    surgery_date: '',
-    surgery_time: '',
-    surgery_type: '',
-    surgery_duration: '',
-    surgery_notes: '',
+    surgery_id: '',
     patient_id: '',
     or_id: '',
-    surgeon_id: '',
-    anaesth_id: '',
-    nurse_id: ''
+    surgery_date: '',
+    surgery_start: '',
+    surgery_end: '',
+    surgery_notes: '',
+    attending: '',
+    resident: '',
+    intern: '',
+    nurse: '',
+    anesthesiologist: ''
   });
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+    const [attending1, setAttending] = useState([]);
+  const [resident, setResident] = useState([]);
+  const [intern, setIntern] = useState([]);
+  const [nurse, setNurse] = useState([]);
+  const [anesthesiologist, setAnesthesiologist] = useState([]);
+  const [patient, setPatient] = useState([]);
+  const [or, setOr] = useState([]);
+  useEffect(() => {
+        axios
+          .get("http://localhost:3000/surgery")
+          .then(res => {
+            console.log("Fetched surgereis:", res.data);
+            setAttending(res.data.attending);
+            setAnesthesiologist(res.data.anesthesiologist);
+            setIntern(res.data.intern);
+            setNurse(res.data.nurse)
+            setResident(res.data.resident)
+            setOr(res.data.or)
+            setPatient(res.data.patient)
+            // console.log(empName(1))
+          })
+          .catch(err => console.error(err));
+      }, []);
+
 
   useEffect(() => {
     if (surgery) {
-      setFormData({
-        surgery_date: surgery.surgery_date,
-        surgery_time: surgery.surgery_time,
-        surgery_type: surgery.surgery_type,
-        surgery_duration: surgery.surgery_duration,
-        surgery_notes: surgery.surgery_notes,
-        patient_id: surgery.patient_id,
-        or_id: surgery.or_id,
-        surgeon_id: surgery.surgeon_id,
-        anaesth_id: surgery.anaesth_id,
-        nurse_id: surgery.nurse_id
-      });
+      setFormData({ ...surgery });
     } else {
       setFormData({
-        surgery_date: '',
-        surgery_time: '',
-        surgery_type: '',
-        surgery_duration: '',
-        surgery_notes: '',
+        surgery_id: '',
         patient_id: '',
         or_id: '',
-        surgeon_id: '',
-        anaesth_id: '',
-        nurse_id: ''
+        surgery_date: '',
+        surgery_start: '',
+        surgery_end: '',
+        surgery_notes: '',
+        attending: '',
+        resident: '',
+        intern: '',
+        nurse: '',
+        anesthesiologist: ''
       });
     }
     setErrors({});
@@ -66,37 +96,46 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
 
   const validateForm = () => {
     const newErrors = {};
-
+    if (!formData.patient_id) newErrors.patient_id = 'Patient is required';
+    if (!formData.or_id) newErrors.or_id = 'Operation room is required';
     if (!formData.surgery_date) newErrors.surgery_date = 'Surgery date is required';
-    if (!formData.surgery_time) newErrors.surgery_time = 'Surgery time is required';
-    if (!formData.surgery_type.trim()) newErrors.surgery_type = 'Surgery type is required';
-    if (!formData.surgery_duration || formData.surgery_duration <= 0) newErrors.surgery_duration = 'Valid surgery duration is required';
-    if (!formData.patient_id) newErrors.patient_id = 'Patient selection is required';
-    if (!formData.or_id) newErrors.or_id = 'Operation room selection is required';
-    if (!formData.surgeon_id) newErrors.surgeon_id = 'Surgeon selection is required';
-    if (!formData.anaesth_id) newErrors.anaesth_id = 'Anesthesiologist selection is required';
-    if (!formData.nurse_id) newErrors.nurse_id = 'Nurse selection is required';
-
+    if (!formData.surgery_start) newErrors.surgery_start = 'Start time is required';
+    if (!formData.surgery_end) newErrors.surgery_end = 'End time is required';
+    if (!formData.role.trim()) newErrors.role = 'Role is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
-
     setIsSubmitting(true);
 
     try {
       if (isEditing) {
-        updateSurgery(surgery.surgery_id, { ...formData, surgery_duration: formData.surgery_duration });
+        updateSurgery(formData.surgery_id, formData);
       } else {
-        addSurgery(formData);
+        const payload={
+        surgery_id: parseInt(formData.surgery_id),
+        patient_id: parseInt(formData.patient_id),
+        or_id: parseInt(formData.or_id),
+        surgery_date: formData.surgery_date,
+        surgery_start:formData.surgery_start ,
+        surgery_end: formData.surgery_end,
+        surgery_notes: formData.surgery_notes,
+        attending_id:parseInt( formData.attending),
+        resident_id: parseInt(formData.resident ),
+        intern_id: parseInt(formData.intern),
+        nurse_id: parseInt(formData.nurse),
+        anesthesiologist_id: parseInt(formData.anesthesiologist)
+        }
+        await axios.post("http://localhost:3000/surgery", payload);
+        console.log("✅ Surgeon added successfully");
+    
       }
       onClose();
-    } catch (error) {
-      console.error('Error saving surgery:', error);
+    } catch (err) {
+      console.error('Error saving surgery:', err);
     } finally {
       setIsSubmitting(false);
     }
@@ -104,9 +143,7 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
+    if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
   };
 
   return (
@@ -119,42 +156,11 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
-            label="Surgery Date"
-            type="date"
-            required
-            value={formData.surgery_date}
-            onChange={(e) => handleInputChange('surgery_date', e.target.value)}
-            error={errors.surgery_date}
-            min={new Date().toISOString().split('T')[0]}
-          />
-
-          <Input
-            label="Surgery Time"
-            type="time"
-            required
-            value={formData.surgery_time}
-            onChange={(e) => handleInputChange('surgery_time', e.target.value)}
-            error={errors.surgery_time}
-          />
-
-          <Input
-            label="Surgery Type"
-            required
-            value={formData.surgery_type}
-            onChange={(e) => handleInputChange('surgery_type', e.target.value)}
-            error={errors.surgery_type}
-            placeholder="e.g., Appendectomy, Cardiac Bypass"
-          />
-
-          <Input
-            label="Duration (minutes)"
-            type="number"
-            required
-            value={formData.surgery_duration}
-            onChange={(e) => handleInputChange('surgery_duration', parseInt(e.target.value) || '')}
-            error={errors.surgery_duration}
-            placeholder="Duration in minutes"
-            min="1"
+            label="Surgery ID"
+            type="text"
+            value={formData.surgery_id}
+            onChange={(e) => handleInputChange('surgery_id', e.target.value)}
+            placeholder="Enter Surgery ID"
           />
 
           <div>
@@ -169,10 +175,8 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
               }`}
             >
               <option value="">Select Patient</option>
-              {patients.map(patient => (
-                <option key={patient.patient_id} value={patient.patient_id}>
-                  {patient.patient_name} - Age {patient.patient_age}
-                </option>
+              {patient.map(p => (
+                <option key={p.patientid} value={p.patientid}>{p.fname+" "+p.lname}</option>
               ))}
             </select>
             {errors.patient_id && <p className="mt-1 text-sm text-red-600">{errors.patient_id}</p>}
@@ -189,116 +193,115 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
                 errors.or_id ? 'border-red-500' : 'border-gray-300'
               }`}
             >
-              <option value="">Select Operation Room</option>
-              {operationRooms.filter(room => room.availability_status === 'Available').map(room => (
-                <option key={room.or_id} value={room.or_id}>
-                  {room.room_number} - {room.availability_status}
-                </option>
+              <option value="">Select OR</option>
+              {or.filter(r => r.status === 'Available').map(r => (
+                <option key={r.orid} value={r.orid}>{r.orid}</option>
               ))}
             </select>
             {errors.or_id && <p className="mt-1 text-sm text-red-600">{errors.or_id}</p>}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Surgeon <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={formData.surgeon_id}
-              onChange={(e) => handleInputChange('surgeon_id', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.surgeon_id ? 'border-red-500' : 'border-gray-300'
-              }`}
-            >
-              <option value="">Select Surgeon</option>
-              {surgeons.map(surgeon => (
-                <option key={surgeon.surgeon_id} value={surgeon.surgeon_id}>
-                  {surgeon.surgeon_name} - {surgeon.surgeon_speciality}
-                </option>
-              ))}
-            </select>
-            {errors.surgeon_id && <p className="mt-1 text-sm text-red-600">{errors.surgeon_id}</p>}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Anesthesiologist <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={formData.anaesth_id}
-              onChange={(e) => handleInputChange('anaesth_id', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.anaesth_id ? 'border-red-500' : 'border-gray-300'
-              }`}
-            >
-              <option value="">Select Anesthesiologist</option>
-              {anesthesiologists.map(anaesth => (
-                <option key={anaesth.anaesth_id} value={anaesth.anaesth_id}>
-                  {anaesth.anaesth_name} - {anaesth.anaesth_experience_years} years exp.
-                </option>
-              ))}
-            </select>
-            {errors.anaesth_id && <p className="mt-1 text-sm text-red-600">{errors.anaesth_id}</p>}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Nurse <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={formData.nurse_id}
-              onChange={(e) => handleInputChange('nurse_id', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.nurse_id ? 'border-red-500' : 'border-gray-300'
-              }`}
-            >
-              <option value="">Select Nurse</option>
-              {nurses.map(nurse => (
-                <option key={nurse.nurse_id} value={nurse.nurse_id}>
-                  {nurse.nurse_name} - {nurse.nurse_shift} Shift
-                </option>
-              ))}
-            </select>
-            {errors.nurse_id && <p className="mt-1 text-sm text-red-600">{errors.nurse_id}</p>}
-          </div>
-        </div>
-
-        {/* Surgical Team Fields */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
-            label="Attending"
-            value={formData.attending || ''}
-            onChange={(e) => handleInputChange('attending', e.target.value)}
-            placeholder="Dr. Rahul Mehta"
+            label="Surgery Date"
+            type="date"
+            required
+            value={formData.surgery_date}
+            onChange={(e) => handleInputChange('surgery_date', e.target.value)}
+            min={new Date().toISOString().split('T')[0]}
           />
 
           <Input
-            label="Resident"
-            value={formData.resident || ''}
-            onChange={(e) => handleInputChange('resident', e.target.value)}
-            placeholder="Dr. Nisha Patil"
+            label="Start Time"
+            type="time"
+            required
+            value={formData.surgery_start}
+            onChange={(e) => handleInputChange('surgery_start', e.target.value)}
           />
 
           <Input
-            label="Intern"
-            value={formData.intern || ''}
-            onChange={(e) => handleInputChange('intern', e.target.value)}
-            placeholder="Dr. xyz"
+            label="End Time"
+            type="time"
+            required
+            value={formData.surgery_end}
+            onChange={(e) => handleInputChange('surgery_end', e.target.value)}
           />
 
-        
-        </div>
+          
 
+          
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Surgery Notes</label>
-          <textarea
-            value={formData.surgery_notes}
-            onChange={(e) => handleInputChange('surgery_notes', e.target.value)}
-            rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Any additional notes or instructions for the surgery..."
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Attending</label>
+            <select
+              value={formData.attending}
+              onChange={(e) => handleInputChange('attending', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select Attending Surgeon</option>
+              {attending1.map((emp) => (
+                <option key={emp.empid} value={emp.empid}>{emp.empid}-{"Dr. "+emp.fname +" "+emp.lname}</option>
+              ))}
+            </select>
+          </div>
+
+          <label className="block text-sm font-medium text-gray-700 mb-2">Resident</label>
+            <select
+              value={formData.resident}
+              onChange={(e) => handleInputChange('resident', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select Resident Surgeon</option>
+              {resident.map((emp) => (
+                <option key={emp.empid} value={emp.empid}>{emp.empid}-{"Dr. "+emp.fname +" "+emp.lname}</option>
+              ))}
+            </select>
+
+          <label className="block text-sm font-medium text-gray-700 mb-2">Intern</label>
+            <select
+              value={formData.intern}
+              onChange={(e) => handleInputChange('intern', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select Intern Surgeon</option>
+              {intern.map((emp) => (
+                <option key={emp.empid} value={emp.empid}>{emp.empid}-{"Dr. "+emp.fname +" "+emp.lname}</option>
+              ))}
+            </select>
+
+          <label className="block text-sm font-medium text-gray-700 mb-2">Nurse</label>
+            <select
+              value={formData.nurse}
+              onChange={(e) => handleInputChange('nurse', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select surgical Nurse</option>
+              {nurse.map((emp) => (
+                <option key={emp.empid} value={emp.empid}>{emp.empid}-{emp.fname +" "+emp.lname}</option>
+              ))}
+            </select>
+
+          <label className="block text-sm font-medium text-gray-700 mb-2">Anesthologist</label>
+            <select
+              value={formData.anesthesiologist}
+              onChange={(e) => handleInputChange('anesthesiologist', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Selectanesthesiologist</option>
+              {anesthesiologist.map((emp) => (
+                <option key={emp.empid} value={emp.empid}>{emp.empid}-{"Dr. "+emp.fname +" "+emp.lname}</option>
+              ))}
+            </select>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Surgery Notes</label>
+            <textarea
+              value={formData.surgery_notes}
+              onChange={(e) => handleInputChange('surgery_notes', e.target.value)}
+              rows={4}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Additional notes..."
+            />
+          </div>
         </div>
 
         <div className="flex justify-end space-x-4 pt-6">

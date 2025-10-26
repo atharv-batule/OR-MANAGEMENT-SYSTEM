@@ -127,6 +127,7 @@ const handleSubmit = async (e) => {
   surgeon_dob: formData.surgeon_dob,
   surgeon_gender: formData.surgeon_gender,
   surgeon_designation: formData.surgeon_designation,
+  surgeon_contact:formData.surgeon_contact
 };
 await axios.post("http://localhost:3000/surgeons", payload);
       console.log("✅ Surgeon added successfully");
@@ -256,6 +257,7 @@ await axios.post("http://localhost:3000/surgeons", payload);
 
           <Input
             label="Contact No."
+            type="tel"
             required
             value={formData.surgeon_contact}
             onChange={(e) => handleInputChange('surgeon_contact', e.target.value)}

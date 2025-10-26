@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import Modal from '../ui/Modal';
+import axios from 'axios';
 
 // Convert "yyyy-mm-dd" → "dd-mm-yyyy"
 const formatDateToDisplay = (dateStr) => {
@@ -19,11 +20,13 @@ const formatDateToInput = (dateStr) => {
 };
 
 const NurseForm = ({ isOpen, onClose, nurse = null }) => {
+  
+
   const { addNurse, updateNurse } = useApp();
   const isEditing = !!nurse;
 
   const [formData, setFormData] = useState({
-    employee_id: '',
+    empid: '',
     nurse_name: '',
     nurse_dob: '',
     nurse_gender: '',
@@ -42,7 +45,7 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.employee_id.trim()) newErrors.employee_id = 'Employee ID is required.';
+    if (!formData.empid.trim()) newErrors.empid = 'Employee ID is required.';
     if (!formData.nurse_name.trim()) newErrors.nurse_name = 'Full name is required.';
     if (!formData.nurse_dob.trim()) newErrors.nurse_dob = 'Date of Birth is required.';
     if (!formData.nurse_gender.trim()) newErrors.nurse_gender = 'Please select gender.';
@@ -69,28 +72,28 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
   useEffect(() => {
     if (nurse) {
       setFormData({
-        employee_id: nurse.employee_id || '',
+        empid: nurse.empid || '',
         nurse_name: nurse.nurse_name || '',
         nurse_dob: nurse.nurse_dob || '',
         nurse_gender: nurse.nurse_gender || '',
         nurse_salary: nurse.nurse_salary || '',
         nurse_contact: nurse.nurse_contact || '',
-        nurse_certification: nurse.nurse_certification || '',
+       // nurse_certification: nurse.nurse_certification || '',
         nurse_supervisor_id: nurse.nurse_supervisor_id || '',
         nurse_experience_years: nurse.nurse_experience_years || '',
         nurse_shift: nurse.nurse_shift || 'Morning'
       });
     } else {
       setFormData({
-        employee_id: '',
+        empid: '',
         nurse_name: '',
         nurse_dob: '',
         nurse_gender: '',
         nurse_salary: '',
         nurse_contact: '',
-        nurse_certification: '',
+       // nurse_certification: '',
         nurse_supervisor_id: '',
-        nurse_experience_years: '',
+        nurse_experience_years: '0',
         nurse_shift: 'Morning'
       });
     }
@@ -99,25 +102,43 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
 
   // ✅ Submit handler
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const isValid = validateForm();
-    if (!isValid) return;
+  const isValid = validateForm();
+  if (!isValid) return;
 
-    setIsSubmitting(true);
-    try {
-      if (isEditing) {
-        await updateNurse(nurse.nurse_id, formData);
-      } else {
-        await addNurse(formData);
-      }
-      onClose();
-    } catch (error) {
-      console.error('Error saving nurse:', error);
-    } finally {
-      setIsSubmitting(false);
+  setIsSubmitting(true);
+
+  try {
+    if (isEditing) {
+      console.log("Update logic pending");
+      // await updateNurse(nurse.empid, formData); // when ready
+    } else {
+      const payload = {
+        employee_id: parseInt(formData.empid),
+        nurse_salary: parseInt(formData.nurse_salary),
+        supervisor_id: parseInt(formData.nurse_supervisor_id),
+        nurse_name: formData.nurse_name,
+        nurse_dob: formData.nurse_dob,
+        nurse_gender: formData.nurse_gender,
+        nurse_designation: "Nurse",
+        nurse_contact: formData.nurse_contact,
+      };
+
+      console.log("📤 Sending payload:", payload);
+
+      await axios.post("http://localhost:3000/nurses", payload);
+      console.log("✅ Nurse added successfully");
     }
-  };
+
+    onClose();
+  } catch (err) {
+    console.error("❌ Error saving nurse:", err);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   // ✅ Handles input change + clears specific field error
   const handleInputChange = (field, value) => {
@@ -137,9 +158,9 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
           <Input
             label="Employee ID"
             required
-            value={formData.employee_id}
-            onChange={(e) => handleInputChange('employee_id', e.target.value)}
-            error={errors.employee_id}
+            value={formData.empid}
+            onChange={(e) => handleInputChange('empid', e.target.value)}
+            error={errors.empid}
             placeholder="EMP001"
           />
 

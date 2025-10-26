@@ -1,20 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import AnesthesiologistForm from '../components/forms/AnesthesiologistForm';
-
+import axios from 'axios';
 const Anesthesiologists = () => {
+  useEffect(() => {
+  axios
+        .get("http://localhost:3000/anesthesiologists")
+        .then(res => {
+          console.log("Fetched Anesthologist:", res.data);
+          setAnesthesiologists(res.data);
+        })
+        .catch(err => console.error(err));
+    }, []);
+  const [anesthesiologists1, setAnesthesiologists] = useState([]);
   const { anesthesiologists, deleteAnesthesiologist } = useApp();
   const [showForm, setShowForm] = useState(false);
   const [editingAnesthesiologist, setEditingAnesthesiologist] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredAnesthesiologists = anesthesiologists.filter(anaesth =>
-    anaesth.anaesth_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    anaesth.anaesth_certification.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredAnesthesiologists = anesthesiologists1.filter(anaesth =>
+  //   anaesth.anaesth_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //   anaesth.anaesth_certification.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   const handleEdit = (anesthesiologist) => {
     setEditingAnesthesiologist(anesthesiologist);
@@ -71,23 +81,23 @@ const Anesthesiologists = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredAnesthesiologists.map((anesthesiologist) => (
-                <tr key={anesthesiologist.anaesth_id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{anesthesiologist.employee_id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{anesthesiologist.anaesth_name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_certification}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_experience_years} years</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_supervisor_id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_contact}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_gender}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_dob}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_salary}</td>
+              {anesthesiologists1.map((anesthesiologist) => (
+                <tr key={anesthesiologist.empid} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{anesthesiologist.empid}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{anesthesiologist.fname+" "+anesthesiologist.lname}</td>
+                  {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_certification}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_experience_years} years</td> */}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.superid}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.phone}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.gender}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.dob}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.salary}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-2">
                       <button onClick={() => handleEdit(anesthesiologist)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleDelete(anesthesiologist.anaesth_id)} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
+                      <button onClick={() => handleDelete(anesthesiologist.empid)} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>

@@ -1,19 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import { useApp } from '../context/AppContext';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import NurseForm from '../components/forms/NurseForm';
+import axios from 'axios';
 
 const Nurses = () => {
+  useEffect(() => {
+      axios
+        .get("http://localhost:3000/nurses")
+        .then(res => {
+          console.log("Fetched nurses:", res.data);
+          setNurses(res.data);
+        })
+        .catch(err => console.error(err));
+    }, []);
+  const [nurses1, setNurses] = useState([]);
   const { nurses, deleteNurse } = useApp();
   const [showForm, setShowForm] = useState(false);
   const [editingNurse, setEditingNurse] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredNurses = nurses.filter(nurse =>
-    nurse.nurse_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    nurse.nurse_department.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredNurses = nurses1.filter(nurse =>
+    nurse.fname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    nurse.nurse_department.toLowerCase().includes(searchTerm.toLowerCase()
+  )
   );
 
   const handleEdit = (nurse) => {
@@ -92,23 +104,23 @@ const Nurses = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredNurses.map((nurse) => (
-                <tr key={nurse.nurse_id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{nurse.employee_id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{nurse.nurse_name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_experience_years} years</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_supervisor_id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_shift} Shift</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_contact}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_gender}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_dob}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_salary}</td>
+              {nurses1.map((nurse) => (
+                <tr key={nurse.empid} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{nurse.empid}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{nurse.fname+" "+nurse.lname}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_experience_years||0} years</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.superid}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_shift||"morning"} Shift</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.phone}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.gender}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.dob}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.salary}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-2">
                       <button onClick={() => handleEdit(nurse)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleDelete(nurse.nurse_id)} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
+                      <button onClick={() => handleDelete(nurse.empid)} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>

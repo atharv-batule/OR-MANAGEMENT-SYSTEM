@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import OperationRoomForm from '../components/forms/OperationRoomForm';
+import axios from 'axios';
 
 const OperationRooms = () => {
+  useEffect(() => {
+      axios
+        .get("http://localhost:3000/operation-rooms")
+        .then(res => {
+          console.log("Fetched OR Details:", res.data);
+          setOperationRooms(res.data);
+        })
+        .catch(err => console.error(err));
+    }, []);
+  const [operationRooms1, setOperationRooms] = useState([]);
   const { operationRooms, deleteOperationRoom } = useApp();
   const [showForm, setShowForm] = useState(false);
   const [editingRoom, setEditingRoom] = useState(null);
@@ -109,16 +120,16 @@ const OperationRooms = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredRooms.map((room) => (
-                <tr key={room.or_id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{room.room_number}</td>
+              {operationRooms1.map((room) => (
+                <tr key={room.orid} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{room.orid}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><ul className="text-sm text-gray-600 list-disc list-inside">
-                  {room.equipment_list.map((equipment, index) => (
+                  {(room.equipments || "").split(',').map((equipment, index) => (
                     <li key={index}>{equipment}</li>
                   ))}
-                </ul></td>
+                </ul></td> 
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(room.availability_status)}`}>
-                    {room.availability_status}
+                    {room.status}
                   </span></td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-2">

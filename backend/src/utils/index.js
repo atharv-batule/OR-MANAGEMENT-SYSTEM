@@ -2,7 +2,12 @@ import express from "express"
 import cors from "cors"
 import dotenev from "dotenv"
 import { client } from "../db/db.js";
-import surgeonRoutes from "../controllers/employee.js";
+import surgeonRoutes from "../controllers/surgeon.js";
+import patientRoutes from"../controllers/patient.js"
+import nurseRoutes from "../controllers/nurse.js"
+import anesthRoutes from "../controllers/anesth.js"
+import orRoutes from "../controllers/operationRoom.js"
+import surgRoutes from "../controllers/surgery.js"
 dotenev.config();
 
 const app=express();
@@ -47,6 +52,11 @@ app.get("/registration", async(req,res)=>
     res.send()
 })
 app.use("/surgeons", surgeonRoutes);
+app.use("/patients", patientRoutes);
+app.use("/nurses", nurseRoutes);
+app.use("/anesthesiologists", anesthRoutes);
+app.use("/operation-rooms",orRoutes );
+app.use("/surgery",surgRoutes );
 //server running 
 app.listen(port,()=>
 {
