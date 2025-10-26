@@ -18,7 +18,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const navigationItems = [
-    { path: '/', label: 'Dashboard', icon: Home },
+    { path: '/dashboard', label: 'Dashboard', icon: Home },
     { path: '/patients', label: 'Patients', icon: Users },
     { path: '/surgeons', label: 'Surgeons', icon: UserPlus },
     { path: '/anesthesiologists', label: 'Anesthesiologists', icon: Shield },

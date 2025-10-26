@@ -117,8 +117,9 @@ async function empName(empid) {
 
   return result.rows;
 }
-// async function addSurg()
-// {
+async function addSurg()
+{
+  const 
 
-// } 
+} 
 export default router;
