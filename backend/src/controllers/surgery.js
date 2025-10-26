@@ -14,8 +14,42 @@ router.use(cors())
 
 router.get("/", async (req, res) => {
    try {
-    const result = await displaySurg(); // fetch data (e.g., from DB)
-    res.json(result); // send it to frontend as JSON
+    const result = await displaySurg(); 
+    const attending = await client.query(`
+  SELECT * FROM employees WHERE designation = 'Attending'
+`);
+
+const nurse = await client.query(`
+  SELECT * FROM employees WHERE designation = 'Nurse'
+`);
+
+const anesthesiologist = await client.query(`
+  SELECT * FROM employees WHERE designation = 'Anesthesiologist'
+`);
+
+const resident = await client.query(`
+  SELECT * FROM employees WHERE designation = 'Resident'
+`);
+
+const intern = await client.query(`
+  SELECT * FROM employees WHERE designation = 'Intern'
+`);
+const patient = await client.query(`
+  SELECT * FROM patients 
+`);
+const or = await client.query(`
+  SELECT * FROM or_table 
+`);
+  res.json(
+  {result,
+  attending: attending.rows,
+  nurse: nurse.rows,
+  anesthesiologist: anesthesiologist.rows,
+  resident: resident.rows,
+  intern: intern.rows,
+  patient:patient.rows,
+  or:or.rows
+    }); 
     console.log();
     console.log("in here")
   } catch (err) {
@@ -83,4 +117,8 @@ async function empName(empid) {
 
   return result.rows;
 }
+// async function addSurg()
+// {
+
+// } 
 export default router;

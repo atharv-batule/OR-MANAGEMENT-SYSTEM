@@ -3,8 +3,20 @@ import { useApp } from '../../context/AppContext';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import Modal from '../ui/Modal';
+import axios from 'axios';
 
-const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
+const surgery = () => {
+ 
+};
+
+
+
+
+
+
+
+const SurgeryForm = ({ isOpen, onClose, surgery = null
+   }) => {
   const { 
     addSurgery, 
     updateSurgery, 
@@ -34,6 +46,31 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+    const [attending1, setAttending] = useState([]);
+  const [resident, setResident] = useState([]);
+  const [intern, setIntern] = useState([]);
+  const [nurse, setNurse] = useState([]);
+  const [anesthesiologist, setAnesthesiologist] = useState([]);
+  const [patient, setPatient] = useState([]);
+  const [or, setOr] = useState([]);
+  useEffect(() => {
+        axios
+          .get("http://localhost:3000/surgery")
+          .then(res => {
+            console.log("Fetched surgereis:", res.data);
+            setAttending(res.data.attending);
+            setAnesthesiologist(res.data.anesthesiologist);
+            setIntern(res.data.intern);
+            setNurse(res.data.nurse)
+            setResident(res.data.resident)
+            setOr(res.data.or)
+            setPatient(res.data.patient)
+            // console.log(empName(1))
+          })
+          .catch(err => console.error(err));
+      }, []);
+
 
   useEffect(() => {
     if (surgery) {
@@ -78,7 +115,23 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
       if (isEditing) {
         updateSurgery(formData.surgery_id, formData);
       } else {
-        addSurgery(formData);
+        const payload={
+        surgery_id: parseInt(formData.surgery_id),
+        patient_id: parseInt(formData.patient_id),
+        or_id: parseInt(formData.or_id),
+        surgery_date: formData.surgery_date,
+        surgery_start:formData.surgery_start ,
+        surgery_end: formData.surgery_end,
+        surgery_notes: formData.surgery_notes,
+        attending_id:parseInt( formData.attending),
+        resident_id: parseInt(formData.resident ),
+        intern_id: parseInt(formData.intern),
+        nurse_id: parseInt(formData.nurse),
+        anesthesiologist_id: parseInt(formData.anesthesiologist)
+        }
+        await axios.post("http://localhost:3000/surgery", payload);
+        console.log("✅ Surgeon added successfully");
+    
       }
       onClose();
     } catch (err) {
@@ -122,8 +175,8 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
               }`}
             >
               <option value="">Select Patient</option>
-              {patients.map(p => (
-                <option key={p.patient_id} value={p.patient_id}>{p.patient_name}</option>
+              {patient.map(p => (
+                <option key={p.patientid} value={p.patientid}>{p.fname+" "+p.lname}</option>
               ))}
             </select>
             {errors.patient_id && <p className="mt-1 text-sm text-red-600">{errors.patient_id}</p>}
@@ -141,8 +194,8 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
               }`}
             >
               <option value="">Select OR</option>
-              {operationRooms.filter(r => r.availability_status === 'Available').map(r => (
-                <option key={r.or_id} value={r.or_id}>{r.room_number}</option>
+              {or.filter(r => r.status === 'Available').map(r => (
+                <option key={r.orid} value={r.orid}>{r.orid}</option>
               ))}
             </select>
             {errors.or_id && <p className="mt-1 text-sm text-red-600">{errors.or_id}</p>}
@@ -185,51 +238,59 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select Attending Surgeon</option>
-              {surgeons.map(s => (
-                <option key={s.surgeon_id} value={s.surgeon_name}>{s.surgeon_name}</option>
+              {attending1.map((emp) => (
+                <option key={emp.empid} value={emp.empid}>{emp.empid}-{"Dr. "+emp.fname +" "+emp.lname}</option>
               ))}
             </select>
           </div>
 
-          <Input
-            label="Resident"
-            value={formData.resident}
-            onChange={(e) => handleInputChange('resident', e.target.value)}
-          />
+          <label className="block text-sm font-medium text-gray-700 mb-2">Resident</label>
+            <select
+              value={formData.resident}
+              onChange={(e) => handleInputChange('resident', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select Resident Surgeon</option>
+              {resident.map((emp) => (
+                <option key={emp.empid} value={emp.empid}>{emp.empid}-{"Dr. "+emp.fname +" "+emp.lname}</option>
+              ))}
+            </select>
 
-          <Input
-            label="Intern"
-            value={formData.intern}
-            onChange={(e) => handleInputChange('intern', e.target.value)}
-          />
+          <label className="block text-sm font-medium text-gray-700 mb-2">Intern</label>
+            <select
+              value={formData.intern}
+              onChange={(e) => handleInputChange('intern', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select Intern Surgeon</option>
+              {intern.map((emp) => (
+                <option key={emp.empid} value={emp.empid}>{emp.empid}-{"Dr. "+emp.fname +" "+emp.lname}</option>
+              ))}
+            </select>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Nurse</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Nurse</label>
             <select
               value={formData.nurse}
               onChange={(e) => handleInputChange('nurse', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Select Nurse</option>
-              {nurses.map(n => (
-                <option key={n.nurse_id} value={n.nurse_name}>{n.nurse_name}</option>
+              <option value="">Select surgical Nurse</option>
+              {nurse.map((emp) => (
+                <option key={emp.empid} value={emp.empid}>{emp.empid}-{emp.fname +" "+emp.lname}</option>
               ))}
             </select>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Anesthesiologist</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Anesthologist</label>
             <select
               value={formData.anesthesiologist}
               onChange={(e) => handleInputChange('anesthesiologist', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Select Anesthesiologist</option>
-              {anesthesiologists.map(a => (
-                <option key={a.anesth_id} value={a.anesth_name}>{a.anesth_name}</option>
+              <option value="">Selectanesthesiologist</option>
+              {anesthesiologist.map((emp) => (
+                <option key={emp.empid} value={emp.empid}>{emp.empid}-{"Dr. "+emp.fname +" "+emp.lname}</option>
               ))}
             </select>
-          </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Surgery Notes</label>

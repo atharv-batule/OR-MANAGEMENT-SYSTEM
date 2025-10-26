@@ -13,7 +13,7 @@ const Surgeries = () => {
           .get("http://localhost:3000/surgery")
           .then(res => {
             console.log("Fetched surgereis:", res.data);
-            setSurgeries(res.data);
+            setSurgeries(res.data.result);
             // console.log(empName(1))
           })
           .catch(err => console.error(err));
