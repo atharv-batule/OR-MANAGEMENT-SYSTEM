@@ -35,9 +35,19 @@ useEffect(() => {
   );
 
   const handleEdit = (patient) => {
-    setEditingPatient(patient);
+    const mappedPatient = {
+      patient_num: patient.patientid,
+      patient_name: `${patient.fname || ''} ${patient.lname || ''}`.trim(),
+      patient_gender: patient.gender,
+      patient_dob: patient.dob,
+      patient_contact: patient.phone,
+      patient_address: patient.address,
+      patient_medical_history: patient.medicalhistory
+    };
+    setEditingPatient(mappedPatient);
     setShowForm(true);
   };
+  
 
   const handleDelete = (patientId) => {
     if (window.confirm('Are you sure you want to delete this patient?')) {
