@@ -31,7 +31,7 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
         patient_num: patient.patient_num || '',
         patient_name: patient.patient_name || '',
         patient_age: patient.patient_age || '',
-        patient_gender: patient.patient_gender || 'Male',
+        patient_gender: patient.patient_gender || '',
         patient_dob: patient.patient_dob || '',
         patient_contact: patient.patient_contact || '',
         patient_address: patient.patient_address || '',
@@ -103,7 +103,9 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
 
       if (isEditing) {
         // Update patient in database via backend API
-        // await axios.put(`http://localhost:3000/patients`, payload);
+        console.log("is editing")
+        console.log(payload)
+        await axios.put(`http://localhost:3000/patients`, payload);
         // updatePatient(patient.patient_num, payload);
         console.log("✅ Patient updated successfully");
       } else {

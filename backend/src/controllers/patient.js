@@ -37,8 +37,8 @@ router.post("/", async (req, res) => {
 
     await addPatient(
       patientid,
-      req.body.patient_name,
-      "", // lname
+      req.body.patient_name.split(" ")[0],
+      req.body.patient_name.split(" ")[1], // lname
       req.body.patient_dob,
       req.body.patient_gender,
       phone,
@@ -52,7 +52,39 @@ router.post("/", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+router.put("/",async(req,res)=>{
+  try {
+    const patientid = parseInt(req.body.patient_num);
+   // const salary = parseInt(req.body.surgeon_salary);
+    //const srgid = parseInt(req.body.surgery_id);
+    const phone=parseInt(req.body.patient_contact)
 
+    if (isNaN(patientid) ) {
+      return res.status(400).send("Employee ID, Salary, and Supervisor ID must be numbers");
+    }
+
+    await updatePatient(
+      patientid,
+      req.body.patient_name.split(" ")[0],
+      req.body.patient_name.split(" ")[1], // lname
+      req.body.patient_dob,
+      req.body.patient_gender,
+      phone,
+      req.body.patient_address,
+      req.body.patient_medical_history
+    );
+
+    res.send("Surgeon added successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
+})
+router.delete("/",async(req,res)=>{
+try{
+await deletePatient(parseInt(req.body.patientid))
+}catch(err){console.log(err)}
+})
 //add patient
 async function addPatient(patientid,fname,lname,dob,gender,phone,address,medicalHistory)
     {
@@ -60,13 +92,36 @@ async function addPatient(patientid,fname,lname,dob,gender,phone,address,medical
    INSERT INTO patients (patientid,Fname,lname,dob,gender,phone,address,medicalhistory) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
     `,[patientid,fname,lname,dob,gender,phone,address,medicalHistory]);
     }
-
+async function updatePatient(patientid,fname,lname,dob,gender,phone,address,medicalHistory)
+    {
+    const upSrg= await client.query(`
+UPDATE patients
+SET 
+  Fname = $2,
+  Lname = $3,
+  dob = $4,
+  gender = $5,
+  phone = $6,
+  address = $7,
+  medicalhistory = $8
+WHERE patientid = $1;
+    `,[patientid,fname,lname,dob,gender,phone,address,medicalHistory]);
+    }
     async function displayPatient()
     {
         const  result=await client.query(`
             SELECT * FROM patients
             `);
             return result.rows;
+    }
+
+    async function deletePatient(patientid)
+    {
+        const  result=await client.query(`
+            DELETE FROM patients
+            WHERE patientid=$1
+            `,[patientid]);
+            
     }
 
 export default router;

@@ -45,7 +45,25 @@ const OperationRoomForm = ({ isOpen, onClose, operationRoom = null }) => {
         equipment_list: formData.equipment_list
       };
       if (isEditing) {
-        updateOperationRoom(operationRoom.orid, roomData);
+        try {
+          const payload = {
+            room_number: parseInt(formData.room_number),
+            availability_status: formData.availability_status,
+            equipment_list: formData.equipment_list
+          };
+        
+          if (isEditing) {
+            await axios.put(`http://localhost:3000/operation-rooms/${formData.room_number}`, payload);
+            console.log("✅ Operation room updated successfully");
+          } else {
+            await axios.post("http://localhost:3000/operation-rooms", payload);
+            console.log("✅ Operation room added successfully");
+          }
+        
+          onClose();
+        } catch (error) {
+          console.error("❌ Error saving operation room:", error);
+        }
       } else {
         //addOperationRoom(roomData);
         await axios.post("http://localhost:3000/operation-rooms", payload);

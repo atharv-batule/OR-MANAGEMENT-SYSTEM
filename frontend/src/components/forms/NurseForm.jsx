@@ -139,8 +139,6 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
   }
 };
 
-
-  // ✅ Handles input change + clears specific field error
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: '' }));

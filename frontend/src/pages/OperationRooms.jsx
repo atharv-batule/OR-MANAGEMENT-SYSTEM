@@ -28,9 +28,17 @@ const OperationRooms = () => {
   );
 
   const handleEdit = (room) => {
-    setEditingRoom(room);
+    const mappedRoom = {
+      room_number: room.orid || '',
+      availability_status: room.status || 'Available',
+      equipment_list: Array.isArray(room.equipments)
+        ? room.equipments.join(', ')
+        : room.equipments || ''
+    };
+    setEditingRoom(mappedRoom);
     setShowForm(true);
   };
+  
 
   const handleDelete = (roomId) => {
     if (window.confirm('Are you sure you want to delete this operation room?')) {
@@ -128,7 +136,7 @@ const OperationRooms = () => {
                     <li key={index}>{equipment}</li>
                   ))}
                 </ul></td> 
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(room.availability_status)}`}>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(room.status)}`}>
                     {room.status}
                   </span></td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

@@ -26,10 +26,22 @@ const Surgeons = () => {
   (surgeon.surgeon_speciality?.toLowerCase().includes(searchTerm.toLowerCase()))
 );
 
-  const handleEdit = (surgeon) => {
-    setEditingSurgeon(surgeon);
-    setShowForm(true);
+const handleEdit = (surgeon) => {
+  const mappedSurgeon = {
+    employee_id: surgeon.empid || '',
+    surgeon_name: `${surgeon.fname || ''} ${surgeon.lname || ''}`.trim(),
+    surgeon_dob: surgeon.dob || '',
+    surgeon_gender: surgeon.gender || '',
+    surgeon_salary: surgeon.salary || '',
+    surgeon_speciality: surgeon.surgeon_speciality || '',
+    surgeon_contact: surgeon.phone || '',
+    surgeon_experience_years: surgeon.surgeon_experience_years || '',
+    supervisor_id: surgeon.superid || '',
+    surgeon_designation: surgeon.designation || '',
   };
+  setEditingSurgeon(mappedSurgeon);
+  setShowForm(true);
+};
 
   const handleDelete = (surgeonId) => {
     if (window.confirm('Are you sure you want to delete this surgeon?')) {
