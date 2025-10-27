@@ -39,7 +39,7 @@ useEffect(() => {
       patient_num: patient.patientid,
       patient_name: `${patient.fname || ''} ${patient.lname || ''}`.trim(),
       patient_gender: patient.gender,
-      patient_dob: patient.dob,
+      patient_dob: patient.dob.split("T")[0],
       patient_contact: patient.phone,
       patient_address: patient.address,
       patient_medical_history: patient.medicalhistory
@@ -50,14 +50,20 @@ useEffect(() => {
   
 
   const handleDelete = (patientId) => {
-    if (window.confirm('Are you sure you want to delete this patient?')) {
-      deletePatient(patientId);
+    
+      
+      if (window.confirm('Are you sure you want to delete this patient?')) {
+      axios.delete("http://localhost:3000/patients",{ data: { patientid: patientId } })
     }
+     window.location.reload();
+    
+    
   };
 
   const handleCloseForm = () => {
     setShowForm(false);
     setEditingPatient(null);
+    window.location.reload();
   };
 
   return (
@@ -103,11 +109,11 @@ useEffect(() => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{patient.patientid}</td>
                   {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.surgeryid || '—'}</td> */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{patient.fname+" "+patient.lname}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.dob}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.dob.split("T")[0]}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.gender}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.phone}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.address}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.patient_medical_history}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.medicalhistory}</td>
 
                   <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
                     {patient.patient_medical_history || '—'}
@@ -117,7 +123,7 @@ useEffect(() => {
                       <button onClick={() => handleEdit(patient)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleDelete(patient.patient_num)} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
+                      <button onClick={() => handleDelete(patient.patientid)} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
