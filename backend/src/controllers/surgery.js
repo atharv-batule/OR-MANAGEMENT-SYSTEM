@@ -176,4 +176,5 @@ async function empName(empid) {
 
   return result.rows;
 }
+
 export default router;
