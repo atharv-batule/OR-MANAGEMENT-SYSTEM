@@ -74,7 +74,20 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
 
   useEffect(() => {
     if (surgery) {
-      setFormData({ ...surgery });
+      setFormData({
+        surgery_id: surgery.surgery_id || '',
+        patient_id: surgery.patient_id || '',
+        or_id: surgery.or_id || '',
+        surgery_date: surgery.surgery_date?.split('T')[0] || '',
+        surgery_start: surgery.surgery_start || '',
+        surgery_end: surgery.surgery_end || '',
+        surgery_notes: surgery.surgery_notes || '',
+        attending: surgery.attending_id || '',
+        resident: surgery.resident_id || '',
+        intern: surgery.intern_id || '',
+        nurse: surgery.nurse_id || '',
+        anesthesiologist: surgery.anesthesiologist_id || ''
+      });
     } else {
       setFormData({
         surgery_id: '',

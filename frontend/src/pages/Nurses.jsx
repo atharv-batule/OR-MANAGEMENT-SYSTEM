@@ -29,7 +29,19 @@ const Nurses = () => {
   );
 
   const handleEdit = (nurse) => {
-    setEditingNurse(nurse);
+    const mappedNurse = {
+      empid: nurse.empid || '',
+      nurse_name: `${nurse.fname || ''} ${nurse.lname || ''}`.trim(),
+      nurse_dob: nurse.dob || '',
+      nurse_gender: nurse.gender || '',
+      nurse_salary: nurse.salary || '',
+      nurse_contact: nurse.phone || '',
+      nurse_supervisor_id: nurse.superid || '',
+      nurse_experience_years: nurse.nurse_experience_years || '',
+      nurse_shift: nurse.nurse_shift || 'Morning'
+    };
+  
+    setEditingNurse(mappedNurse);
     setShowForm(true);
   };
 

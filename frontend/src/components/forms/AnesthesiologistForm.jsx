@@ -117,8 +117,23 @@ const AnesthesiologistForm = ({ isOpen, onClose, anesthesiologist = null }) => {
     setIsSubmitting(true);
     try {
       if (isEditing) {
-        await updateAnesthesiologist(anesthesiologist.anaesth_id, formData);
-      } else {
+        const payload = {
+          empid: parseInt(formData.empid),
+          fname: formData.anaesth_name.split(' ')[0] || '',
+          lname: formData.anaesth_name.split(' ')[1] || '',
+          dob: formData.anaesth_dob,
+          gender: formData.anaesth_gender,
+          salary: parseInt(formData.anaesth_salary),
+          phone: formData.anaesth_contact,
+          superid: parseInt(formData.anaesth_supervisor_id),
+          anaesth_certification: formData.anaesth_certification,
+          anaesth_experience_years: parseInt(formData.anaesth_experience_years) || 0
+        };
+      
+        console.log('🩺 Updating anesthesiologist:', payload);
+        await axios.put(`http://localhost:3000/anesthesiologists/${formData.empid}`, payload);
+        console.log('✅ Anesthesiologist updated successfully');
+      }  else {
         const payload = {
         employee_id: parseInt(formData.empid),
         anaesth_salary: parseInt(formData.anaesth_salary),

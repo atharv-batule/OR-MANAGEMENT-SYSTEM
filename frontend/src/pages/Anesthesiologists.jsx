@@ -27,7 +27,19 @@ const Anesthesiologists = () => {
   // );
 
   const handleEdit = (anesthesiologist) => {
-    setEditingAnesthesiologist(anesthesiologist);
+    const mapped = {
+      empid: anesthesiologist.empid || '',
+      anaesth_name: `${anesthesiologist.fname || ''} ${anesthesiologist.lname || ''}`.trim(),
+      anaesth_dob: anesthesiologist.dob || '',
+      anaesth_gender: anesthesiologist.gender || '',
+      anaesth_salary: anesthesiologist.salary || '',
+      anaesth_contact: anesthesiologist.phone || '',
+      anaesth_supervisor_id: anesthesiologist.superid || '',
+      anaesth_certification: anesthesiologist.anaesth_certification || '',
+      anaesth_experience_years: anesthesiologist.anaesth_experience_years || ''
+    };
+  
+    setEditingAnesthesiologist(mapped);
     setShowForm(true);
   };
 
