@@ -44,10 +44,15 @@ const handleEdit = (surgeon) => {
 };
 
   const handleDelete = (surgeonId) => {
+    try{
     if (window.confirm('Are you sure you want to delete this patient?')) {
-      axios.delete("http://localhost:3000/surgeons",{ data: { employee_id: employee_id } })
+      console.log(surgeonId)
+      console.log(isNaN(surgeonId))
+      axios.delete("http://localhost:3000/surgeons",{ data: { employee_id: parseInt(surgeonId) } })
     }
-     window.location.reload();
+  }
+  catch(err){console.log(err)}
+    //  window.location.reload();
     
   };
 

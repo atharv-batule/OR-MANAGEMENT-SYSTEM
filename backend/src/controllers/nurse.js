@@ -84,13 +84,13 @@ console.log("added nurse scuessfully")
           ,[fname, lname, dob, salary, gender, superid, designation, phone,empid] );
     }
 
-    async function deleteNurse(empid)
-     {
-        const deleteSrg = await client.query(
-        ` DELETE FROM Employees
-          WHERE empid = $1 `
-          ,[empid]);
-    }  
+    // async function deleteNurse(empid)
+    //  {
+    //     const deleteSrg = await client.query(
+    //     ` DELETE FROM Employees
+    //       WHERE empid = $1 `
+    //       ,[empid]);
+    // }  
 
     
 
