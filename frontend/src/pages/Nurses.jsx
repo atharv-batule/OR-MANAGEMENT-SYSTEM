@@ -47,7 +47,7 @@ const Nurses = () => {
 
   const handleDelete = (nurseId) => {
     if (window.confirm('Are you sure you want to delete this patient?')) {
-      axios.delete("http://localhost:3000/nurses",{ data: { employee_id: employee_id } })
+      axios.delete("http://localhost:3000/nurses",{ data: { empid: employee_id } })
     }
      window.location.reload();
   };

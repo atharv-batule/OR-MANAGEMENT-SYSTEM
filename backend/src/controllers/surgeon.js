@@ -74,32 +74,32 @@ router.put("/",async(req,res)=>{
     }
 
     //update employe
-    async function updateSurgeon(empid, fname, lname, dob, salary, gender, superid, designation,phone)
-     {
-        const updateEmp = await client.query(
-        ` UPDATE Employees
-          SET 
-            fname = $1,
-            lname = $2,
-            dob = $3,
-            salary = $4,
-            gender = $5,
-            superid = $6,
-            designation = $7,
-            phone=$8
-          WHERE empid = $9
-          `
-          ,[fname, lname, dob, salary, gender, superid, designation, phone,empid] );
-    }
+    // async function updateSurgeon(empid, fname, lname, dob, salary, gender, superid, designation,phone)
+    //  {
+    //     const updateEmp = await client.query(
+    //     ` UPDATE Employees
+    //       SET 
+    //         fname = $1,
+    //         lname = $2,
+    //         dob = $3,
+    //         salary = $4,
+    //         gender = $5,
+    //         superid = $6,
+    //         designation = $7,
+    //         phone=$8
+    //       WHERE empid = $9
+    //       `
+    //       ,[fname, lname, dob, salary, gender, superid, designation, phone,empid] );
+    // }
     //delete surgeon querry
     async function deleteSurgeon(empid)
      {
         const deleteSrg = await client.query(
-        ` DELETE FROM Employees
+        ` DELETE FROM employees
           WHERE empid = $1 `
           ,[empid]);
     }  
-    deleteSurgeon(11)
+   
     
 
     async function displaySurgeon()
@@ -162,7 +162,7 @@ SET
   fname = $2,
   lname = $3,
   dob = $4,
-  salary = $5
+  salary = $5,
   gender = $6,
   superid = $7,
   designation = $8,
@@ -171,11 +171,20 @@ WHERE empid = $1;
     `,[empid, fname, lname, dob, salary, gender, superid, designation,phone]);
     }
 
-    router.delete("/",async(req,res)=>{
-      try{
-      await deleteSurgeon(parseInt(req.body.employee_id))
-      }catch(err){console.log(err)}
-      })
+   router.delete("/", async (req, res) => {
+    console.log("Delete request received!");
+  console.log("Request body:", req.body);
+  try {
+    const empid = parseInt(req.body.employee_id);
+    if (isNaN(empid)) return res.status(400).send("Invalid empid");
+
+    await deleteSurgeon(empid);
+    res.status(200).send("Surgeon deleted successfully");
+  } catch (err) {
+    console.error("DELETE error:", err);
+    res.status(500).send("Error deleting surgeon");
+  }
+});
 
 
     export default router;

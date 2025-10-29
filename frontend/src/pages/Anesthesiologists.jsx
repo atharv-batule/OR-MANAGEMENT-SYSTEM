@@ -45,7 +45,7 @@ const Anesthesiologists = () => {
 
   const handleDelete = (anesthId) => {
     if (window.confirm('Are you sure you want to delete this patient?')) {
-      axios.delete("http://localhost:3000/anesthesiologists",{ data: { employee_id: employee_id } })
+      axios.delete("http://localhost:3000/anesthesiologists",{ data: { empid: empid } })
     }
      window.location.reload();
     
