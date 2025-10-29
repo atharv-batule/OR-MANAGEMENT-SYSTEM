@@ -25,7 +25,7 @@ const Dashboard = () => {
 
     <div className="flex-9 mx-1">
       <header className="bg-white shadow-sm border-b border-gray-200 rounded-2xl overflow-hidden">
-          <div className="bg-blue-50 p-3 rounded-2xl px-1 py-4 sm:p-3">
+          <div className="bg-blue-50 p-3 rounded-2xl px-1 py-4 sm:p-3 bg-[linear-gradient(135deg,#daf0ff,#dee4fb,#daf0ff)] shadow-[0px_1rem_1.5rem_-0.9rem_#000000e1">
             <marquee className="text-blue-700 font-medium text-base">
               {newsItems.join(' • ')}
             </marquee>
@@ -38,18 +38,18 @@ const Dashboard = () => {
         {/* OR Schedule Board */}
       <Card className="overflow-hidden">
         <Card.Header>
-          <Card.Title className="text-base sm:text-lg font-semibold">Operation Room Schedule</Card.Title>
+          <Card.Title className="text-base sm:text-lg text-center font-semibold">Operation Room Schedule</Card.Title>
         </Card.Header>
         <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse border border-gray-300">
-            <thead className="bg-gray-100">
+          <table className="min-w-full bg-white rounded-xl overflow-hidden shadow-md">
+            <thead className="bg-gradient-to-r from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase">
               <tr>
-                <th className="border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700">OR</th>
-                <th className="border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700">Surgery Hours</th>
-                <th className="border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700">Patient</th>
-                <th className="border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700">Procedure</th>
-                <th className="border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700">Surgeon</th>
-                <th className="border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700">Anest.</th>
+                <th className="px-4 py-3 text-center font-semibold">OR</th>
+                <th className="px-4 py-3 text-center font-semibold">Surgery Hours</th>
+                <th className="px-4 py-3 text-center font-semibold">Patient</th>
+                <th className="px-4 py-3 text-center font-semibold">Procedure</th>
+                <th className="px-4 py-3 text-center font-semibold">Surgeon</th>
+                <th className="px-4 py-3 text-center font-semibold">Anest.</th>
               </tr>
             </thead>
             <tbody>
@@ -62,7 +62,7 @@ const Dashboard = () => {
                 return (
                   <tr 
                     key={room.or_id} 
-                    className="hover:bg-blue-50 cursor-pointer"
+                    className="hover:bg-gradient-to-r hover:from-[#f6f8ff] hover:to-[#eaf0ff] transition-all duration-200 hover:scale-[1.01]"
                     onClick={() => setSelectedOR(room.or_id)}
                   >
                     <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">{room.room_number}</td>
@@ -101,13 +101,13 @@ const Dashboard = () => {
         return (
           <Card>
             <Card.Header>
-              <div className="flex justify-between items-center">
-                <Card.Title>Details: {room?.or_name}</Card.Title>
+              <div className="flex justify-between items-centerrounded-2xl pr-4 pl-3">
+                <Card.Title><div className="font-semibold pl-125">Details</div></Card.Title>
                 <button
                   onClick={() => setSelectedOR(null)}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="bubble-button hover:bg-blue-400 hover:text-blue-800 relative px-[19px] py-[4px] rounded-[6px] border-none text-white cursor-pointer bg-blue-500 transition-all duration-200 ease-linear active:scale-95 overflow-hidden"
                 >
-                  ✕
+                  close
                 </button>
               </div>
             </Card.Header>
@@ -115,7 +115,7 @@ const Dashboard = () => {
               {surgery ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-hidden">
                   {/* Patient Information */}
-                  <div className="border rounded-lg p-4">
+                  <div className="rounded-lg p-4 bg-linear-30 bg-blue-50 bg-[linear-gradient(135deg,#c7d2f6,#dee4fb,#fdfefe)] shadow-[0px_1rem_1.5rem_-0.9rem_#000000e1]">
                   <h3 className="font-bold text-gray-900 flex items-center gap-2 mb-3">
                   <FileText className="w-5 h-5" />
                   PATIENT'S DETAILS
@@ -161,11 +161,11 @@ const Dashboard = () => {
                   {/* Surgery & Team Information */}
                   <div className="space-y-4">
                     {/* Surgery Details */}
-                    <div className="border rounded-lg p-4">
-                    <h3 className="font-bold text-gray-900 flex items-center gap-2 mb-3">
-                  <FileText className="w-5 h-5" />
-                  SURGERY DETAILS
-                </h3>
+                    <div className="rounded-lg p-4 bg-linear-30 bg-blue-50 bg-[linear-gradient(135deg,#c7d2f6,#dee4fb,#fdfefe)] shadow-[0px_1rem_1.5rem_-0.9rem_#000000e1] ">
+                      <h3 className="font-bold text-gray-900 flex items-center gap-2 mb-3">
+                         <FileText className="w-5 h-5" />
+                         SURGERY DETAILS
+                      </h3>
                       <div className="space-y-2">
                         <div>
                           <span className="font-medium text-gray-600">Procedure:</span>
@@ -187,11 +187,11 @@ const Dashboard = () => {
                     </div>
 
                     {/* Surgical Team */}
-                    <div className="border rounded-lg p-4">
-                    <h3 className="font-bold text-gray-900 flex items-center gap-2 mb-3">
-                  <Users className="w-5 h-5" />
-                  SURGICAL TEAM
-                </h3>
+                    <div className="rounded-lg p-4 bg-linear-30 bg-blue-50 bg-[linear-gradient(135deg,#c7d2f6,#dee4fb,#fdfefe)] shadow-[0px_1rem_1.5rem_-0.9rem_#000000e1]">
+                     <h3 className="font-bold text-gray-900 flex items-center gap-2 mb-3">
+                       <Users className="w-5 h-5" />
+                      SURGICAL TEAM
+                     </h3>
                       <div className="space-y-2">
                         <div>
                           <span className="font-medium text-gray-600">Surgeon:</span>
