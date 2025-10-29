@@ -112,6 +112,7 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
   try {
     if (isEditing) {
       console.log("Update logic pending");
+      await axios.put(`http://localhost:3000/nurses`, payload);
       // await updateNurse(nurse.empid, formData); // when ready
     } else {
       const payload = {

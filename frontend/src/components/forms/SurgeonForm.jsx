@@ -116,6 +116,7 @@ const handleSubmit = async (e) => {
 
   try {
     if (isEditing) {
+      await axios.put(`http://localhost:3000/patients`, payload);
       // Update not yet implemented on backend
       console.log("Update logic pending");
     } else {

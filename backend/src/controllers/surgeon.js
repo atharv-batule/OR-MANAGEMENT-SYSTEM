@@ -23,6 +23,36 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.put("/",async(req,res)=>{
+  try {
+    const empid = parseInt(req.body.employee_id);
+   // const salary = parseInt(req.body.surgeon_salary);
+    //const srgid = parseInt(req.body.surgery_id);
+    const phone=parseInt(req.body.surgeon_contact)
+
+    if (isNaN(empid) ) {
+      return res.status(400).send("Employee ID, Salary, and Supervisor ID must be numbers");
+    }
+
+    await updateSurgeon(
+      empid,
+      req.body.surgeon_name.split(" ")[0], // lname
+      req.body.surgeon_name.split(" ")[1],// fname
+      req.body.surgeon_dob,
+      salary,
+      req.body.surgeon_gender,
+      superid,
+      req.body.surgeon_designation,
+      phone
+    );
+
+    res.send("Surgeon added successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
+})
+
  const emp=await client.query(`
     CREATE TABLE  IF NOT EXISTS Employees(
     empid INT PRIMARY KEY ,
@@ -124,7 +154,28 @@ router.get("/", async (req, res) => {
   }
 });
 
+async function updateSurgeon(empid, fname, lname, dob, salary, gender, superid, designation,phone)
+    {
+    const upSur= await client.query(`
+UPDATE employees
+SET 
+  fname = $2,
+  lname = $3,
+  dob = $4,
+  salary = $5
+  gender = $6,
+  superid = $7,
+  designation = $8,
+  phone = $9,
+WHERE empid = $1;
+    `,[empid, fname, lname, dob, salary, gender, superid, designation,phone]);
+    }
 
+    router.delete("/",async(req,res)=>{
+      try{
+      await deleteSurgeon(parseInt(req.body.employee_id))
+      }catch(err){console.log(err)}
+      })
 
 
     export default router;

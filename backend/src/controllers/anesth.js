@@ -30,6 +30,55 @@ async function displayAnesth()
           return result.rows;
 } 
 
+router.put("/",async(req,res)=>{
+  try {
+    const empid = parseInt(req.body.employee_id);
+   // const salary = parseInt(req.body.surgeon_salary);
+    //const srgid = parseInt(req.body.surgery_id);
+    const phone=parseInt(req.body.anaesth_contact)
+
+    if (isNaN(empid) ) {
+      return res.status(400).send("Employee ID, Salary, and Supervisor ID must be numbers");
+    }
+
+    await updateAnaesth(
+      empid,
+      req.body.anaesth_name.split(" ")[0], // lname
+      req.body.anaesth_name.split(" ")[1],// fname
+      req.body.anaesth_dob,
+      salary,
+      req.body.anaesth_gender,
+      superid,
+      req.body.anaesth_designation,
+      phone
+    );
+
+    res.send("anaesth added successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
+})
+
+async function updateAnaesth(empid, fname, lname, dob, salary, gender, superid, designation,phone)
+    {
+    const upSur= await client.query(`
+UPDATE employees
+SET 
+  fname = $2,
+  lname = $3,
+  dob = $4,
+  salary = $5
+  gender = $6,
+  superid = $7,
+  designation = $8,
+  phone = $9,
+WHERE empid = $1;
+    `,[empid, fname, lname, dob, salary, gender, superid, designation,phone]);
+    }
+
+
+
 router.post("/",async(req,res)=>{
 try {
   console.log("inside post")
@@ -66,4 +115,19 @@ console.log("added anesth scuessfully")
    INSERT INTO Employees (empid,Fname,lname,dob,salary,gender,superid,designation,phone) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
     `,[empid,fname,lname,dob,salary,gender,superid,"Anesthesiologist",phone]);
     }
+
+      router.delete("/",async(req,res)=>{
+        try{
+        await deleteAnaesth(parseInt(req.body.employee_id))
+        }catch(err){console.log(err)}
+        })
+
+      async function deleteAnaesth(empid)
+     {
+        const deleteAnaesth = await client.query(
+        ` DELETE FROM Employees
+          WHERE empid = $1 `
+          ,[empid]);
+    }  
+
 export default router;
