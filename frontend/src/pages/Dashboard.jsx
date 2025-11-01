@@ -22,25 +22,20 @@ const Dashboard = () => {
 
   return (
   <div className="space-y-6">
-
-    <div className="flex-9 mx-1">
-      <header className="bg-white shadow-sm border-b border-gray-200 rounded-2xl overflow-hidden">
-          <div className="bg-blue-50 p-3 rounded-2xl px-1 py-4 sm:p-3 bg-[linear-gradient(135deg,#daf0ff,#dee4fb,#daf0ff)] shadow-[0px_1rem_1.5rem_-0.9rem_#000000e1">
-            <marquee className="text-blue-700 font-medium text-base">
+      <header className="text-shadow-sm border-b border-gray-200 overflow-hidden bg-blue-50 p-3 rounded-2xl px-1 py-4 sm:p-3 bg-[linear-gradient(135deg,#daf0ff,#dee4fb,#daf0ff)] shadow-[0px_1rem_1.5rem_-0.9rem_#000000e1"> 
+            <marquee className="text-blue-700 font-medium text-base overflow-hidden">
               {newsItems.join(' • ')}
             </marquee>
-          </div>
       </header>
-    </div>
-      
-      
 
         {/* OR Schedule Board */}
-      <Card className="overflow-hidden">
+        <Card className="overflow-hidden">
         <Card.Header>
-          <Card.Title className="text-base sm:text-lg text-center font-semibold">Operation Room Schedule</Card.Title>
+          <Card.Title className="text-base text-center font-semibold">Operation Room Schedule</Card.Title>
         </Card.Header>
-        <div className="overflow-x-auto">
+        
+        {/* Desktop View - Normal Horizontal Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="min-w-full bg-white rounded-xl overflow-hidden shadow-md">
             <thead className="bg-gradient-to-r from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase">
               <tr>
@@ -87,6 +82,85 @@ const Dashboard = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Mobile View */}
+        <div className="md:hidden overflow-x-auto">
+          <table className="bg-white rounded-xl overflow-hidden shadow-md">
+            <tbody className="">
+              <tr className="hover:bg-gray-50">
+                <th className="px-4 py-3 text-center font-semibold sticky left-0 bg-gradient-to-bl from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase border-gray-300">OR</th>
+                {operationRooms.map((room) => (
+                  <td key={room.or_id} className=" border border-gray-300 px-4 py-2  text-center font-base whitespace-nowrap">
+                    {room.room_number}
+                  </td>
+                ))}
+              </tr>
+              
+              <tr className="hover:bg-gray-50">
+                <td className="px-4 py-3 text-center font-semibold sticky left-0 bg-gradient-to-bl from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase border-gray-300">Surgery Hours</td>
+                {operationRooms.map((room) => {
+                  const surgery = surgeries.find(s => s.or_id === room.or_id);
+                  return (
+                    <td key={room.or_id} className="border border-gray-300 px-4 py-2  text-center font-base whitespace-nowrap" onClick={() => setSelectedOR(room.or_id)}>
+                      {surgery ? `${surgery.surgery_time} (${surgery.surgery_duration} mins)` : "CLOSED"}
+                    </td>
+                  );
+                })}
+              </tr>
+
+              <tr className="hover:bg-gray-50">
+                <td className="px-4 py-3 text-center font-semibold sticky left-0 bg-gradient-to-bl from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase border-gray-300">Patient</td>
+                {operationRooms.map((room) => {
+                  const surgery = surgeries.find(s => s.or_id === room.or_id);
+                  const patient = patients.find(p => p.patient_id === surgery?.patient_id);
+                  return (
+                    <td key={room.or_id} className="border border-gray-300 px-4 py-2  text-center font-base whitespace-nowrap" onClick={() => setSelectedOR(room.or_id)}>
+                      {patient?.patient_name || (surgery ? "Unknown Patient" : "-")}
+                    </td>
+                  );
+                })}
+              </tr>
+
+              <tr className="hover:bg-gray-50">
+                <td className="px-4 py-3 text-center font-semibold sticky left-0 bg-gradient-to-bl from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase border-gray-300">Procedure</td>
+                {operationRooms.map((room) => {
+                  const surgery = surgeries.find(s => s.or_id === room.or_id);
+                  return (
+                    <td key={room.or_id} className="border border-gray-300 px-4 py-2  text-center font-base whitespace-nowrap" onClick={() => setSelectedOR(room.or_id)}>
+                      {surgery?.surgery_type || "-"}
+                    </td>
+                  );
+                })}
+              </tr>
+
+              <tr className="hover:bg-gray-50">
+                <td className="px-4 py-3 text-center font-semibold sticky left-0 bg-gradient-to-bl from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase border-gray-300">Surgeon</td>
+                {operationRooms.map((room) => {
+                  const surgery = surgeries.find(s => s.or_id === room.or_id);
+                  const surgeon = surgeons.find(s => s.surgeon_id === surgery?.surgeon_id);
+                  return (
+                    <td key={room.or_id} className="border border-gray-300 px-4 py-2  text-center font-base whitespace-nowrap" onClick={() => setSelectedOR(room.or_id)}>
+                      {surgeon?.surgeon_name || "-"}
+                    </td>
+                  );
+                })}
+              </tr>
+
+              <tr className="hover:bg-gray-50">
+                <td className="px-4 py-3 text-center font-semibold sticky left-0 bg-gradient-to-bl from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase border-gray-300">Anest.</td>
+                {operationRooms.map((room) => {
+                  const surgery = surgeries.find(s => s.or_id === room.or_id);
+                  const anesth = anesthesiologists.find(a => a.anaesth_id === surgery?.anaesth_id);
+                  return (
+                    <td key={room.or_id} className="border border-gray-300 px-4 py-2  text-center font-base whitespace-nowrap" onClick={() => setSelectedOR(room.or_id)}>
+                      {anesth?.anaesth_name || "-"}
+                    </td>
+                  );
+                })}
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </Card>
           
       {/* Detailed View Section */}
@@ -100,17 +174,21 @@ const Dashboard = () => {
 
         return (
           <Card>
+              
             <Card.Header>
-              <div className="flex justify-between items-centerrounded-2xl pr-4 pl-3">
-                <Card.Title><div className="font-semibold pl-125">Details</div></Card.Title>
+            <div className="relative flex items-center justify-center">
+                <Card.Title className="text-base text-center font-semibold">
+                  Details
+                </Card.Title>
                 <button
-                  onClick={() => setSelectedOR(null)}
-                  className="bubble-button hover:bg-blue-400 hover:text-blue-800 relative px-[19px] py-[4px] rounded-[6px] border-none text-white cursor-pointer bg-blue-500 transition-all duration-200 ease-linear active:scale-95 overflow-hidden"
-                >
-                  close
-                </button>
-              </div>
+      onClick={() => setSelectedOR(null)}
+      className="absolute right-0 bubble-button hover:bg-blue-400 hover:text-blue-800 px-[19px] py-[4px] rounded-[6px] border-none text-white cursor-pointer bg-blue-500 transition-all duration-200 ease-linear active:scale-95 overflow-hidden"
+    >
+      Close
+    </button>
+                </div>
             </Card.Header>
+
             <Card.Content>
               {surgery ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-hidden">
