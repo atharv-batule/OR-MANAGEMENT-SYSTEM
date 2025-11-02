@@ -21,7 +21,7 @@ function App() {
       <Router>
       <Routes>
           {/* Login page (no sidebar, appears first) */}
-          <Route path="/" element={<Login/>} />
+          <Route path="/login" element={<Login/>} />
 
           {/* All other pages (with sidebar) */}
           <Route

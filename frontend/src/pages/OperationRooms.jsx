@@ -41,9 +41,10 @@ const OperationRooms = () => {
   
 
   const handleDelete = (roomId) => {
-    if (window.confirm('Are you sure you want to delete this operation room?')) {
-      deleteOperationRoom(roomId);
+    if (window.confirm('Are you sure you want to delete this patient?')) {
+      axios.delete("http://localhost:3000/operation-rooms",{ data: { orid: orid } })
     }
+     window.location.reload();
   };
 
   const handleCloseForm = () => {

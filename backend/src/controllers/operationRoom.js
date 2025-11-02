@@ -45,6 +45,18 @@ router.get("/", async (req, res) => {
   }
 });
 
+async function updateOR(orid, equipmentlist, status)
+{
+   const updateOR = await client.query(
+   ` UPDATE or_table
+     SET 
+       equipmentlist = $2,
+       status = $3,
+     WHERE orid = $1
+     `
+     ,[orid, equipmentlist, status] );
+}
+
 
 async function displayOR()
 {
@@ -68,5 +80,19 @@ async function addOr(orid, equipmentlist, status) {
     throw err;
   }
 }
+
+router.delete("/",async(req,res)=>{
+  try{
+  await deleteOr(parseInt(req.body.orid))
+  }catch(err){console.log(err)}
+  })
+
+  async function deleteOr(orid)
+ {
+    const deleteOr = await client.query(
+    ` DELETE FROM or_table
+      WHERE orid = $1 `
+      ,[orid]);
+} 
 
 export default router;

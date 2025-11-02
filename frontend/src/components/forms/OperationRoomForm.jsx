@@ -53,7 +53,7 @@ const OperationRoomForm = ({ isOpen, onClose, operationRoom = null }) => {
           };
         
           if (isEditing) {
-            await axios.put(`http://localhost:3000/operation-rooms/${formData.room_number}`, payload);
+            await axios.put(`http://localhost:3000/operation-rooms`, payload);
             console.log("✅ Operation room updated successfully");
           } else {
             await axios.post("http://localhost:3000/operation-rooms", payload);

@@ -44,9 +44,16 @@ const handleEdit = (surgeon) => {
 };
 
   const handleDelete = (surgeonId) => {
-    if (window.confirm('Are you sure you want to delete this surgeon?')) {
-      deleteSurgeon(surgeonId);
+    try{
+    if (window.confirm('Are you sure you want to delete this patient?')) {
+      console.log(surgeonId)
+      console.log(isNaN(surgeonId))
+      axios.delete("http://localhost:3000/surgeons",{ data: { employee_id: parseInt(surgeonId) } })
     }
+  }
+  catch(err){console.log(err)}
+    //  window.location.reload();
+    
   };
 
   const handleCloseForm = () => {
