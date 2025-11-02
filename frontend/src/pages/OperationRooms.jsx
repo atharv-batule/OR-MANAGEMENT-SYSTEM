@@ -9,7 +9,7 @@ import axios from 'axios';
 const OperationRooms = () => {
   useEffect(() => {
       axios
-        .get("http://localhost:3000/operation-rooms")
+        .get("https://or-management-system.onrender.com/operation-rooms")
         .then(res => {
           console.log("Fetched OR Details:", res.data);
           setOperationRooms(res.data);
@@ -42,7 +42,7 @@ const OperationRooms = () => {
 
   const handleDelete = (roomId) => {
     if (window.confirm('Are you sure you want to delete this patient?')) {
-      axios.delete("http://localhost:3000/operation-rooms",{ data: { orid: orid } })
+      axios.delete("https://or-management-system.onrender.com/operation-rooms",{ data: { orid: orid } })
     }
      window.location.reload();
   };

@@ -9,7 +9,7 @@ import axios from 'axios';
 const Nurses = () => {
   useEffect(() => {
       axios
-        .get("http://localhost:3000/nurses")
+        .get("https://or-management-system.onrender.com/nurses")
         .then(res => {
           console.log("Fetched nurses:", res.data);
           setNurses(res.data);
@@ -47,7 +47,7 @@ const Nurses = () => {
 
   const handleDelete = (nurseId) => {
     if (window.confirm('Are you sure you want to delete this patient?')) {
-      axios.delete("http://localhost:3000/nurses",{ data: { employee_id: parseInt(nurseId) } })
+      axios.delete("https://or-management-system.onrender.com/nurses",{ data: { employee_id: parseInt(nurseId) } })
     }
      window.location.reload();
   };

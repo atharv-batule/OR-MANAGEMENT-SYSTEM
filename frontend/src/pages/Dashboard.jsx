@@ -11,7 +11,7 @@ const Dashboard = () => {
   //const patient_age=2025-parseInt(surgery.patient_dob)
   useEffect(() => {
     axios
-      .get("http://localhost:3000/dashboard")
+      .get("https://or-management-system.onrender.com/dashboard")
       .then(res => {
         console.log("Fetched Surgery Data:", res.data);
         setOperationRoom(res.data);

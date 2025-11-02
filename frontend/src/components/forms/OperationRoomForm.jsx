@@ -53,10 +53,10 @@ const OperationRoomForm = ({ isOpen, onClose, operationRoom = null }) => {
           };
         
           if (isEditing) {
-            await axios.put(`http://localhost:3000/operation-rooms`, payload);
+            await axios.put(`https://or-management-system.onrender.com/operation-rooms`, payload);
             console.log("✅ Operation room updated successfully");
           } else {
-            await axios.post("http://localhost:3000/operation-rooms", payload);
+            await axios.post("https://or-management-system.onrender.com/operation-rooms", payload);
             console.log("✅ Operation room added successfully");
           }
         
@@ -66,7 +66,7 @@ const OperationRoomForm = ({ isOpen, onClose, operationRoom = null }) => {
         }
       } else {
         //addOperationRoom(roomData);
-        await axios.post("http://localhost:3000/operation-rooms", payload);
+        await axios.post("https://or-management-system.onrender.com/operation-rooms", payload);
         console.log(" OR added successfully");
       }
       onClose();
