@@ -56,7 +56,7 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
   const [or, setOr] = useState([]);
   useEffect(() => {
         axios
-          .get("http://localhost:3000/surgery")
+          .get("https://or-management-system.onrender.com/surgery")
           .then(res => {
             console.log("Fetched surgereis:", res.data);
             setAttending(res.data.attending);
@@ -142,7 +142,7 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
         nurse_id: parseInt(formData.nurse),
         anesthesiologist_id: parseInt(formData.anesthesiologist)
         };
-        await axios.post("http://localhost:3000/surgery", payload);
+        await axios.post("https://or-management-system.onrender.com/surgery", payload);
         console.log("✅ Surgeon added successfully");
     
       }

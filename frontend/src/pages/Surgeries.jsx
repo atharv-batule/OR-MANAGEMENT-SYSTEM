@@ -10,7 +10,7 @@ import axios from 'axios';
 const Surgeries = () => {
   useEffect(() => {
         axios
-          .get("http://localhost:3000/surgery")
+          .get("https://or-management-system.onrender.com/surgery")
           .then(res => {
             console.log("Fetched surgereis:", res.data);
             setSurgeries(res.data.result);
@@ -27,7 +27,7 @@ const Surgeries = () => {
   // Fetch surgeries from backend
   // useEffect(() => {
   //   axios
-  //     .get('http://localhost:3000/surgery')
+  //     .get('https://or-management-system.onrender.com/surgery')
   //     .then(res => setSurgeries(res.data))
   //     .catch(err => console.error(err));
   // }, []);

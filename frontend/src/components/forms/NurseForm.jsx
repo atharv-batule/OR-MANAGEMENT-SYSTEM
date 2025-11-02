@@ -122,14 +122,14 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
       };
     if (isEditing) {
       console.log("Update logic pending");
-      await axios.put(`http://localhost:3000/nurses`, payload);
+      await axios.put(`https://or-management-system.onrender.com/nurses`, payload);
       // await updateNurse(nurse.empid, formData); // when ready
     } else {
       
 
       console.log("📤 Sending payload:", payload);
 
-      await axios.post("http://localhost:3000/nurses", payload);
+      await axios.post("https://or-management-system.onrender.com/nurses", payload);
       console.log("✅ Nurse added successfully");
     }
 

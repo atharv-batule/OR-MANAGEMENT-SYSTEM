@@ -5,10 +5,15 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import AnesthesiologistForm from '../components/forms/AnesthesiologistForm';
 import axios from 'axios';
+
+const baseURL = import.meta.env.REACT_APP_API_URL;
+
+
 const Anesthesiologists = () => {
   useEffect(() => {
   axios
-        .get("http://localhost:3000/anesthesiologists")
+        .get(`https://or-management-system.onrender.com/anesthesiologists`)
+       // .get()
         .then(res => {
           console.log("Fetched Anesthologist:", res.data);
           setAnesthesiologists(res.data);
@@ -45,7 +50,7 @@ const Anesthesiologists = () => {
 
   const handleDelete = (anesthId) => {
     if (window.confirm('Are you sure you want to delete this patient?')) {
-      axios.delete("http://localhost:3000/anesthesiologists",{ data: { empid: empid } })
+      axios.delete(`https://or-management-system.onrender.com/anesthesiologists`,{ data: { empid: empid } })
     }
      window.location.reload();
     

@@ -8,7 +8,7 @@ import axios from 'axios';
 const Surgeons = () => {
   useEffect(() => {
     axios
-      .get("http://localhost:3000/surgeons")
+      .get("https://or-management-system.onrender.com/surgeons")
       .then(res => {
         console.log("Fetched surgeons:", res.data);
         setSurgeons(res.data);
@@ -48,7 +48,7 @@ const handleEdit = (surgeon) => {
     if (window.confirm('Are you sure you want to delete this patient?')) {
       console.log(surgeonId)
       console.log(isNaN(surgeonId))
-      axios.delete("http://localhost:3000/surgeons",{ data: { employee_id: parseInt(surgeonId) } })
+      axios.delete("https://or-management-system.onrender.com/surgeons",{ data: { employee_id: parseInt(surgeonId) } })
     }
   }
   catch(err){console.log(err)}

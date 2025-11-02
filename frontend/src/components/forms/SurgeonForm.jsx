@@ -127,12 +127,12 @@ const payload = {
 
   try {
     if (isEditing) {
-      await axios.put(`http://localhost:3000/surgeons`, payload);
+      await axios.put(`https://or-management-system.onrender.com/surgeons`, payload);
       // Update not yet implemented on backend
       console.log("Update logic pending");
     } else {
        
-await axios.post("http://localhost:3000/surgeons", payload);
+await axios.post("https://or-management-system.onrender.com/surgeons", payload);
       console.log("✅ Surgeon added successfully");
     }
 
