@@ -8,6 +8,7 @@ import nurseRoutes from "../controllers/nurse.js"
 import anesthRoutes from "../controllers/anesth.js"
 import orRoutes from "../controllers/operationRoom.js"
 import surgRoutes from "../controllers/surgery.js"
+import orInfo from "../controllers/dashboard.js"
 dotenev.config();
 
 const app=express();
@@ -57,6 +58,7 @@ app.use("/nurses", nurseRoutes);
 app.use("/anesthesiologists", anesthRoutes);
 app.use("/operation-rooms",orRoutes );
 app.use("/surgery",surgRoutes );
+app.use("/dashboard",orInfo );
 //server running 
 app.listen(port,()=>
 {

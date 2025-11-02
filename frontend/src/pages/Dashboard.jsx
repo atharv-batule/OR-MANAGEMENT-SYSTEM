@@ -1,11 +1,21 @@
-import React from 'react';
+import {React,useEffect,useState} from 'react';
 import { useApp } from '../context/AppContext';
 import { Users, UserPlus, Stethoscope, Shield, Building, FileText, Calendar, Activity, Clock } from 'lucide-react';
 import Card from '../components/ui/Card';
-
+import axios from 'axios';
 const Dashboard = () => {
-  const { patients, surgeons, anesthesiologists, nurses, operationRooms, surgeries } = useApp();
-  const [selectedOR, setSelectedOR] = React.useState(null);
+  const { patients, surgeons, anesthesiologists, nurses, surgeries } = useApp();
+  const [selectedOR, setSelectedOR] = useState(null);
+  const [operationRooms,setOperationRoom]=useState([]);
+      useEffect(() => {
+  axios
+        .get("http://localhost:3000/dashboard")
+        .then(res => {
+          console.log("Fetched Anesthologist:", res.data);
+          setOperationRoom(res.data);
+        })
+        .catch(err => console.error(err));
+    }, []);
 
 
   const availableRooms = operationRooms.filter(room => room.availability_status === 'Available');
@@ -48,24 +58,26 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {operationRooms.map((room) => {
-                const surgery = surgeries.find(s => s.or_id === room.or_id);
-                const patient = patients.find(p => p.patient_id === surgery?.patient_id);
-                const surgeon = surgeons.find(s => s.surgeon_id === surgery?.surgeon_id);
-                const anesth = anesthesiologists.find(a => a.anaesth_id === surgery?.anaesth_id);
-
+              {operationRooms.map((surgery) => {
+                // const surgery = surgeries.find(s => s.or_id === room.or_id);
+                // const patient = patients.find(p => p.patient_id === surgery?.patient_id);
+                // const surgeon = surgeons.find(s => s.surgeon_id === surgery?.surgeon_id);
+                // const anesth = anesthesiologists.find(a => a.anaesth_id === surgery?.anaesth_id);
+                const patient = patients.find(p => p.patient_id === surgery.patient_id);
+                const surgeon = surgeons.find(s => s.surgeon_id === surgery.attending_id);
+                const anesth = anesthesiologists.find(a => a.anaesth_id === surgery.anesthesiologist_id);
                 return (
                   <tr 
-                    key={room.or_id} 
+                    key={surgery.or_id} 
                     className="hover:bg-gradient-to-r hover:from-[#f6f8ff] hover:to-[#eaf0ff] transition-all duration-200 hover:scale-[1.01]"
-                    onClick={() => setSelectedOR(room.or_id)}
+                    onClick={() => setSelectedOR(surgery.or_id)}
                   >
-                    <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">{room.room_number}</td>
+                    <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">{surgery.or_id}</td>
                     <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">
-                      {surgery ? `${surgery.surgery_time} (${surgery.surgery_duration} mins)` : "CLOSED"}
+                      {surgery ? `${surgery.surgery_start} (${surgery.surgery_end} mins)` : "CLOSED"}
                     </td>
                     <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">
-                      {patient?.patient_name || (surgery ? "Unknown Patient" : "-")}
+                      {surgery.patient_id }
                     </td>
                     <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">
                       {surgery?.surgery_type || "-"}
@@ -74,7 +86,7 @@ const Dashboard = () => {
                       {surgeon?.surgeon_name || "-"}
                     </td>
                     <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">
-                      {anesth?.anaesth_name || "-"}
+                      {surgery.anesthesiologist_id }
                     </td>
                   </tr>
                 );
@@ -91,7 +103,7 @@ const Dashboard = () => {
                 <th className="px-4 py-3 text-center font-semibold sticky left-0 bg-gradient-to-bl from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase border-gray-300">OR</th>
                 {operationRooms.map((room) => (
                   <td key={room.or_id} className=" border border-gray-300 px-4 py-2  text-center font-base whitespace-nowrap">
-                    {room.room_number}
+                    {room.or_id}
                   </td>
                 ))}
               </tr>

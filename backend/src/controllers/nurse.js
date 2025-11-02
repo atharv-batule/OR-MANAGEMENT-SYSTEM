@@ -92,7 +92,35 @@ console.log("added nurse scuessfully")
     //       ,[empid]);
     // }  
 
-    
+    router.put("/",async(req,res)=>{
+  try {
+   const empid = parseInt(req.body.employee_id);
+    const salary = parseInt(req.body.nurse_salary);
+    const superid = parseInt(req.body.supervisor_id);
+    const phone=parseInt(req.body.nurse_contact)
+     if (isNaN(empid) || isNaN(salary) || isNaN(superid)||isNaN(phone)) {
+      return res.status(400).send("Employee ID, Salary,phone no. and Supervisor ID must be numbers");
+    }
+
+    await updateNurse(
+      empid,
+      req.body.nurse_name.split(" ")[0], // lname
+      req.body.nurse_name.split(" ")[1],// fname
+      req.body.nurse_dob,
+      salary,
+      req.body.nurse_gender,
+      superid,
+      req.body.nurse_designation,
+      phone
+    );
+
+    res.send("Surgeon added successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
+})
+
 
     router.delete("/",async(req,res)=>{
       try{

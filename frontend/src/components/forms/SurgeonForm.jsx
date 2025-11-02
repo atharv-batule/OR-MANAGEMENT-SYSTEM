@@ -44,7 +44,7 @@ const SurgeonForm = ({ isOpen, onClose, surgeon = null }) => {
       setFormData({
         employee_id: surgeon.employee_id || '',
         surgeon_name: surgeon.surgeon_name || '',
-        surgeon_dob: surgeon.surgeon_dob || '',
+        surgeon_dob: surgeon.surgeon_dob.split("T")[0] || '',
         surgeon_gender: surgeon.surgeon_gender || '',
         surgeon_salary: surgeon.surgeon_salary || '',
         surgeon_speciality: surgeon.surgeon_speciality || '',
@@ -73,7 +73,7 @@ const SurgeonForm = ({ isOpen, onClose, surgeon = null }) => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.employee_id.trim()) newErrors.employee_id = 'Employee ID is required';
+   // if (!formData.employee_id.trim()) newErrors.employee_id = 'Employee ID is required';
     if (!formData.surgeon_name.trim()) newErrors.surgeon_name = 'Name is required';
     if (!formData.surgeon_dob.trim()) newErrors.surgeon_dob = 'Date of Birth is required';
     if (!formData.surgeon_gender.trim()) newErrors.surgeon_gender = 'Gender is required';
@@ -83,7 +83,7 @@ const SurgeonForm = ({ isOpen, onClose, surgeon = null }) => {
       newErrors.surgeon_contact = 'Valid contact number required';    
     if (!formData.surgeon_experience_years || formData.surgeon_experience_years < 0)
       newErrors.surgeon_experience_years = 'Valid experience years required';
-    if (!formData.supervisor_id.trim()) newErrors.supervisor_id = 'Supervisor ID is required';
+    //if (!formData.supervisor_id.trim()) newErrors.supervisor_id = 'Supervisor ID is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -113,14 +113,7 @@ const handleSubmit = async (e) => {
   if (!validateForm()) return;
 
   setIsSubmitting(true);
-
-  try {
-    if (isEditing) {
-      await axios.put(`http://localhost:3000/patients`, payload);
-      // Update not yet implemented on backend
-      console.log("Update logic pending");
-    } else {
-       const payload = {
+const payload = {
   employee_id: parseInt(formData.employee_id),
   surgeon_salary: parseInt(formData.surgeon_salary),
   supervisor_id: parseInt(formData.supervisor_id),
@@ -130,6 +123,15 @@ const handleSubmit = async (e) => {
   surgeon_designation: formData.surgeon_designation,
   surgeon_contact:formData.surgeon_contact
 };
+
+
+  try {
+    if (isEditing) {
+      await axios.put(`http://localhost:3000/surgeons`, payload);
+      // Update not yet implemented on backend
+      console.log("Update logic pending");
+    } else {
+       
 await axios.post("http://localhost:3000/surgeons", payload);
       console.log("✅ Surgeon added successfully");
     }
