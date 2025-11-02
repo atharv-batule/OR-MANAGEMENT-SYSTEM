@@ -25,13 +25,13 @@ router.get("/", async (req, res) => {
 
 router.put("/",async(req,res)=>{
   try {
-    const empid = parseInt(req.body.employee_id);
-   // const salary = parseInt(req.body.surgeon_salary);
-    //const srgid = parseInt(req.body.surgery_id);
-    const phone=parseInt(req.body.surgeon_contact)
+   const empid = parseInt(req.body.employee_id);
+    const salary = parseInt(req.body.surgeon_salary);
+    const superid = parseInt(req.body.supervisor_id);
+    const phone= parseInt(req.body.surgeon_contact)
 
-    if (isNaN(empid) ) {
-      return res.status(400).send("Employee ID, Salary, and Supervisor ID must be numbers");
+     if (isNaN(empid) || isNaN(salary) || isNaN(superid)||isNaN(phone)) {
+      return res.status(400).send("Employee ID, Salary,phone no. and Supervisor ID must be numbers");
     }
 
     await updateSurgeon(
@@ -166,7 +166,7 @@ SET
   gender = $6,
   superid = $7,
   designation = $8,
-  phone = $9,
+  phone = $9
 WHERE empid = $1;
     `,[empid, fname, lname, dob, salary, gender, superid, designation,phone]);
     }
