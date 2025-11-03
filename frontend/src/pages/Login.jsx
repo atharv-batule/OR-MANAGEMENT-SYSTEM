@@ -46,7 +46,7 @@ const Login = () => {
     setLoading(true);
 //     try {
 //       // Replace with your backend endpoint
-//       const res = await axios.post('http://localhost:3000/login', formData);
+//       const res = await axios.post('https://or-management-system.onrender.com/login', formData);
 //       console.log('Login response:', res.data);
 
 //       if (res.data.success) {

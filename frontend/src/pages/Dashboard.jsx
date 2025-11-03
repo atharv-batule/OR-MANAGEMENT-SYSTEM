@@ -8,10 +8,10 @@ const Dashboard = () => {
   const { patients, surgeons, anesthesiologists, nurses } = useApp();
   const [selectedOR, setSelectedOR] = useState(null);
   const [operationRooms, setOperationRoom] = useState([]);
-  
+  //const patient_age=2025-parseInt(surgery.patient_dob)
   useEffect(() => {
     axios
-      .get("http://localhost:3000/dashboard")
+      .get("https://or-management-system.onrender.com/dashboard")
       .then(res => {
         console.log("Fetched Surgery Data:", res.data);
         setOperationRoom(res.data);
@@ -60,6 +60,7 @@ const Dashboard = () => {
             <thead className="bg-gradient-to-r from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase">
               <tr>
                 <th className="px-4 py-3 text-center font-semibold">OR</th>
+                <th className="px-4 py-3 text-center font-semibold">Date</th>
                 <th className="px-4 py-3 text-center font-semibold">Surgery Hours</th>
                 <th className="px-4 py-3 text-center font-semibold">Patient</th>
                 <th className="px-4 py-3 text-center font-semibold">Procedure</th>
@@ -82,19 +83,23 @@ const Dashboard = () => {
                   >
                     <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">{room.or_id}</td>
                     <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">
-                      {`${surgery.surgery_start} (${duration} mins)`}
+                      {`${surgery.surgery_date.split("T")[0]}`}
                     </td>
+                    <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">
+                      {`${surgery.surgery_start} :${surgery.surgery_end}`}
+                    </td>
+                    
                     <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">
                       {patient?.patient_name || surgery.patient_id || "Unknown Patient"}
                     </td>
                     <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">
-                      {patient?.patient_diagonosis || "N/A"}
+                      {surgery.procedure || "N/A"}
                     </td>
                     <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">
-                      {surgeon?.surgeon_name || "-"}
+                      {surgery?.attending_name || "-"}
                     </td>
                     <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">
-                      {anesth?.anaesth_name || "-"}
+                      {surgery?.anesthesiologist_name || "-"}
                     </td>
                   </tr>
                 );
@@ -217,32 +222,33 @@ const Dashboard = () => {
                     <div className="space-y-2">
                       <div>
                         <span className="font-medium text-gray-600">Name:</span>
-                        <span className="ml-2 text-gray-900">{patient?.patient_name || 'Unknown'}</span>
+                        <span className="ml-2 text-gray-900">{surgery?.patient_name || 'Unknown'}</span>
                       </div>
-                      <div>
+                      {/* <div>
                         <span className="font-medium text-gray-600">Bed Number:</span>
                         <span className="ml-2 text-gray-900">{patient?.patient_number || 'N/A'}</span>
-                      </div>
+                      </div> */}
                       <div>
+                        
                         <span className="font-medium text-gray-600">Age:</span>
-                        <span className="ml-2 text-gray-900">{patient?.patient_age || 'N/A'}</span>
+                        <span className="ml-2 text-gray-900">{new Date().getFullYear()-parseInt(surgery.patient_dob) || 'N/A'}</span>
                       </div>
                       <div>
                         <span className="font-medium text-gray-600">Gender:</span>
-                        <span className="ml-2 text-gray-900">{patient?.patient_gender || 'N/A'}</span>
+                        <span className="ml-2 text-gray-900">{surgery?.patient_gender || 'N/A'}</span>
                       </div>
                       <div>
                         <span className="font-medium text-gray-600">Diagnosis:</span>
-                        <span className="ml-2 text-gray-900">{patient?.patient_diagonosis || 'N/A'}</span>
+                        <span className="ml-2 text-gray-900">{surgery?.patient_medical || 'N/A'}</span>
                       </div>
                       <div>
                         <span className="font-medium text-gray-600">Contact:</span>
-                        <span className="ml-2 text-gray-900">{patient?.patient_contact || 'N/A'}</span>
+                        <span className="ml-2 text-gray-900">{surgery?.patient_phone || 'N/A'}</span>
                       </div>
-                      <div>
+                      {/* <div>
                         <span className="font-medium text-gray-600">Emergency Contact:</span>
                         <span className="ml-2 text-gray-900">{patient?.patient_emergency_contact || 'N/A'}</span>
-                      </div>
+                      </div> */}
                       {patient?.patient_medical_history && (
                         <div>
                           <span className="font-medium text-gray-600">Medical History:</span>
@@ -296,7 +302,7 @@ const Dashboard = () => {
                         <div>
                           <span className="font-medium text-gray-600">Attending Surgeon:</span>
                           <span className="ml-2 text-gray-900">
-                            {surgeon?.surgeon_name || 'Not assigned'}
+                            {surgery?.attending_name || 'Not assigned'}
                           </span>
                           {surgeon?.surgeon_speciality && (
                             <span className="ml-1 text-sm text-gray-500">
@@ -307,25 +313,25 @@ const Dashboard = () => {
                         <div>
                           <span className="font-medium text-gray-600">Anesthesiologist:</span>
                           <span className="ml-2 text-gray-900">
-                            {anesth?.anaesth_name || 'Not assigned'}
+                            {surgery?.anesthesiologist_name || 'Not assigned'}
                           </span>
                         </div>
-                        {assignedNurse && (
+                        {surgery.nurse_id && (
                           <div>
                             <span className="font-medium text-gray-600">Nurse:</span>
-                            <span className="ml-2 text-gray-900">{assignedNurse.nurse_name}</span>
+                            <span className="ml-2 text-gray-900">{surgery.nurse_name}</span>
                           </div>
                         )}
                         {surgery.resident_id && (
                           <div>
-                            <span className="font-medium text-gray-600">Resident ID:</span>
-                            <span className="ml-2 text-gray-900">{surgery.resident_id}</span>
+                            <span className="font-medium text-gray-600">Resident::</span>
+                            <span className="ml-2 text-gray-900">{surgery.resident_name}</span>
                           </div>
                         )}
                         {surgery.intern_id && (
                           <div>
-                            <span className="font-medium text-gray-600">Intern ID:</span>
-                            <span className="ml-2 text-gray-900">{surgery.intern_id}</span>
+                            <span className="font-medium text-gray-600">Intern:</span>
+                            <span className="ml-2 text-gray-900">{surgery.intern_name}</span>
                           </div>
                         )}
                       </div>

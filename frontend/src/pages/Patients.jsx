@@ -10,7 +10,7 @@ import axios from 'axios';
 const Patients = () => {
 useEffect(() => {
     axios
-      .get("http://localhost:3000/patients")
+      .get("https://or-management-system.onrender.com/patients")
       .then(res => {
         console.log("Fetched patients:", res.data);
         setPatients(res.data);
@@ -53,7 +53,7 @@ useEffect(() => {
     
       
       if (window.confirm('Are you sure you want to delete this patient?')) {
-      axios.delete("http://localhost:3000/patients",{ data: { patientid: patientId } })
+      axios.delete("https://or-management-system.onrender.com/patients",{ data: { patientid: patientId } })
     }
      window.location.reload();
     

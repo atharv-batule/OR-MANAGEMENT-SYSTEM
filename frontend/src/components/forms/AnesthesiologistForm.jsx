@@ -119,7 +119,7 @@ const AnesthesiologistForm = ({ isOpen, onClose, anesthesiologist = null }) => {
       if (isEditing) {
 
         console.log('🩺 Updating anesthesiologist:', payload);
-        await axios.put(`http://localhost:3000/anesthesiologists`, payload);
+        await axios.put(`https://or-management-system.onrender.com/anesthesiologists`, payload);
         console.log('✅ Anesthesiologist updated successfully');
       }  else {
         const payload = {
@@ -134,7 +134,7 @@ const AnesthesiologistForm = ({ isOpen, onClose, anesthesiologist = null }) => {
       };
       console.log("📤 Sending payload:", payload);
 
-      await axios.post("http://localhost:3000/anesthesiologists", payload);
+      await axios.post("https://or-management-system.onrender.com/anesthesiologists", payload);
       console.log("✅ Nurse added successfully");
       }
       onClose();

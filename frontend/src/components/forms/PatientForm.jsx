@@ -105,12 +105,12 @@ const PatientForm = ({ isOpen, onClose, patient = null }) => {
         // Update patient in database via backend API
         console.log("is editing")
         console.log(payload)
-        await axios.put(`http://localhost:3000/patients`, payload);
+        await axios.put(`https://or-management-system.onrender.com/patients`, payload);
         // updatePatient(patient.patient_num, payload);
         console.log("✅ Patient updated successfully");
       } else {
         // Add new patient to database via backend API
-        await axios.post("http://localhost:3000/patients", payload);
+        await axios.post("https://or-management-system.onrender.com/patients", payload);
         //addPatient(payload);
         console.log("✅ Patient added successfully");
       }
