@@ -120,6 +120,18 @@ const Dashboard = () => {
                   </td>
                 ))}
               </tr>
+
+              <tr className="hover:bg-gray-50">
+                <td className="px-4 py-3 text-center font-semibold sticky left-0 bg-gradient-to-bl from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase border-gray-300">Date</td>
+                {operationRooms.map((surgery) => {
+                  const duration = calculateDuration(surgery.surgery_start, surgery.surgery_end);
+                  return (
+                    <td key={surgery.surgery_id} className="border border-gray-300 px-4 py-2 text-center font-base whitespace-nowrap cursor-pointer" onClick={() => setSelectedOR(surgery.surgery_id)}>
+                      {`${surgery.surgery_date.split("T")[0]}`}
+                    </td>
+                  );
+                })}
+              </tr>
               
               <tr className="hover:bg-gray-50">
                 <td className="px-4 py-3 text-center font-semibold sticky left-0 bg-gradient-to-bl from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase border-gray-300">Surgery Hours</td>
@@ -127,7 +139,7 @@ const Dashboard = () => {
                   const duration = calculateDuration(surgery.surgery_start, surgery.surgery_end);
                   return (
                     <td key={surgery.surgery_id} className="border border-gray-300 px-4 py-2 text-center font-base whitespace-nowrap cursor-pointer" onClick={() => setSelectedOR(surgery.surgery_id)}>
-                      {`${surgery.surgery_start} (${duration} mins)`}
+                      {`${surgery.surgery_start} :${surgery.surgery_end}`}
                     </td>
                   );
                 })}
@@ -139,7 +151,7 @@ const Dashboard = () => {
                   const patient = patients.find(p => p.patient_id === surgery.patient_id);
                   return (
                     <td key={surgery.surgery_id} className="border border-gray-300 px-4 py-2 text-center font-base whitespace-nowrap cursor-pointer" onClick={() => setSelectedOR(surgery.surgery_id)}>
-                      {patient?.patient_name || surgery.patient_id || "Unknown"}
+                      {patient?.patient_name || surgery.patient_id || "Unknown Patient"}
                     </td>
                   );
                 })}
@@ -151,7 +163,7 @@ const Dashboard = () => {
                   const patient = patients.find(p => p.patient_id === surgery.patient_id);
                   return (
                     <td key={surgery.surgery_id} className="border border-gray-300 px-4 py-2 text-center font-base whitespace-nowrap cursor-pointer" onClick={() => setSelectedOR(surgery.surgery_id)}>
-                      {patient?.patient_diagonosis || "N/A"}
+                      {surgery.procedure || "N/A"}
                     </td>
                   );
                 })}
@@ -163,7 +175,7 @@ const Dashboard = () => {
                   const surgeon = surgeons.find(s => s.surgeon_id === surgery.attending_id);
                   return (
                     <td key={surgery.surgery_id} className="border border-gray-300 px-4 py-2 text-center font-base whitespace-nowrap cursor-pointer" onClick={() => setSelectedOR(surgery.surgery_id)}>
-                      {surgeon?.surgeon_name || "-"}
+                      {surgery?.attending_name || "-"}
                     </td>
                   );
                 })}
@@ -175,7 +187,7 @@ const Dashboard = () => {
                   const anesth = anesthesiologists.find(a => a.anaesth_id === surgery.anesthesiologist_id);
                   return (
                     <td key={surgery.surgery_id} className="border border-gray-300 px-4 py-2 text-center font-base whitespace-nowrap cursor-pointer" onClick={() => setSelectedOR(surgery.surgery_id)}>
-                      {anesth?.anaesth_name || "-"}
+                      {surgery?.anesthesiologist_name || "-"}
                     </td>
                   );
                 })}
