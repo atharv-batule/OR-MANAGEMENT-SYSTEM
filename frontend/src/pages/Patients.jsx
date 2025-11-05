@@ -113,11 +113,11 @@ useEffect(() => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.gender}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.phone}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.address}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.medicalhistory}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{patient.medicalhistory || '-'}</td>
 
-                  <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
+                  {/* <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
                     {patient.patient_medical_history || '—'}
-                  </td>
+                  </td> */}
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-2">
                       <button onClick={() => handleEdit(patient)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">

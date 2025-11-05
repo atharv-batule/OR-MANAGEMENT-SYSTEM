@@ -44,10 +44,10 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
     anesthesiologist: ''
   });
 
+  const { admin } = useApp();
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-    const [attending1, setAttending] = useState([]);
+  const [attending1, setAttending] = useState([]);
   const [resident, setResident] = useState([]);
   const [intern, setIntern] = useState([]);
   const [nurse, setNurse] = useState([]);
@@ -319,9 +319,18 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
 
         <div className="flex justify-end space-x-4 pt-6">
           <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={!admin || isSubmitting}>
             {isSubmitting ? 'Saving...' : isEditing ? 'Update Surgery' : 'Schedule Surgery'}
           </Button>
+
+          {/* submit button to be completely hidden for non admins */}
+          {/* {admin && (
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Saving...' : isEditing ? 'Update Surgeon' : 'Add Surgeon'}
+            </Button>
+          )} */}
+
+
         </div>
       </form>
     </Modal>

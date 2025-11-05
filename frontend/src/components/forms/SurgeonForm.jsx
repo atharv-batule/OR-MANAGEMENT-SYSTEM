@@ -25,6 +25,7 @@ const SurgeonForm = ({ isOpen, onClose, surgeon = null }) => {
 
   const [formData, setFormData] = useState({
     employee_id: '',
+    dept_no: '',
     surgeon_name: '',
     surgeon_dob: '',
     surgeon_gender: '',
@@ -45,6 +46,7 @@ const SurgeonForm = ({ isOpen, onClose, surgeon = null }) => {
       setFormData({
         employee_id: surgeon.employee_id || '',
         surgeon_name: surgeon.surgeon_name || '',
+        dept_no: surgeon.dept_no || '',
         surgeon_dob: surgeon.surgeon_dob.split("T")[0] || '',
         surgeon_gender: surgeon.surgeon_gender || '',
         surgeon_salary: surgeon.surgeon_salary || '',
@@ -57,6 +59,7 @@ const SurgeonForm = ({ isOpen, onClose, surgeon = null }) => {
     } else {
       setFormData({
         employee_id: '',
+        dept_no: '',
         surgeon_name: '',
         surgeon_dob: '',
         surgeon_gender: '',
@@ -75,6 +78,7 @@ const SurgeonForm = ({ isOpen, onClose, surgeon = null }) => {
     const newErrors = {};
 
    // if (!formData.employee_id.trim()) newErrors.employee_id = 'Employee ID is required';
+    if (!formData.dept_no.trim() || formData.dept_no <= 0) newErrors.dept_no = 'Department Number is required';
     if (!formData.surgeon_name.trim()) newErrors.surgeon_name = 'Name is required';
     if (!formData.surgeon_dob.trim()) newErrors.surgeon_dob = 'Date of Birth is required';
     if (!formData.surgeon_gender.trim()) newErrors.surgeon_gender = 'Gender is required';
@@ -116,6 +120,7 @@ const handleSubmit = async (e) => {
   setIsSubmitting(true);
 const payload = {
   employee_id: parseInt(formData.employee_id),
+  dept_no: parseInt(formData.dept_no),
   surgeon_salary: parseInt(formData.surgeon_salary),
   supervisor_id: parseInt(formData.supervisor_id),
   surgeon_name: formData.surgeon_name,
@@ -167,6 +172,15 @@ await axios.post("https://or-management-system.onrender.com/surgeons", payload);
             onChange={(e) => handleInputChange('employee_id', e.target.value)}
             error={errors.employee_id}
             placeholder="EMP001"
+          />
+
+          <Input
+            label="Department Number"
+            required
+            value={formData.dept_no}
+            onChange={(e) => handleInputChange('dept_no', e.target.value)}
+            error={errors.dept_no}
+            placeholder="01"
           />
 
           <Input

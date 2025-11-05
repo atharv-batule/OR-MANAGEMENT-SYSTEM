@@ -29,6 +29,7 @@ const Surgeons = () => {
 const handleEdit = (surgeon) => {
   const mappedSurgeon = {
     employee_id: surgeon.empid || '',
+    dept_no: surgeon.dno || '',
     surgeon_name: `${surgeon.fname || ''} ${surgeon.lname || ''}`.trim(),
     surgeon_dob: surgeon.dob || '',
     surgeon_gender: surgeon.gender || '',
@@ -87,7 +88,8 @@ const handleEdit = (surgeon) => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Emp Id</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Emp Id</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dept No.</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Speciality</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Experience</th>
@@ -105,6 +107,7 @@ const handleEdit = (surgeon) => {
                  
                 <tr key={surgeon.empid} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{surgeon.empid}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{surgeon.dno}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{surgeon.fname+" "+surgeon.lname}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.surgeon_speciality||"Cardio"}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.surgeon_experience_years||0} years</td>
