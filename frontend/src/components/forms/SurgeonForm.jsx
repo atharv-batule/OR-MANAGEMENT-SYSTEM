@@ -38,6 +38,7 @@ const SurgeonForm = ({ isOpen, onClose, surgeon = null }) => {
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [admin,setAdmin] = useState(false);
 
   useEffect(() => {
     if (surgeon) {
