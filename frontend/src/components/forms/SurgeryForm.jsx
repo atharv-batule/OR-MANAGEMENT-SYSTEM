@@ -142,6 +142,7 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
         procedure: formData.procedure
         };
         await axios.post("https://or-management-system.onrender.com/surgery", payload);
+        //await axios.post("http://localhost:3000/surgery", payload);
         console.log("✅ Surgeon added successfully");
     
       }

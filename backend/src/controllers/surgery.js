@@ -122,22 +122,22 @@ parseInt(req.body.anesthesiologist_id),
 req.body.procedure
 
   );
-  if (temp.rowCount === 0) {
-      return res.status(409).json({
-        success: false,
-        message: "Surgery could not be scheduled. The selected OR is already booked during this time.",
-      });
-}
+//   if (temp.rowCount === 0) {
+//       return res.status(409).json({
+//         success: false,
+//         message: "Surgery could not be scheduled. The selected OR is already booked during this time.",
+//       });
+// }
   }
 catch(err)
 {console.log(err)}
 
 })
-async function addSurg(surgery_id, patient_id, or_id, surgery_date, surgery_start, surgery_end, surgery_notes, attending_id, resident_id, intern_id, nurse_id, anesthesiologist_id) {
+async function addSurg(surgery_id, patient_id, or_id, surgery_date, surgery_start, surgery_end, surgery_notes, attending_id, resident_id, intern_id, nurse_id, anesthesiologist_id,procedure) {
   try{
  const temp= await client.query(
   `
-  START TRANSACTION
+  
   WITH conflict AS (
       SELECT COUNT(*) AS cnt
       FROM surgery
@@ -153,7 +153,7 @@ async function addSurg(surgery_id, patient_id, or_id, surgery_date, surgery_star
   )
   INSERT INTO surgery_staff (surgery_id, emp_id)
   VALUES ($1,$8),($1,$9),($1,$10),($1,$11),($1,$12)
-  COMMIT;
+  
   `,
   [
     surgery_id,        // $1
@@ -171,11 +171,11 @@ async function addSurg(surgery_id, patient_id, or_id, surgery_date, surgery_star
     procedure           // $13
   ]
 )
-if(temp.rowCount===0){
-return res
-        .status(409) // HTTP 409 Conflict
-        .json({ error: "This OR is already booked during that time." });
-}
+// if(temp.rowCount===0){
+// return res
+//         .status(409) // HTTP 409 Conflict
+//         .json({ error: "This OR is already booked during that time." });
+// }
   } catch (err) {
     await client.query('ROLLBACK'); // rollback if anything fails
     throw err; // propagate error to router
