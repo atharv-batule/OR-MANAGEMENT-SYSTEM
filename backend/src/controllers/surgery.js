@@ -129,8 +129,8 @@ req.body.procedure
 //       });
 // }
   
-  console.log("Insert result:", result);
-    res.json({ success: true, result });
+  console.log("Insert result:", temp);
+    res.json({ success: true, temp });
 
   } catch (err) {
     console.error("Error in POST /surgery:", err);
