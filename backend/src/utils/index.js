@@ -16,7 +16,10 @@ const port=process.env.PORT||3000;
 
 app.use(express.json())
 app.use(cors({
-  origin: ["https://or-management-system-2.onrender.com"], // your frontend URL
+  origin: ["https://or-management-system-2.onrender.com",
+    'http://localhost:5173'
+  ],
+   // your frontend URL
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
