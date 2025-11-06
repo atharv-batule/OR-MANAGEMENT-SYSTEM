@@ -7,7 +7,15 @@ import SurgeryForm from '../components/forms/SurgeryForm';
 import axios from 'axios';
 // import { empName } from '../../../backend/src/controllers/basic';
 
+
+
 const Surgeries = () => {
+  const { deleteSurgery } = useApp();
+  const [showForm, setShowForm] = useState(false);
+  const [editingSurgery, setEditingSurgery] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [surgeries1, setSurgeries] = useState([]);
+
   useEffect(() => {
         axios
           .get("https://or-management-system.onrender.com/surgery")
@@ -18,11 +26,8 @@ const Surgeries = () => {
           })
           .catch(err => console.error(err));
       }, []);
-  const [surgeries1, setSurgeries] = useState([]);
-  const { deleteSurgery } = useApp();
-  const [showForm, setShowForm] = useState(false);
-  const [editingSurgery, setEditingSurgery] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  
+  
 
   // Fetch surgeries from backend
   // useEffect(() => {
@@ -45,6 +50,7 @@ const Surgeries = () => {
   };
 
   const handleCloseForm = () => {
+    console.log("🔹 handleCloseForm triggered");
     setShowForm(false);
     setEditingSurgery(null);
   };

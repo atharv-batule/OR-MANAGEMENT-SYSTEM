@@ -146,7 +146,13 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
         console.log("✅ Surgeon added successfully");
     
       }
+<<<<<<< HEAD
       
+=======
+
+      console.log("🔹 Calling onClose() from SurgeryForm");
+      onClose();
+>>>>>>> f35eb6e66871ce1cac45bfc3ebafc67b01319208
     } catch (err) {
       console.error('Error saving surgery:', err);
     } finally {
