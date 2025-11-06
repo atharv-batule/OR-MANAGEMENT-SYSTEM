@@ -161,18 +161,22 @@ async function addSurg(
       INSERT INTO surgery_staff (surgery_id, emp_id)
       SELECT surgery_id, emp_id
       FROM ins_surgery,
-      LATERAL (VALUES ($8), ($9), ($10), ($11), ($12)) AS v(emp_id);
+      LATERAL (VALUES ($8::int), ($9::int), ($10::int), ($11::int), ($12::int)) AS v(emp_id)
+
     `;
 
     const params = [
       surgery_id, patient_id, or_id, surgery_date, surgery_start, surgery_end,
       surgery_notes, attending_id, resident_id, intern_id, nurse_id, anesthesiologist_id, procedure
     ];
+    console.log(params);
+
 
     const result = await client.query(query, params);
     await client.query("COMMIT");
     return result.rowCount;
   } catch (err) {
+    console.error('Query failed:', err.message);
     await client.query("ROLLBACK");
     throw err;
   }
