@@ -78,7 +78,7 @@ const Surgeries = () => {
             <thead className="bg-gray-50">
               <tr>
                 {[
-                  'Surgery ID', 'Patient ID', 'OR ID', 'Date', 'Start Time', 'End Time',
+                  'Surgery ID', 'Patient ID', 'OR ID','Procedure', 'Date', 'Start Time', 'End Time',
                   'Notes',  'Attending', 'Intern', 'Resident', 'Nurse', 'Anesthesiologist', 'Actions'
                 ].map((col) => (
                   <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{col}</th>
@@ -91,6 +91,7 @@ const Surgeries = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_id}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.patient_id}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.or_id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.procedure}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_date}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_start}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_end}</td>

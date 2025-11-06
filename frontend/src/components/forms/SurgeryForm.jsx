@@ -9,12 +9,6 @@ const surgery = () => {
  
 };
 
-
-
-
-
-
-
 const SurgeryForm = ({ isOpen, onClose, surgery = null
    }) => {
   const { 
@@ -41,7 +35,8 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
     resident: '',
     intern: '',
     nurse: '',
-    anesthesiologist: ''
+    anesthesiologist: '',
+    procedure: ''
   });
 
   const { admin } = useApp();
@@ -54,6 +49,7 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
   const [anesthesiologist, setAnesthesiologist] = useState([]);
   const [patient, setPatient] = useState([]);
   const [or, setOr] = useState([]);
+  const [procedure, setProcedure] = useState([]);
   useEffect(() => {
         axios
           .get("https://or-management-system.onrender.com/surgery")
@@ -86,7 +82,8 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
         resident: surgery.resident_id || '',
         intern: surgery.intern_id || '',
         nurse: surgery.nurse_id || '',
-        anesthesiologist: surgery.anesthesiologist_id || ''
+        anesthesiologist: surgery.anesthesiologist_id || '',
+        procedure: surgery.procedure || ''
       });
     } else {
       setFormData({
@@ -101,7 +98,8 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
         resident: '',
         intern: '',
         nurse: '',
-        anesthesiologist: ''
+        anesthesiologist: '',
+        procedure: ''
       });
     }
     setErrors({});
@@ -140,7 +138,8 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
         resident_id: parseInt(formData.resident ),
         intern_id: parseInt(formData.intern),
         nurse_id: parseInt(formData.nurse),
-        anesthesiologist_id: parseInt(formData.anesthesiologist)
+        anesthesiologist_id: parseInt(formData.anesthesiologist),
+        procedure: formData.procedure
         };
         await axios.post("https://or-management-system.onrender.com/surgery", payload);
         console.log("✅ Surgeon added successfully");
@@ -167,170 +166,153 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
       size="large"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Input
-            label="Surgery ID"
-            type="text"
-            value={formData.surgery_id}
-            onChange={(e) => handleInputChange('surgery_id', e.target.value)}
-            placeholder="Enter Surgery ID"
-          />
+     {/* --- Patient & Procedure Section --- */}
+     <section className="bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200">
+          <h3 className="text-lg font-semibold mb-4 text-gray-700">Patient Information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Input
+              label="Surgery ID"
+              type="text"
+              value={formData.surgery_id}
+              onChange={(e) => handleInputChange('surgery_id', e.target.value)}
+              placeholder="Enter Surgery ID"
+            />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Patient <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={formData.patient_id}
-              onChange={(e) => handleInputChange('patient_id', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.patient_id ? 'border-red-500' : 'border-gray-300'
-              }`}
-            >
-              <option value="">Select Patient</option>
-              {patient.map(p => (
-                <option key={p.patientid} value={p.patientid}>{p.fname+" "+p.lname}</option>
-              ))}
-            </select>
-            {errors.patient_id && <p className="mt-1 text-sm text-red-600">{errors.patient_id}</p>}
-          </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Patient <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={formData.patient_id}
+                onChange={(e) => handleInputChange('patient_id', e.target.value)}
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                  errors.patient_id ? 'border-red-500 focus:ring-red-300' : 'border-gray-300 focus:ring-blue-500'
+                }`}
+              >
+                <option value="">Select Patient</option>
+                {patient.map(p => (
+                  <option key={p.patientid} value={p.patientid}>{p.fname} {p.lname}</option>
+                ))}
+              </select>
+              {errors.patient_id && <p className="mt-1 text-sm text-red-600">{errors.patient_id}</p>}
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Operation Room <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={formData.or_id}
-              onChange={(e) => handleInputChange('or_id', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.or_id ? 'border-red-500' : 'border-gray-300'
-              }`}
-            >
-              <option value="">Select OR</option>
-              {or.filter(r => r.status === 'Available').map(r => (
-                <option key={r.orid} value={r.orid}>{r.orid}</option>
-              ))}
-            </select>
-            {errors.or_id && <p className="mt-1 text-sm text-red-600">{errors.or_id}</p>}
-          </div>
-
-          <Input
-            label="Surgery Date"
-            type="date"
-            required
-            value={formData.surgery_date}
-            onChange={(e) => handleInputChange('surgery_date', e.target.value)}
-            min={new Date().toISOString().split('T')[0]}
-          />
-
-          <Input
-            label="Start Time"
-            type="time"
-            required
-            value={formData.surgery_start}
-            onChange={(e) => handleInputChange('surgery_start', e.target.value)}
-          />
-
-          <Input
-            label="End Time"
-            type="time"
-            required
-            value={formData.surgery_end}
-            onChange={(e) => handleInputChange('surgery_end', e.target.value)}
-          />
-
-          
-
-          
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Attending</label>
-            <select
-              value={formData.attending}
-              onChange={(e) => handleInputChange('attending', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Select Attending Surgeon</option>
-              {attending1.map((emp) => (
-                <option key={emp.empid} value={emp.empid}>{emp.empid}-{"Dr. "+emp.fname +" "+emp.lname}</option>
-              ))}
-            </select>
-          </div>
-
-          <label className="block text-sm font-medium text-gray-700 mb-2">Resident</label>
-            <select
-              value={formData.resident}
-              onChange={(e) => handleInputChange('resident', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Select Resident Surgeon</option>
-              {resident.map((emp) => (
-                <option key={emp.empid} value={emp.empid}>{emp.empid}-{"Dr. "+emp.fname +" "+emp.lname}</option>
-              ))}
-            </select>
-
-          <label className="block text-sm font-medium text-gray-700 mb-2">Intern</label>
-            <select
-              value={formData.intern}
-              onChange={(e) => handleInputChange('intern', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Select Intern Surgeon</option>
-              {intern.map((emp) => (
-                <option key={emp.empid} value={emp.empid}>{emp.empid}-{"Dr. "+emp.fname +" "+emp.lname}</option>
-              ))}
-            </select>
-
-          <label className="block text-sm font-medium text-gray-700 mb-2">Nurse</label>
-            <select
-              value={formData.nurse}
-              onChange={(e) => handleInputChange('nurse', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Select surgical Nurse</option>
-              {nurse.map((emp) => (
-                <option key={emp.empid} value={emp.empid}>{emp.empid}-{emp.fname +" "+emp.lname}</option>
-              ))}
-            </select>
-
-          <label className="block text-sm font-medium text-gray-700 mb-2">Anesthologist</label>
-            <select
-              value={formData.anesthesiologist}
-              onChange={(e) => handleInputChange('anesthesiologist', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Selectanesthesiologist</option>
-              {anesthesiologist.map((emp) => (
-                <option key={emp.empid} value={emp.empid}>{emp.empid}-{"Dr. "+emp.fname +" "+emp.lname}</option>
-              ))}
-            </select>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Surgery Notes</label>
-            <textarea
-              value={formData.surgery_notes}
-              onChange={(e) => handleInputChange('surgery_notes', e.target.value)}
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Additional notes..."
+            <Input
+              label="Procedure"
+              value={formData.procedure}
+              onChange={(e) => handleInputChange('procedure', e.target.value)}
+              placeholder="Procedure Name"
             />
           </div>
-        </div>
+        </section>
 
-        <div className="flex justify-end space-x-4 pt-6">
+        {/* --- Surgery Details Section --- */}
+        <section className="bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200">
+          <h3 className="text-lg font-semibold mb-4 text-gray-700">Surgery Details</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Operation Room <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={formData.or_id}
+                onChange={(e) => handleInputChange('or_id', e.target.value)}
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                  errors.or_id ? 'border-red-500 focus:ring-red-300' : 'border-gray-300 focus:ring-blue-500'
+                }`}
+              >
+                <option value="">Select OR</option>
+                {or.filter(r => r.status === 'Available').map(r => (
+                  <option key={r.orid} value={r.orid}>{r.orid}</option>
+                ))}
+              </select>
+              {errors.or_id && <p className="mt-1 text-sm text-red-600">{errors.or_id}</p>}
+            </div>
+
+            <Input
+              label="Surgery Date"
+              type="date"
+              required
+              value={formData.surgery_date}
+              onChange={(e) => handleInputChange('surgery_date', e.target.value)}
+              min={new Date().toISOString().split('T')[0]}
+            />
+
+            <Input
+              label="Start Time"
+              type="time"
+              required
+              value={formData.surgery_start}
+              onChange={(e) => handleInputChange('surgery_start', e.target.value)}
+            />
+
+            <Input
+              label="End Time"
+              type="time"
+              required
+              value={formData.surgery_end}
+              onChange={(e) => handleInputChange('surgery_end', e.target.value)}
+            />
+          </div>
+        </section>
+
+        {/* --- Surgical Team Section --- */}
+        <section className="bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200">
+          <h3 className="text-lg font-semibold mb-4 text-gray-700">Surgical Team</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { label: 'Attending Surgeon', field: 'attending', data: attending1 },
+              { label: 'Resident Surgeon', field: 'resident', data: resident },
+              { label: 'Intern Surgeon', field: 'intern', data: intern },
+              { label: 'Surgical Nurse', field: 'nurse', data: nurse },
+              { label: 'Anesthesiologist', field: 'anesthesiologist', data: anesthesiologist }
+            ].map(({ label, field, data }) => (
+              <div key={field}>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
+                <select
+                  value={formData[field]}
+                  onChange={(e) => handleInputChange(field, e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Select {label}</option>
+                  {data.map(emp => (
+                    <option key={emp.empid} value={emp.empid}>
+                      {emp.empid} - Dr. {emp.fname} {emp.lname}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* --- Notes Section --- */}
+        <section className="bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200">
+          <h3 className="text-lg font-semibold mb-4 text-gray-700">Additional Notes</h3>
+          <textarea
+            value={formData.surgery_notes}
+            onChange={(e) => handleInputChange('surgery_notes', e.target.value)}
+            rows={4}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Additional notes..."
+          />
+        </section>
+
+        {/* --- Actions --- */}
+        <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
           <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
-          <Button type="submit" disabled={!admin || isSubmitting}>
-            {isSubmitting ? 'Saving...' : isEditing ? 'Update Surgery' : 'Schedule Surgery'}
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Saving...' : isEditing ? 'Update Surgeon' : 'Add Surgeon'}
           </Button>
 
-          {/* submit button to be completely hidden for non admins */}
           {/* {admin && (
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : isEditing ? 'Update Surgeon' : 'Add Surgeon'}
+              {isSubmitting ? 'Saving...' : isEditing ? 'Update Surgery' : 'Schedule Surgery'}
             </Button>
           )} */}
 
-
+          
+          
         </div>
       </form>
     </Modal>

@@ -34,7 +34,6 @@ const handleEdit = (surgeon) => {
     surgeon_dob: surgeon.dob || '',
     surgeon_gender: surgeon.gender || '',
     surgeon_salary: surgeon.salary || '',
-    surgeon_speciality: surgeon.surgeon_speciality || '',
     surgeon_contact: surgeon.phone || '',
     surgeon_experience_years: surgeon.surgeon_experience_years || '',
     supervisor_id: surgeon.superid || '',
@@ -91,7 +90,6 @@ const handleEdit = (surgeon) => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Emp Id</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dept No.</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Speciality</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Experience</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Designation</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supervisor Id</th>
@@ -109,7 +107,6 @@ const handleEdit = (surgeon) => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{surgeon.empid}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{surgeon.dno}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{surgeon.fname+" "+surgeon.lname}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.surgeon_speciality||"Cardio"}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.surgeon_experience_years||0} years</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.designation}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.superid}</td>

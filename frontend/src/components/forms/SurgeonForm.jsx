@@ -30,7 +30,6 @@ const SurgeonForm = ({ isOpen, onClose, surgeon = null }) => {
     surgeon_dob: '',
     surgeon_gender: '',
     surgeon_salary: '',
-    surgeon_speciality: '',
     surgeon_contact: '',
     surgeon_experience_years: '',
     supervisor_id: '',
@@ -50,7 +49,6 @@ const SurgeonForm = ({ isOpen, onClose, surgeon = null }) => {
         surgeon_dob: surgeon.surgeon_dob.split("T")[0] || '',
         surgeon_gender: surgeon.surgeon_gender || '',
         surgeon_salary: surgeon.surgeon_salary || '',
-        surgeon_speciality: surgeon.surgeon_speciality || '',
         surgeon_contact: surgeon.surgeon_contact || '',
         surgeon_experience_years: surgeon.surgeon_experience_years || '',
         supervisor_id: surgeon.supervisor_id || '',
@@ -64,7 +62,6 @@ const SurgeonForm = ({ isOpen, onClose, surgeon = null }) => {
         surgeon_dob: '',
         surgeon_gender: '',
         surgeon_salary: '',
-        surgeon_speciality: '',
         surgeon_contact: '',
         surgeon_experience_years: '',
         supervisor_id: '',
@@ -83,7 +80,6 @@ const SurgeonForm = ({ isOpen, onClose, surgeon = null }) => {
     if (!formData.surgeon_dob.trim()) newErrors.surgeon_dob = 'Date of Birth is required';
     if (!formData.surgeon_gender.trim()) newErrors.surgeon_gender = 'Gender is required';
     if (!formData.surgeon_salary || formData.surgeon_salary <= 0) newErrors.surgeon_salary = 'Valid salary is required';
-    if (!formData.surgeon_speciality.trim()) newErrors.surgeon_speciality = 'Speciality is required';
     if (!formData.surgeon_contact.trim() || formData.surgeon_contact.length < 10 || formData.surgeon_contact.length > 13)
       newErrors.surgeon_contact = 'Valid contact number required';    
     if (!formData.surgeon_experience_years || formData.surgeon_experience_years < 0)
@@ -262,15 +258,6 @@ await axios.post("https://or-management-system.onrender.com/surgeons", payload);
             placeholder="Years of experience"
             min="0"
             max="50"
-          />
-
-          <Input
-            label="Speciality"
-            required
-            value={formData.surgeon_speciality}
-            onChange={(e) => handleInputChange('surgeon_speciality', e.target.value)}
-            error={errors.surgeon_speciality}
-            placeholder="e.g., Cardiothoracic Surgery"
           />
 
           <Input
