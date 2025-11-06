@@ -123,7 +123,8 @@ const payload = {
   surgeon_dob: formData.surgeon_dob,
   surgeon_gender: formData.surgeon_gender,
   surgeon_designation: formData.surgeon_designation,
-  surgeon_contact:formData.surgeon_contact
+  surgeon_contact:formData.surgeon_contact,
+  surgeon_experience_years:parseInt(formData.surgeon_experience_years)
 };
 
 
@@ -253,7 +254,7 @@ await axios.post("https://or-management-system.onrender.com/surgeons", payload);
             type="number"
             required
             value={formData.surgeon_experience_years}
-            onChange={(e) => handleInputChange('surgeon_experience_years', parseInt(e.target.value) || '')}
+            onChange={(e) => handleInputChange('surgeon_experience_years', e.target.value || '')}
             error={errors.surgeon_experience_years}
             placeholder="Years of experience"
             min="0"
