@@ -152,6 +152,7 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
     } catch (err) {
       console.error('Error saving surgery:', err);
     } finally {
+      onClose();
       setIsSubmitting(false);
     }
   };

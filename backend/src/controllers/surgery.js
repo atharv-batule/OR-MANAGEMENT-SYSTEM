@@ -128,57 +128,57 @@ req.body.procedure
 //         message: "Surgery could not be scheduled. The selected OR is already booked during this time.",
 //       });
 // }
-  }
-catch(err)
-{console.log(err)}
+  
+  console.log("Insert result:", temp);
+    res.json({ success: true, temp });
+
+  } catch (err) {
+    console.error("Error in POST /surgery:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }finally{}
 
 })
-async function addSurg(surgery_id, patient_id, or_id, surgery_date, surgery_start, surgery_end, surgery_notes, attending_id, resident_id, intern_id, nurse_id, anesthesiologist_id,procedure) {
-  try{
- const temp= await client.query(
-  `
-  
-  WITH conflict AS (
-      SELECT COUNT(*) AS cnt
-      FROM surgery
-      WHERE surgery_date = $4
-        AND or_id = $3
-        AND (surgery_start, surgery_end) OVERLAPS ($5::time, $6::time)
-  ),
-  ins_surgery AS (
-      INSERT INTO surgery (surgery_id, patient_id, or_id, surgery_date, surgery_start, surgery_end, surgery_notes,procedure)
-      SELECT $1, $2, $3, $4, $5, $6, $7,$13
-      WHERE (SELECT cnt FROM conflict) = 0
-      RETURNING surgery_id
-  )
-  INSERT INTO surgery_staff (surgery_id, emp_id)
-  VALUES ($1,$8),($1,$9),($1,$10),($1,$11),($1,$12)
-  
-  `,
-  [
-    surgery_id,        // $1
-    patient_id,        // $2
-    or_id,             // $3
-    surgery_date,      // $4
-    surgery_start,     // $5
-    surgery_end,       // $6
-    surgery_notes,     // $7
-    attending_id,      // $8
-    resident_id,       // $9
-    intern_id,         // $10
-    nurse_id,          // $11
-    anesthesiologist_id,//12
-    procedure           // $13
-  ]
-)
-// if(temp.rowCount===0){
-// return res
-//         .status(409) // HTTP 409 Conflict
-//         .json({ error: "This OR is already booked during that time." });
-// }
+async function addSurg(
+  surgery_id, patient_id, or_id, surgery_date, surgery_start, surgery_end,
+  surgery_notes, attending_id, resident_id, intern_id, nurse_id, anesthesiologist_id, procedure
+) {
+  await client.query("BEGIN");
+  try {
+    const query = `
+      WITH conflict AS (
+        SELECT COUNT(*) AS cnt
+        FROM surgery
+        WHERE surgery_date = $4
+          AND or_id = $3
+          AND (surgery_start, surgery_end) OVERLAPS ($5::time, $6::time)
+      ),
+      ins_surgery AS (
+        INSERT INTO surgery (surgery_id, patient_id, or_id, surgery_date, surgery_start, surgery_end, surgery_notes, procedure)
+        SELECT $1, $2, $3, $4, $5, $6, $7, $13
+        WHERE (SELECT cnt FROM conflict) = 0
+        RETURNING surgery_id
+      )
+      INSERT INTO surgery_staff (surgery_id, emp_id)
+      SELECT surgery_id, emp_id
+      FROM ins_surgery,
+      LATERAL (VALUES ($8::int), ($9::int), ($10::int), ($11::int), ($12::int)) AS v(emp_id)
+
+    `;
+
+    const params = [
+      surgery_id, patient_id, or_id, surgery_date, surgery_start, surgery_end,
+      surgery_notes, attending_id, resident_id, intern_id, nurse_id, anesthesiologist_id, procedure
+    ];
+    console.log(params);
+
+
+    const result = await client.query(query, params);
+    await client.query("COMMIT");
+    return result.rowCount;
   } catch (err) {
-    await client.query('ROLLBACK'); // rollback if anything fails
-    throw err; // propagate error to router
+    console.error('Query failed:', err.message);
+    await client.query("ROLLBACK");
+    throw err;
   }
 }
 async function empName(empid) {
