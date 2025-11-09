@@ -6,140 +6,129 @@ import Input from '../components/ui/Input';
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    designation: '',
     email: '',
     password: ''
   });
 
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const designations = [
-    'Admin',
-    'Attending Surgeon',
-    'Resident',
-    'Intern',
-    'Nurse',
-    'Anesthesiologist'
-  ];
-
-  const users = [
-    { designation: 'Admin', email: 'admin@hospital.com', password: 'admin123' },
-    { designation: 'Attending Surgeon', email: 'surgeon@hospital.com', password: 'surgeon123' },
-    { designation: 'Nurse', email: 'nurse@hospital.com', password: 'nurse123' },
-  ];
-
-  const handleChange = (field, value) => {
+  const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (error) setError('');
   };
 
+  const validateForm = () => {
+    if (!formData.email || !formData.password) {
+      setError('All fields are required.');
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) return;
+    
     setError('');
+    setIsSubmitting(true);
 
-    if (!formData.designation || !formData.email || !formData.password) {
-      setError('All fields are required.');
-      return;
-    }
+    try {
+      const payload = {
+        email: formData.email,
+        password: formData.password
+      };
+      
+      console.log('Payload being sent:', payload);
 
-    setLoading(true);
-//     try {
-//       // Replace with your backend endpoint
-//       const res = await axios.post('https://or-management-system.onrender.com/login', formData);
-//       console.log('Login response:', res.data);
+      // POST request to backend
+      const res = await axios.post('http://localhost:3000/login', payload);
+      
+      console.log('Login response:', res.data);
 
-//       if (res.data.success) {
-//         alert('Login successful!');
-//         // redirect to dashboard or home
-//         window.location.replace('/dashboard');
-
-//       } else {
-//         setError(res.data.message || 'Invalid credentials');
-//       }
-//     } catch (err) {
-//       console.error(err);
-//       setError('Login failed. Please check credentials.');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-  const user = users.find(
-      u =>
-        u.designation === formData.designation &&
-        u.email === formData.email &&
-        u.password === formData.password
-    );
-
-    setTimeout(() => {
-      if (user) {
-        alert(`Welcome ${user.designation}!`);
-        // Store login session in localStorage (optional)
-        localStorage.setItem('user', JSON.stringify(user));
+      if (res.data.success) {
+        // Store user data in localStorage
+        localStorage.setItem('user', JSON.stringify(res.data.user));
+        
+        // Success message
+        alert(`Welcome back!`);
+        
+        // Redirect to dashboard
         window.location.replace('/dashboard');
       } else {
-        setError('Invalid email, password, or designation.');
+        setError(res.data.message || 'Invalid credentials');
       }
-      setLoading(false);
-    }, 1000);
+    } catch (err) {
+      console.error('Login error:', err);
+      
+      if (err.response) {
+        // Server responded with error
+        setError(err.response.data.message || 'Invalid email or password.');
+      } else if (err.request) {
+        // Request made but no response
+        setError('Unable to reach server. Please try again.');
+      } else {
+        // Something else happened
+        setError('Login failed. Please check your credentials.');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <>
-    <div className="shadow-2xl m-4 shadow-blue-300"> 
-    <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">OR Management System</h2>
-    </div>
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
-      <Card className="max-w-md w-full p-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Login</h2>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Designation <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={formData.designation}
-              onChange={(e) => handleChange('designation', e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            >
-              <option value="">Select Designation</option>
-              {designations.map((role, idx) => (
-                <option key={idx} value={role}>{role}</option>
-              ))}
-            </select>
-          </div>
+      <div className="shadow-2xl m-4 shadow-blue-300"> 
+        <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">OR Management System</h2>
+      </div>
+      
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+        <Card className="max-w-md w-full p-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Login</h2>
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Login Fields Section */}
+            <section className="space-y-4">
+              <Input
+                label="Email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                placeholder="Enter your email"
+                required
+              />
 
-          <Input
-            label="Email"
-            type="email"
-            value={formData.email}
-            onChange={(e) => handleChange('email', e.target.value)}
-            required
-          />
+              <Input
+                label="Password"
+                type="password"
+                value={formData.password}
+                onChange={(e) => handleInputChange('password', e.target.value)}
+                placeholder="Enter your password"
+                required
+              />
+            </section>
 
-          <Input
-            label="Password"
-            type="password"
-            value={formData.password}
-            onChange={(e) => handleChange('password', e.target.value)}
-            required
-          />
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-sm text-red-600 text-center">{error}</p>
+              </div>
+            )}
 
-          {error && <p className="text-sm text-red-600 text-center">{error}</p>}
-
-          <div className="pt-4">
-            <Button 
-              type="submit" 
-              className="w-full flex justify-center items-center"
-              disabled={loading}
-            >
-              {loading ? 'Logging in...' : 'Login'}
-            </Button>
-          </div>
-        </form>
-      </Card>
-    </div>
+            {/* Submit Button */}
+            <div className="pt-4">
+              <Button 
+                type="submit" 
+                className="w-full flex justify-center items-center"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Logging in...' : 'Login'}
+              </Button>
+            </div>
+          </form>
+        </Card>
+      </div>
     </>
   );
 };

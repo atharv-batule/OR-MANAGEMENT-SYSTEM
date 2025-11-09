@@ -9,6 +9,7 @@ import anesthRoutes from "../controllers/anesth.js"
 import orRoutes from "../controllers/operationRoom.js"
 import surgRoutes from "../controllers/surgery.js"
 import orInfo from "../controllers/dashboard.js"
+import authRoutes from "../route/auth.js";
 dotenev.config();
 
 const app=express();
@@ -66,6 +67,7 @@ app.use("/anesthesiologists", anesthRoutes);
 app.use("/operation-rooms",orRoutes );
 app.use("/surgery",surgRoutes );
 app.use("/dashboard",orInfo );
+app.use("/login", authRoutes);
 //server running 
 app.listen(port,()=>
 {

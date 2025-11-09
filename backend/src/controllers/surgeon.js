@@ -3,6 +3,8 @@ import cors from "cors"
 import dotenev from "dotenv"
 //import {app} from "./src/utils/index.js"
 import { client } from "../db/db.js";
+import { authenticateToken, authorize } from "../middlewares/auth.js";
+
 dotenev.config();
 const router=express.Router()
 const port=process.env.PORT||3000;
@@ -11,7 +13,7 @@ const port=process.env.PORT||3000;
 router.use(express.json())
 router.use(cors())
 
-router.get("/", async (req, res) => {
+router.get("/", authenticateToken,async (req, res) => {
    try {
     const result = await displaySurgeon(); // fetch data (e.g., from DB)
     res.json(result); // send it to frontend as JSON
