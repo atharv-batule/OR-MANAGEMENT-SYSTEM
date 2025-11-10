@@ -3,9 +3,11 @@ import axios from 'axios';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Input from '../components/ui/Input';
+import { Link } from 'react-router-dom';
 
-const Login = () => {
+const Register = () => {
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
     password: ''
   });
@@ -19,7 +21,7 @@ const Login = () => {
   };
 
   const validateForm = () => {
-    if (!formData.email || !formData.password) {
+    if (!formData.name || !formData.email || !formData.password) {
       setError('All fields are required.');
       return false;
     }
@@ -28,50 +30,21 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
-    
-    setError('');
+
     setIsSubmitting(true);
+    setError('');
 
     try {
-      const payload = {
-        email: formData.email,
-        password: formData.password
-      };
-      
-      console.log('Payload being sent:', payload);
-
-      // POST request to backend
-      const res = await axios.post('http://localhost:3000/login', payload);
-      
-      console.log('Login response:', res.data);
-
+      const res = await axios.post('http://localhost:3000/register', formData);
       if (res.data.success) {
-        // Store user data in localStorage
-        localStorage.setItem('user', JSON.stringify(res.data.user));
-        
-        // Success message
-        alert(`Welcome back!`);
-        
-        // Redirect to dashboard
-        window.location.replace('/dashboard');
+        alert('Registration successful! Please login.');
+        window.location.replace('/login');
       } else {
-        setError(res.data.message || 'Invalid credentials');
+        setError(res.data.message || 'Registration failed.');
       }
     } catch (err) {
-      console.error('Login error:', err);
-      
-      if (err.response) {
-        // Server responded with error
-        setError(err.response.data.message || 'Invalid email or password.');
-      } else if (err.request) {
-        // Request made but no response
-        setError('Unable to reach server. Please try again.');
-      } else {
-        // Something else happened
-        setError('Login failed. Please check your credentials.');
-      }
+      setError(err.response?.data?.message || 'Unable to register. Try again later.');
     } finally {
       setIsSubmitting(false);
     }
@@ -79,18 +52,26 @@ const Login = () => {
 
   return (
     <>
-   
-      <div className="pt-10 shadow-blue-300 bg-gray-100 px-4 bg-gradient-to-bl from-[#fdfdb1] to-[#85edff]"> 
-        <h2 className="text-2xl font-bold text-gray-800 text-center">OR Management System</h2>
+      <div className=" m-4 shadow-blue-300"> 
+        <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+          OR Management System
+        </h2>
       </div>
-      
-      <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 bg-gradient-to-bl from-[#85edff] to-[#fdfdb1]">
-        <Card className="max-w-md w-full p-8 shadow-xl shadow-blue-200">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Login</h2>
-          
+
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+        <Card className="max-w-md w-full p-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Register</h2>
+
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Login Fields Section */}
             <section className="space-y-4">
+              <Input
+                label="Full Name"
+                type="text"
+                value={formData.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                placeholder="Enter your full name"
+                required
+              />
               <Input
                 label="Email"
                 type="email"
@@ -99,40 +80,43 @@ const Login = () => {
                 placeholder="Enter your email"
                 required
               />
-
               <Input
                 label="Password"
                 type="password"
                 value={formData.password}
                 onChange={(e) => handleInputChange('password', e.target.value)}
-                placeholder="Enter your password"
+                placeholder="Create a password"
                 required
               />
             </section>
 
-            {/* Error Message */}
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-3">
                 <p className="text-sm text-red-600 text-center">{error}</p>
               </div>
             )}
 
-            {/* Submit Button */}
             <div className="pt-4">
               <Button 
                 type="submit" 
                 className="w-full flex justify-center items-center"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Logging in...' : 'Login'}
+                {isSubmitting ? 'Registering...' : 'Register'}
               </Button>
             </div>
+
+            <p className="text-center text-sm text-gray-600 pt-2">
+              Already have an account?{' '}
+              <Link to="/login" className="text-blue-600 hover:underline">
+                Login
+              </Link>
+            </p>
           </form>
         </Card>
       </div>
-    
     </>
   );
 };
 
-export default Login;
+export default Register;

@@ -11,6 +11,7 @@ import OperationRooms from './pages/OperationRooms';
 import Surgeries from './pages/Surgeries';
 import DisplayName from './components/forms/sample';
 import Login from './pages/Login';
+import Register from './pages/Register';
 //import SurgeonTableContainer from './components/tables/SurgeonTable';
 
 function App() {
@@ -21,8 +22,9 @@ function App() {
       <Router>
       <Routes>
           {/* Login page (no sidebar, appears first) */}
-          <Route path="/login" element={<Login/>} />
-
+          <Route path="/register" element={<Register/>} />
+          <Route path="/login" element={<Login />} />
+          
           {/* All other pages (with sidebar) */}
           <Route
             path="/*"
@@ -37,6 +39,7 @@ function App() {
             </header>
             <main className="flex-1 overflow-y-auto p-6">
               <Routes>
+                <Route path="/register" element ={<Register />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/patients" element={<Patients />} />
                 <Route path="/surgeons" element={<Surgeons />} />
