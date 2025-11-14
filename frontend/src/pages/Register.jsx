@@ -52,14 +52,12 @@ const Register = () => {
 
   return (
     <>
-      <div className=" m-4 shadow-blue-300"> 
-        <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
-          OR Management System
-        </h2>
+      <div className="pt-10 shadow-blue-300 bg-gray-100 px-4 bg-gradient-to-bl from-[#fdfdb1] to-[#85edff]">  
+      <h2 className="text-2xl font-bold text-gray-800 text-center">OR Management System</h2>
       </div>
 
-      <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
-        <Card className="max-w-md w-full p-8">
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 bg-gradient-to-bl from-[#85edff] to-[#fdfdb1]">
+      <Card className="max-w-md w-full p-8 shadow-xl shadow-blue-200">
           <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Register</h2>
 
           <form onSubmit={handleSubmit} className="space-y-6">
