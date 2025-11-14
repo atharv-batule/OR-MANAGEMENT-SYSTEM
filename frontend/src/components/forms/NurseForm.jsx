@@ -5,20 +5,6 @@ import Input from '../ui/Input';
 import Modal from '../ui/Modal';
 import axios from 'axios';
 
-// Convert "yyyy-mm-dd" → "dd-mm-yyyy"
-// const formatDateToDisplay = (dateStr) => {
-//   if (!dateStr) return '';
-//   const [year, month, day] = dateStr.split('-');
-//   return `${day}-${month}-${year}`;
-// };
-
-// // Convert "dd-mm-yyyy" → "yyyy-mm-dd" (for <input type="date">)
-// const formatDateToInput = (dateStr) => {
-//   if (!dateStr) return '';
-//   const [day, month, year] = dateStr.split('-');
-//   return `${year}-${month}-${day}`;
-// };
-
 const NurseForm = ({ isOpen, onClose, nurse = null }) => {
   
 
@@ -49,20 +35,12 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
     if (!formData.nurse_name.trim()) newErrors.nurse_name = 'Full name is required.';
     if (!formData.nurse_dob.trim()) newErrors.nurse_dob = 'Date of Birth is required.';
     if (!formData.nurse_gender.trim()) newErrors.nurse_gender = 'Please select gender.';
-    // if (!formData.nurse_salary || formData.nurse_salary <= 0)
-    //   newErrors.nurse_salary = 'Enter a valid salary.';
-   // if (!formData.nurse_contact.trim())
-    //   newErrors.nurse_contact = 'Contact number is required.';
-    // else if (formData.nurse_contact.length < 10 || formData.nurse_contact.length > 13)
-    //   newErrors.nurse_contact = 'Contact number must be between 10–13 digits.';
     if (
       !formData.nurse_experience_years ||
       isNaN(formData.nurse_experience_years) ||
       formData.nurse_experience_years < 0
     )
       newErrors.nurse_experience_years = 'Enter valid experience in years.';
-   // if (!formData.nurse_supervisor_id.trim())
-    //  newErrors.nurse_supervisor_id = 'Supervisor ID is required.';
 
     setErrors(newErrors);
    return Object.keys(newErrors).length === 0;
