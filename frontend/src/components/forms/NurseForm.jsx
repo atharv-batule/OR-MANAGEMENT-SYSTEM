@@ -139,7 +139,7 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
             value={formData.empid}
             onChange={(e) => handleInputChange('empid', e.target.value)}
             error={errors.empid}
-            placeholder="EMP001"
+            placeholder="001"
           />
 
           <Input
@@ -157,7 +157,7 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
             value={formData.nurse_supervisor_id}
             onChange={(e) => handleInputChange('nurse_supervisor_id', e.target.value)}
             error={errors.nurse_supervisor_id}
-            placeholder="SUP001"
+            placeholder="001"
           />
 
           <Input

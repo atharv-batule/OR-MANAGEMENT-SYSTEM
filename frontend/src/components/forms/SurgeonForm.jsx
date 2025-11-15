@@ -168,7 +168,7 @@ await axios.post("https://or-management-system.onrender.com/surgeons", payload);
             value={formData.employee_id}
             onChange={(e) => handleInputChange('employee_id', e.target.value)}
             error={errors.employee_id}
-            placeholder="EMP001"
+            placeholder="001"
           />
 
           <Input

@@ -12,6 +12,7 @@ import Surgeries from './pages/Surgeries';
 import DisplayName from './components/forms/sample';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Hod from './pages/Hod';
 //import SurgeonTableContainer from './components/tables/SurgeonTable';
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
                 <Route path="/operation-rooms" element={<OperationRooms />} />
                 <Route path="/surgeries" element={<Surgeries />} />
                 <Route path="/registration" element={<DisplayName />} />
+                <Route path="/hod" element={<Hod />} />
               </Routes>
             </main>
           </div>

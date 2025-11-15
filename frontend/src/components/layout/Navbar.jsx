@@ -25,6 +25,8 @@ const Navbar = () => {
     { path: '/nurses', label: 'Nurses', icon: Stethoscope },
     { path: '/operation-rooms', label: 'Operation Rooms', icon: Building },
     { path: '/surgeries', label: 'Surgeries', icon: Calendar },
+    { path: '/hod', label: 'HOD', icon: Calendar },
+
   ];
 
   const isActivePath = (path) => {

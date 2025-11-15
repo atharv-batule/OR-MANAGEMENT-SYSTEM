@@ -166,7 +166,7 @@ const AnesthesiologistForm = ({ isOpen, onClose, anesthesiologist = null }) => {
             value={formData.empid}
             onChange={(e) => handleInputChange('empid', e.target.value)}
             error={errors.employee_id}
-            placeholder="EMP001"
+            placeholder="001"
           />
 
           <Input
@@ -185,7 +185,7 @@ const AnesthesiologistForm = ({ isOpen, onClose, anesthesiologist = null }) => {
             value={formData.anaesth_supervisor_id}
             onChange={(e) => handleInputChange('anaesth_supervisor_id', e.target.value)}
             error={errors.anaesth_supervisor_id}
-            placeholder="SUP001"
+            placeholder="001"
           />
 
           <Input
@@ -210,14 +210,6 @@ const AnesthesiologistForm = ({ isOpen, onClose, anesthesiologist = null }) => {
             placeholder="Phone or email"
           />
 
-          <Input
-            label="Certification"
-            required
-            value={formData.anaesth_certification}
-            onChange={(e) => handleInputChange('anaesth_certification', e.target.value)}
-            error={errors.anaesth_certification}
-            placeholder="Board Certified Anesthesiologist"
-          />
 
           <Input
             label="Experience (Years)"

@@ -93,7 +93,7 @@ const OperationRoomForm = ({ isOpen, onClose, operationRoom = null }) => {
             required
             value={formData.room_number}
             onChange={(e) => handleInputChange('room_number', e.target.value)}
-            placeholder="OR-101"
+            placeholder="101"
           />
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">

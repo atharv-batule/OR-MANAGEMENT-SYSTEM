@@ -81,7 +81,7 @@ const Dashboard = () => {
                     className="hover:bg-gradient-to-r hover:from-[#f6f8ff] hover:to-[#eaf0ff] transition-all duration-200 hover:scale-[1.01] cursor-pointer"
                     onClick={() => setSelectedOR(surgery.surgery_id)}
                   >
-                    <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">{room.or_id}</td>
+                    <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">{surgery.or_id}</td>
                     <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">
                       {`${surgery.surgery_date.split("T")[0]}`}
                     </td>
