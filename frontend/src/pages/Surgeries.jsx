@@ -5,9 +5,6 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import SurgeryForm from '../components/forms/SurgeryForm';
 import axios from 'axios';
-// import { empName } from '../../../backend/src/controllers/basic';
-
-
 
 const Surgeries = () => {
   const { deleteSurgery } = useApp();
@@ -17,25 +14,14 @@ const Surgeries = () => {
   const [surgeries1, setSurgeries] = useState([]);
 
   useEffect(() => {
-        axios
-          .get("https://or-management-system.onrender.com/surgery")
-          .then(res => {
-            console.log("Fetched surgereis:", res.data);
-            setSurgeries(res.data.result);
-            // console.log(empName(1))
-          })
-          .catch(err => console.error(err));
-      }, []);
-  
-  
-
-  // Fetch surgeries from backend
-  // useEffect(() => {
-  //   axios
-  //     .get('https://or-management-system.onrender.com/surgery')
-  //     .then(res => setSurgeries(res.data))
-  //     .catch(err => console.error(err));
-  // }, []);
+    axios
+      .get("https://or-management-system.onrender.com/surgery")
+      .then(res => {
+        console.log("Fetched surgeries:", res.data);
+        setSurgeries(res.data.result);
+      })
+      .catch(err => console.error(err));
+  }, []);
 
   const handleEdit = (surgery) => {
     setEditingSurgery(surgery);
@@ -50,26 +36,33 @@ const Surgeries = () => {
   };
 
   const handleCloseForm = () => {
-    console.log("🔹 handleCloseForm triggered");
     setShowForm(false);
     setEditingSurgery(null);
+  };
+
+  // Search function
+  const matchesSearch = (surgery) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      surgery.surgery_id?.toString().includes(term) ||
+      surgery.patient_id?.toString().includes(term) ||
+      surgery.attending_name?.toLowerCase().includes(term)
+    );
   };
 
   return (
     <div className="space-y-6">
       {/* Search + Add */}
       <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input
-              type="text"
-              placeholder="Search surgeries..."
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <input
+            type="text"
+            placeholder="Search surgeries..."
+            className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
         <Button onClick={() => setShowForm(true)}>
           <Plus className="w-4 h-4 mr-2" />
@@ -92,34 +85,35 @@ const Surgeries = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {surgeries1.map((surgery) => (
-                <tr key={surgery.surgery_id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.patient_id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.or_id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.procedure}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_date}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_start}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_end}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_notes}</td>
-                  {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{empName(1)}</td> */}
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.attending_name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.intern_name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.resident_name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.nurse_name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.anesthesiologist_name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex justify-end space-x-2">
-                      <button onClick={() => handleEdit(surgery)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => handleDelete(surgery.surgery_id)} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {surgeries1
+                .filter(matchesSearch)
+                .map((surgery) => (
+                  <tr key={surgery.surgery_id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.patient_id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.or_id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.procedure}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_date}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_start}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_end}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_notes}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.attending_name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.intern_name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.resident_name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.nurse_name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.anesthesiologist_name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex justify-end space-x-2">
+                        <button onClick={() => handleEdit(surgery)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => handleDelete(surgery.surgery_id)} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

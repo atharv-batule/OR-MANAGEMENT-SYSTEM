@@ -101,32 +101,56 @@ const handleEdit = (surgeon) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {surgeons1.map((surgeon) => (
-                 
-                <tr key={surgeon.empid} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{surgeon.empid}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{surgeon.dno}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{surgeon.fname+" "+surgeon.lname}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.surgeon_experience_years||0} years</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.designation}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.superid}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.phone}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.gender}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.dob}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.salary}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex justify-end space-x-2">
-                      <button onClick={() => handleEdit(surgeon)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => handleDelete(surgeon.empid)} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+  {surgeons1
+    .filter(surgeon => {
+      const s = searchTerm.toLowerCase();
+      return (
+        surgeon.empid?.toString().includes(s) ||
+        `${surgeon.fname} ${surgeon.lname}`.toLowerCase().includes(s) ||
+        surgeon.designation?.toLowerCase().includes(s) ||
+        surgeon.surgeon_experience_years?.toString().includes(s) ||
+        surgeon.dno?.toString().includes(s) ||
+        surgeon.phone?.includes(searchTerm)
+      );
+    })
+    .map(surgeon => (
+      <tr key={surgeon.empid} className="hover:bg-gray-50">
+        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{surgeon.empid}</td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{surgeon.dno}</td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+          {surgeon.fname + " " + surgeon.lname}
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+          {surgeon.surgeon_experience_years || 0} years
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.designation}</td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.superid}</td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.phone}</td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.gender}</td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.dob}</td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.salary}</td>
+
+        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+          <div className="flex justify-end space-x-2">
+            <button
+              onClick={() => handleEdit(surgeon)}
+              className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+            >
+              <Edit className="w-4 h-4" />
+            </button>
+
+            <button
+              onClick={() => handleDelete(surgeon.empid)}
+              className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        </td>
+      </tr>
+    ))}
+</tbody>
+
           </table>
         </div>
       </Card>

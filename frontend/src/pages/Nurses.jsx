@@ -7,26 +7,21 @@ import NurseForm from '../components/forms/NurseForm';
 import axios from 'axios';
 
 const Nurses = () => {
-  useEffect(() => {
-      axios
-        .get("https://or-management-system.onrender.com/nurses")
-        .then(res => {
-          console.log("Fetched nurses:", res.data);
-          setNurses(res.data);
-        })
-        .catch(err => console.error(err));
-    }, []);
   const [nurses1, setNurses] = useState([]);
-  const { nurses, deleteNurse } = useApp();
+  const { deleteNurse } = useApp();
   const [showForm, setShowForm] = useState(false);
   const [editingNurse, setEditingNurse] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredNurses = nurses1.filter(nurse =>
-    nurse.fname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    nurse.nurse_department.toLowerCase().includes(searchTerm.toLowerCase()
-  )
-  );
+  useEffect(() => {
+    axios
+      .get("https://or-management-system.onrender.com/nurses")
+      .then(res => {
+        console.log("Fetched nurses:", res.data);
+        setNurses(res.data);
+      })
+      .catch(err => console.error(err));
+  }, []);
 
   const handleEdit = (nurse) => {
     const mappedNurse = {
@@ -40,16 +35,16 @@ const Nurses = () => {
       nurse_experience_years: nurse.nurse_experience_years || '',
       nurse_shift: nurse.nurse_shift || 'Morning'
     };
-  
     setEditingNurse(mappedNurse);
     setShowForm(true);
   };
 
   const handleDelete = (nurseId) => {
-    if (window.confirm('Are you sure you want to delete this patient?')) {
-      axios.delete("https://or-management-system.onrender.com/nurses",{ data: { employee_id: parseInt(nurseId) } })
+    if (window.confirm('Are you sure you want to delete this nurse?')) {
+      axios.delete("https://or-management-system.onrender.com/nurses", { data: { employee_id: parseInt(nurseId) } })
+        .then(() => setNurses(prev => prev.filter(n => n.empid !== nurseId)))
+        .catch(err => console.error(err));
     }
-     window.location.reload();
   };
 
   const handleCloseForm = () => {
@@ -59,6 +54,7 @@ const Nurses = () => {
 
   return (
     <div className="space-y-6">
+      {/* Search + Add */}
       <div className="flex justify-between items-center">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -76,70 +72,47 @@ const Nurses = () => {
         </Button>
       </div>
 
-      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredNurses.map((nurse) => (
-          <Card key={nurse.nurse_id} hover>
-            <Card.Content>
-              <div className="flex justify-between items-start mb-2">
-                <h4 className="font-medium text-gray-900">{nurse.nurse_name}</h4>
-                <div className="flex space-x-1">
-                  <button onClick={() => handleEdit(nurse)} className="p-1 text-gray-400 hover:text-blue-600">
-                    <Edit className="w-4 h-4" />
-                  </button>
-                  <button onClick={() => handleDelete(nurse.nurse_id)} className="p-1 text-gray-400 hover:text-red-600">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-              <p className="text-sm text-gray-600 mb-1">{nurse.nurse_department}</p>
-              <p className="text-sm text-gray-600 mb-1">{nurse.nurse_shift} Shift</p>
-              <p className="text-sm text-gray-600">{nurse.nurse_contact}</p>
-            </Card.Content>
-          </Card>
-        ))}
-      </div> */}
-
+      {/* Table */}
       <Card>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee Id</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Experience</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supervisor Id</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shift</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DOB</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Salary</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                {['Employee Id','Name','Experience','Supervisor Id','Shift','Contact','Gender','DOB','Salary','Actions'].map(col => (
+                  <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{col}</th>
+                ))}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {nurses1.map((nurse) => (
-                <tr key={nurse.empid} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{nurse.empid}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{nurse.fname+" "+nurse.lname}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_experience_years||0} years</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.superid}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_shift||"morning"} Shift</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.phone}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.gender}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.dob}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.salary}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex justify-end space-x-2">
-                      <button onClick={() => handleEdit(nurse)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => handleDelete(nurse.empid)} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {nurses1
+                .filter(nurse => {
+                  if (!searchTerm) return true;
+                  const fullName = `${nurse.fname} ${nurse.lname}`.toLowerCase();
+                  return fullName.includes(searchTerm.toLowerCase());
+                })
+                .map(nurse => (
+                  <tr key={nurse.empid} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{nurse.empid}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{nurse.fname} {nurse.lname}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_experience_years || 0} years</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.superid}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_shift || "Morning"} Shift</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.phone}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.gender}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.dob}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.salary}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex justify-end space-x-2">
+                        <button onClick={() => handleEdit(nurse)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => handleDelete(nurse.empid)} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

@@ -98,6 +98,68 @@ const Anesthesiologists = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
+  {anesthesiologists1
+    .filter(ana => {
+      const s = searchTerm.toLowerCase();
+      return (
+        ana.empid?.toString().includes(s) ||
+        `${ana.fname} ${ana.lname}`.toLowerCase().includes(s) ||
+        ana.superid?.toString().includes(s) ||
+        ana.phone?.includes(searchTerm) ||
+        ana.gender?.toLowerCase().includes(s)
+      );
+    })
+    .map(anesthesiologist => (
+      <tr key={anesthesiologist.empid} className="hover:bg-gray-50">
+        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+          {anesthesiologist.empid}
+        </td>
+
+        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+          {anesthesiologist.fname + " " + anesthesiologist.lname}
+        </td>
+
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+          {anesthesiologist.superid}
+        </td>
+
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+          {anesthesiologist.phone}
+        </td>
+
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+          {anesthesiologist.gender}
+        </td>
+
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+          {anesthesiologist.dob}
+        </td>
+
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+          {anesthesiologist.salary}
+        </td>
+
+        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+          <div className="flex justify-end space-x-2">
+            <button
+              onClick={() => handleEdit(anesthesiologist)}
+              className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+            >
+              <Edit className="w-4 h-4" />
+            </button>
+
+            <button
+              onClick={() => handleDelete(anesthesiologist.empid)}
+              className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        </td>
+      </tr>
+    ))}
+</tbody>
+<tbody className="bg-white divide-y divide-gray-200">
               {anesthesiologists1.map((anesthesiologist) => (
                 <tr key={anesthesiologist.empid} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{anesthesiologist.empid}</td>
