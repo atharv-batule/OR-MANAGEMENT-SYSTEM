@@ -1,62 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Search, Edit, Trash2 } from "lucide-react";
 import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
 import HodForm from "../components/forms/HodForm";
+import axios from "axios";
 
 const Hod = () => {
-  // Hardcoded Data
-  const [hod1, setHod] = useState([
-    {
-      hod_id: 1,
-      fname: "Meridith",
-      lname: "Grey",
-      dnumber: "D001",
-      dname: "Neurology",
-      start_date: "2023-01-15",
-    },
-    {
-      hod_id: 2,
-      fname: "Christina",
-      lname: "Yang",
-      dnumber: "D002",
-      dname: "Cardiology",
-      start_date: "2022-09-10",
-    },
-    {
-      hod_id: 6,
-      fname: "Richard",
-      lname: "Weber",
-      dnumber: "D003",
-      dname: "Orthopedics",
-      start_date: "2021-12-05",
-    },
-    {
-      hod_id: 16,
-      fname: "Lexie",
-      lname: "Grey",
-      dnumber: "D004",
-      dname: "Dermatology",
-      start_date: "2023-05-20",
-    },
-    {
-      hod_id: 4,
-      fname: "Miranda",
-      lname: "Bailey",
-      dnumber: "D005",
-      dname: "Pediatrics",
-      start_date: "2020-11-01",
-    },
-  ]);
-
+  const [hod1, setHod] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editingHod, setEditingHod] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Fetch HODs from backend
+  useEffect(() => {
+    axios
+      .get("https://or-management-system.onrender.com/hod")
+      .then((res) => {
+        console.log("Fetched HOD:", res.data);
+        setHod(res.data);
+      })
+      .catch((err) => console.error(err));
+  }, []);
+
+  // Edit handler
   const handleEdit = (hod) => {
     const mapped = {
       hod_id: hod.hod_id,
-      hod_name: `${hod.fname} ${hod.lname}`,
       hod_dnumber: hod.dnumber,
       hod_dname: hod.dname,
       hod_start_date: hod.start_date,
@@ -66,9 +35,17 @@ const Hod = () => {
     setShowForm(true);
   };
 
+  // Delete handler
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this HOD?")) {
-      setHod((prev) => prev.filter((item) => item.hod_id !== id));
+      axios
+        .delete("https://or-management-system.onrender.com/hod", {
+          data: { hod_id: parseInt(id) },
+        })
+        .then(() => {
+          setHod((prev) => prev.filter((item) => item.hod_id !== id));
+        })
+        .catch((err) => console.error(err));
     }
   };
 
@@ -104,67 +81,78 @@ const Hod = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  HOD Id
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Dept No.
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Department
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Start Date
-                </th>
-                <th className="px-6 py-3"></th>
+                {[
+                  "HOD Id",
+                  "Name",
+                  "Dept No.",
+                  "Department",
+                  "Start Date",
+                  "Actions",
+                ].map((col) => (
+                  <th
+                    key={col}
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    {col}
+                  </th>
+                ))}
               </tr>
             </thead>
 
             <tbody className="bg-white divide-y divide-gray-200">
-              {hod1.map((hod) => (
-                <tr key={hod.hod_id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                    {hod.hod_id}
-                  </td>
+              {hod1
+                .filter((hod) => {
+                  if (!searchTerm) return true;
+                  const s = searchTerm.toLowerCase();
 
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {hod.fname + " " + hod.lname}
-                  </td>
+                  return (
+                    hod.hod_id.toString().includes(s) ||
+                    hod.dname.toLowerCase().includes(s) ||
+                    hod.dnumber.toString().includes(s)
+                  );
+                })
+                .map((hod) => (
+                  <tr key={hod.hod_id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                      {hod.hod_id}
+                    </td>
 
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {hod.dnumber}
-                  </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {/* Backend does NOT store name, so show "HOD #id" */}
+                      HOD #{hod.hod_id}
+                    </td>
 
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {hod.dname}
-                  </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {hod.dnumber}
+                    </td>
 
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {hod.start_date}
-                  </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {hod.dname}
+                    </td>
 
-                  <td className="px-6 py-4 text-right text-sm font-medium">
-                    <div className="flex justify-end space-x-2">
-                      <button
-                        onClick={() => handleEdit(hod)}
-                        className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {hod.start_date}
+                    </td>
 
-                      <button
-                        onClick={() => handleDelete(hod.hod_id)}
-                        className="p-2 text-gray-400 hover:text-red-600 transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    <td className="px-6 py-4 text-right text-sm font-medium">
+                      <div className="flex justify-end space-x-2">
+                        <button
+                          onClick={() => handleEdit(hod)}
+                          className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+
+                        <button
+                          onClick={() => handleDelete(hod.hod_id)}
+                          className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
