@@ -23,7 +23,7 @@ const Nurses = () => {
 
   useEffect(() => {
     axios
-      .get("https://or-management-system.onrender.com/nurses")
+      .get("http://localhost:3000/nurses")
       .then(res => {
         console.log("Fetched nurses:", res.data);
         setNurses(res.data);
@@ -40,7 +40,7 @@ const Nurses = () => {
       nurse_salary: nurse.salary || '',
       nurse_contact: nurse.phone || '',
       nurse_supervisor_id: nurse.superid || '',
-      nurse_experience_years: nurse.nurse_experience_years || '',
+      nurse_experience_years: nurse.experience || '',
       nurse_shift: nurse.nurse_shift || 'Morning'
     };
     setEditingNurse(mappedNurse);
@@ -49,7 +49,7 @@ const Nurses = () => {
 
   const handleDelete = (nurseId) => {
     if (window.confirm('Are you sure you want to delete this nurse?')) {
-      axios.delete("https://or-management-system.onrender.com/nurses", { data: { employee_id: parseInt(nurseId) } })
+      axios.delete("http://localhost:3000/nurses", { data: { employee_id: parseInt(nurseId) } })
         .then(() => setNurses(prev => prev.filter(n => n.empid !== nurseId)))
         .catch(err => console.error(err));
     }
@@ -103,7 +103,7 @@ const Nurses = () => {
                   <tr key={nurse.empid} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{nurse.empid}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{nurse.fname} {nurse.lname}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_experience_years || 0} years</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.experience || 0} years</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.superid}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_shift || "Morning"} Shift</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.phone}</td>

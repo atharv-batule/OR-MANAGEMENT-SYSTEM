@@ -15,8 +15,12 @@ console.log(token)
 
 const Surgeons = () => {
   useEffect(() => {
+      if (token) {
+    // Apply token to all future requests
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      }
     axios
-      .get("https://or-management-system.onrender.com/surgeons")
+      .get("http://localhost:3000/surgeons")
       .then(res => {
         console.log("Fetched surgeons:", res.data);
         setSurgeons(res.data);

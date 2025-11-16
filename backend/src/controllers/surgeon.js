@@ -113,6 +113,7 @@ router.put("/",async(req,res)=>{
         const result=await client.query(`
         SELECT * FROM Employees
          WHERE designation IN ('Attending', 'Intern', 'Resident') 
+         ORDER BY dno,empid ASC;
           `);
           return result.rows;
     }  

@@ -59,33 +59,7 @@ const or = await client.query(`
 
 async function displaySurg() {
   const result = await client.query(`
-    SELECT
-        S.surgery_id,
-        S.patient_id,
-        S.or_id,
-        S.surgery_date,
-        S.surgery_start,
-        S.surgery_end,
-        S.surgery_notes,
-        MAX(CASE WHEN E.designation = 'Attending' THEN L.emp_id END) AS attending_id,
-        MAX(CASE WHEN E.designation = 'Intern' THEN L.emp_id END) AS intern_id,
-        MAX(CASE WHEN E.designation = 'Anesthesiologist' THEN L.emp_id END) AS anesthesiologist_id,
-        MAX(CASE WHEN E.designation = 'Resident' THEN L.emp_id END) AS resident_id,
-        MAX(CASE WHEN E.designation = 'Nurse' THEN L.emp_id END) AS nurse_id
-    FROM
-        Surgery S
-    JOIN
-        surgery_staff L ON S.surgery_id = L.surgery_id
-    JOIN
-        Employees E ON L.emp_id = E.empid
-    GROUP BY
-        S.surgery_id,
-        S.patient_id,
-        S.or_id,
-        S.surgery_date,
-        S.surgery_start,
-        S.surgery_end,
-        S.surgery_notes;
+    SELECT * FROM surgery_details_view
   `);
 
   const surgeries = result.rows;
