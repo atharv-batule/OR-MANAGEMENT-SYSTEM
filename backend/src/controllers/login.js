@@ -41,6 +41,7 @@ const password = req.body.password ? req.body.password : null;
     res.status(200).json({
       message: "Login successful",
       token,
+      success: true,  
       user: { id: user.id, email: user.email, role: user.role }
     });
   } catch (err) {

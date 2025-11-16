@@ -5,6 +5,14 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import SurgeonForm from '../components/forms/SurgeonForm';
 import axios from 'axios';
+import{ jwtDecode }from "jwt-decode";
+
+const token = localStorage.getItem("token");
+const payload = token ? jwtDecode(token) : null;
+const role = payload?.role;
+console.log(role)
+console.log(token)
+
 const Surgeons = () => {
   useEffect(() => {
     axios
@@ -76,10 +84,10 @@ const handleEdit = (surgeon) => {
             />
           </div>
         </div>
-        <Button onClick={() => setShowForm(true)}>
+       {(role=="admin" ||role=="surgeon") && <Button onClick={() => setShowForm(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Add Surgeon
-        </Button>
+        </Button>}
       </div>
 
       <Card>
@@ -97,7 +105,7 @@ const handleEdit = (surgeon) => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DOB</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Salary</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                {(role=="admin"||role=="surgeon")&&<th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -129,7 +137,7 @@ const handleEdit = (surgeon) => {
         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.gender}</td>
         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.dob}</td>
         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.salary}</td>
-
+        {(role=="admin"||role=="surgeon")&&
         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
           <div className="flex justify-end space-x-2">
             <button
@@ -147,6 +155,7 @@ const handleEdit = (surgeon) => {
             </button>
           </div>
         </td>
+      }
       </tr>
     ))}
 </tbody>

@@ -60,11 +60,11 @@ const HodForm = ({ isOpen, onClose, hod = null }) => {
   useEffect(() => {
     if (hod) {
       setFormData({
-        empid: parseInt(hod.hod_id) || '',
-        hod_name: hod.hod_name || '',
-        hod_dob: hod.hod_dname || '',
-        hod_salary: parseInt(hod.hod_dnumber) || '',
-        hod_contact: parseInt(hod.hod_start_date) || '',
+      hod_id: hod.hod_id || '',
+      hod_name: hod.hod_name || '',
+      hod_dnumber: hod.hod_dnumber || '',
+      hod_dname: hod.hod_dname || '',
+      hod_start_date: hod.hod_start_date.split("T")[0] || '',
       });
     } else {
       setFormData({
@@ -88,12 +88,12 @@ const HodForm = ({ isOpen, onClose, hod = null }) => {
     try {
       if (isEditing) {
 
-        console.log('🩺 Updating anesthesiologist:', payload);
-        await axios.put(`https://or-management-system.onrender.com/anesthesiologists`, payload);
-        console.log('✅ Anesthesiologist updated successfully');
+        console.log('🩺 Updating HOD:', payload);
+        await axios.put(`http://localhost:3000/hod`, payload);
+        console.log('HOD updated successfully');
       }  else {
         const payload = {
-        hod_id: parseInt(formData.hod),
+        hod_id: parseInt(formData.hod_id),
         hod_name: formData.hod_name,
         hod_dnumber: parseInt(formData.hod_dnumber),
         hod_dname: formData.hod_dname,
@@ -102,12 +102,13 @@ const HodForm = ({ isOpen, onClose, hod = null }) => {
       };
       console.log("📤 Sending payload:", payload);
 
-      await axios.post("https://or-management-system.onrender.com/anesthesiologists", payload);
-      console.log("✅ Nurse added successfully");
+      await axios.post("http://localhost:3000/hod", payload);
+      console.log(" HOD added successfully");
       }
       onClose();
     } catch (error) {
-      console.error('Error saving anesthesiologist:', error);
+      console.error('Error saving HOD:', error.message);
+      console.log(error)
     } finally {
       setIsSubmitting(false);
     }

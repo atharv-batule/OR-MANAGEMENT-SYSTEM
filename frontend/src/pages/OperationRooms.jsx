@@ -4,6 +4,11 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import OperationRoomForm from '../components/forms/OperationRoomForm';
 import axios from 'axios';
+import{ jwtDecode }from "jwt-decode";
+
+const token = localStorage.getItem("token");
+const payload = token ? jwtDecode(token) : null;
+const role = payload?.role;
 
 const OperationRooms = () => {
   const [operationRooms1, setOperationRooms] = useState([]);
@@ -85,10 +90,10 @@ const OperationRooms = () => {
           />
         </div>
 
-        <Button onClick={() => setShowForm(true)}>
+       {(role=="admin"||role=="surgeon")&& <Button onClick={() => setShowForm(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Add Operation Room
-        </Button>
+        </Button>}
       </div>
 
       {/* Table */}
@@ -100,7 +105,7 @@ const OperationRooms = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">OR Number</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Equipment List</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Action</th>
+                {(role=="admin"||role=="surgeon")&&<th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Action</th>}
               </tr>
             </thead>
 
@@ -123,7 +128,7 @@ const OperationRooms = () => {
                     </span>
                   </td>
 
-                  <td className="px-6 py-4 text-right">
+                  {(role=="admin"||role=="surgeon")&&<td className="px-6 py-4 text-right">
                     <div className="flex justify-end space-x-2">
                       <button onClick={() => handleEdit(room)} className="p-2 text-gray-400 hover:text-blue-600">
                         <Edit className="w-4 h-4" />
@@ -133,7 +138,7 @@ const OperationRooms = () => {
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
-                  </td>
+                  </td>}
                 </tr>
               ))}
             </tbody>

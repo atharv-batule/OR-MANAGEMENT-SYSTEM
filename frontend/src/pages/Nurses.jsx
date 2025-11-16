@@ -5,6 +5,14 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import NurseForm from '../components/forms/NurseForm';
 import axios from 'axios';
+import{ jwtDecode }from "jwt-decode";
+
+const token = localStorage.getItem("token");
+const payload = token ? jwtDecode(token) : null;
+const role = payload?.role;
+// console.log(role);
+// console.log(payload);
+// console.log(token)
 
 const Nurses = () => {
   const [nurses1, setNurses] = useState([]);
@@ -66,10 +74,10 @@ const Nurses = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Button onClick={() => setShowForm(true)}>
+        {(role=="admin"||role=="surgeon")&&<Button onClick={() => setShowForm(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Add Nurse
-        </Button>
+        </Button>}
       </div>
 
       {/* Table */}
@@ -78,9 +86,10 @@ const Nurses = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                {['Employee Id','Name','Experience','Supervisor Id','Shift','Contact','Gender','DOB','Salary','Actions'].map(col => (
+                {['Employee Id','Name','Experience','Supervisor Id','Shift','Contact','Gender','DOB','Salary',].map(col => (
                   <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{col}</th>
                 ))}
+               {(role=="admin"||role=="surgeon")&& <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ACTIONS</th>}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -101,7 +110,7 @@ const Nurses = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.gender}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.dob}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.salary}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  {(role=="admin"||role=="surgeon")&&  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end space-x-2">
                         <button onClick={() => handleEdit(nurse)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
                           <Edit className="w-4 h-4" />
@@ -111,6 +120,7 @@ const Nurses = () => {
                         </button>
                       </div>
                     </td>
+                  }
                   </tr>
                 ))}
             </tbody>

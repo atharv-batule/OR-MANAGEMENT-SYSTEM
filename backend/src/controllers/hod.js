@@ -51,7 +51,7 @@ router.post("/", async (req, res) => {
   
       res.send("HOD added successfully");
     } catch (err) {
-      console.error("POST HOD Error:", err);
+      console.error("POST HOD Error:", err.message);
       res.status(500).send("Internal Server Error");
     }
   });

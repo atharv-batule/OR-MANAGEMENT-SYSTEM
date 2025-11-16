@@ -37,13 +37,13 @@ app.get("/", async(req,res)=>
     const result=await client.query("SELECT current_database()");
     res.send(`${result.rows[0].current_database}`)
 })
-app.post("/", async(req,res)=>
-{
-    const result=await client.query("SELECT * from user1");
-    //res.json(`${result.rows[0]}`)
+// app.post("/", async(req,res)=>
+// {
+//     const result=await client.query("SELECT * from user1");
+//     //res.json(`${result.rows[0]}`)
     
-    console.log(result.rows[0])
-})
+//     console.log(result.rows[0])
+// })
 
 app.get("/registration", async(req,res)=>
 {

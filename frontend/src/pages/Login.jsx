@@ -3,8 +3,10 @@ import axios from 'axios';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Input from '../components/ui/Input';
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -50,12 +52,13 @@ const Login = () => {
       if (res.data.success) {
         // Store user data in localStorage
         localStorage.setItem('user', JSON.stringify(res.data.user));
-        
+        localStorage.setItem("token", res.data.token);
+
         // Success message
         alert(`Welcome back!`);
         
         // Redirect to dashboard
-        window.location.replace('/dashboard');
+        navigate("/dashboard");
       } else {
         setError(res.data.message || 'Invalid credentials');
       }

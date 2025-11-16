@@ -4,6 +4,14 @@ import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
 import HodForm from "../components/forms/HodForm";
 import axios from "axios";
+import{ jwtDecode }from "jwt-decode";
+
+const token = localStorage.getItem("token");
+const payload = token ? jwtDecode(token) : null;
+const role = payload?.role;
+console.log(role);
+console.log(payload);
+console.log(token)
 
 const Hod = () => {
   const [hod1, setHod] = useState([]);
@@ -14,7 +22,7 @@ const Hod = () => {
   // Fetch HODs from backend
   useEffect(() => {
     axios
-      .get("https://or-management-system.onrender.com/hod")
+      .get("http://localhost:3000/hod")
       .then((res) => {
         console.log("Fetched HOD:", res.data);
         setHod(res.data);
@@ -69,10 +77,10 @@ const Hod = () => {
           />
         </div>
 
-        <Button onClick={() => setShowForm(true)}>
+        {(role=="admin"||role=="surgeon")&&<Button onClick={() => setShowForm(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Add Head of Department
-        </Button>
+        </Button>}
       </div>
 
       {/* Table */}
@@ -87,7 +95,7 @@ const Hod = () => {
                   "Dept No.",
                   "Department",
                   "Start Date",
-                  "Actions",
+                
                 ].map((col) => (
                   <th
                     key={col}
@@ -96,6 +104,11 @@ const Hod = () => {
                     {col}
                   </th>
                 ))}
+                {(role=="admin"||role=="surgeon")&&<th
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    ACTIONS
+                  </th>}
               </tr>
             </thead>
 
@@ -134,7 +147,7 @@ const Hod = () => {
                       {hod.start_date}
                     </td>
 
-                    <td className="px-6 py-4 text-right text-sm font-medium">
+                   {(role=="admin"||role=="surgeon")&& <td className="px-6 py-4 text-right text-sm font-medium">
                       <div className="flex justify-end space-x-2">
                         <button
                           onClick={() => handleEdit(hod)}
@@ -151,6 +164,7 @@ const Hod = () => {
                         </button>
                       </div>
                     </td>
+                    }
                   </tr>
                 ))}
             </tbody>

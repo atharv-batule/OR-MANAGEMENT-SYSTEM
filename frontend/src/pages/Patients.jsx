@@ -5,7 +5,11 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import PatientForm from '../components/forms/PatientForm';
 import axios from 'axios';
+import{ jwtDecode }from "jwt-decode";
 
+const token = localStorage.getItem("token");
+const payload = token ? jwtDecode(token) : null;
+const role = payload?.role;
 
 const Patients = () => {
 useEffect(() => {
@@ -81,10 +85,12 @@ useEffect(() => {
             />
           </div>
         </div>
-        <Button onClick={() => setShowForm(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Patient
-        </Button>
+       {(role=="admin"||role=="surgeon") && (
+  <Button onClick={() => setShowForm(true)}>
+    <Plus className="w-4 h-4 mr-2" />
+    Add Patient
+  </Button>
+)}
       </div>
 
       <Card>
@@ -100,7 +106,7 @@ useEffect(() => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Medical History</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                {(role=="admin"||role=="surgeon")&&<th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -143,7 +149,7 @@ useEffect(() => {
         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
           {patient.medicalhistory || "-"}
         </td>
-
+        {(role=="admin"||role=="surgeon")&&
         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
           <div className="flex justify-end space-x-2">
             <button
@@ -161,6 +167,7 @@ useEffect(() => {
             </button>
           </div>
         </td>
+        }
       </tr>
     ))}
 </tbody>

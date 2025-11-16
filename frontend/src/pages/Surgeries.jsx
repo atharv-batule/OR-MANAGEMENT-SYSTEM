@@ -5,6 +5,11 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import SurgeryForm from '../components/forms/SurgeryForm';
 import axios from 'axios';
+import{ jwtDecode }from "jwt-decode";
+
+const token = localStorage.getItem("token");
+const payload = token ? jwtDecode(token) : null;
+const role = payload?.role;
 
 const Surgeries = () => {
   const { deleteSurgery } = useApp();
@@ -64,10 +69,10 @@ const Surgeries = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Button onClick={() => setShowForm(true)}>
+        {(role=="admin"||role=="surgeon")&&<Button onClick={() => setShowForm(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Add Surgery
-        </Button>
+        </Button>}
       </div>
 
       {/* Table */}
@@ -78,10 +83,11 @@ const Surgeries = () => {
               <tr>
                 {[
                   'Surgery ID', 'Patient ID', 'OR ID','Procedure', 'Date', 'Start Time', 'End Time',
-                  'Notes',  'Attending', 'Intern', 'Resident', 'Nurse', 'Anesthesiologist', 'Actions'
+                  'Notes',  'Attending', 'Intern', 'Resident', 'Nurse', 'Anesthesiologist'
                 ].map((col) => (
                   <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{col}</th>
                 ))}
+                {(role=="admin"||role=="surgeon")&&<th  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ACTIONS</th>}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -103,7 +109,7 @@ const Surgeries = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.nurse_name}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.anesthesiologist_name}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex justify-end space-x-2">
+                     {(role=="admin"||role=="surgeon")&& <div className="flex justify-end space-x-2">
                         <button onClick={() => handleEdit(surgery)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
                           <Edit className="w-4 h-4" />
                         </button>
@@ -111,6 +117,7 @@ const Surgeries = () => {
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
+                    }
                     </td>
                   </tr>
                 ))}

@@ -5,6 +5,14 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import AnesthesiologistForm from '../components/forms/AnesthesiologistForm';
 import axios from 'axios';
+import{ jwtDecode }from "jwt-decode";
+
+const token = localStorage.getItem("token");
+const payload = token ? jwtDecode(token) : null;
+const role = payload?.role;
+
+console.log(role)
+console.log(token)
 
 const baseURL = import.meta.env.REACT_APP_API_URL;
 
@@ -74,10 +82,10 @@ const Anesthesiologists = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Button onClick={() => setShowForm(true)}>
+        {(role=="admin"||role=="surgeon")&&<Button onClick={() => setShowForm(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Add Anesthesiologist
-        </Button>
+        </Button>}
       </div>
 
       
@@ -94,7 +102,7 @@ const Anesthesiologists = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DOB</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Salary</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+               {(role=="admin"||role=="surgeon") && <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -139,7 +147,7 @@ const Anesthesiologists = () => {
           {anesthesiologist.salary}
         </td>
 
-        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+        {(role=="admin"||role=="surgeon") &&<td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
           <div className="flex justify-end space-x-2">
             <button
               onClick={() => handleEdit(anesthesiologist)}
@@ -155,35 +163,12 @@ const Anesthesiologists = () => {
               <Trash2 className="w-4 h-4" />
             </button>
           </div>
-        </td>
+        </td>}
       </tr>
     ))}
 </tbody>
-<tbody className="bg-white divide-y divide-gray-200">
-              {anesthesiologists1.map((anesthesiologist) => (
-                <tr key={anesthesiologist.empid} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{anesthesiologist.empid}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{anesthesiologist.fname+" "+anesthesiologist.lname}</td>
-                  {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_certification}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_experience_years} years</td> */}
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.superid}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.phone}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.gender}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.dob}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.salary}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex justify-end space-x-2">
-                      <button onClick={() => handleEdit(anesthesiologist)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => handleDelete(anesthesiologist.empid)} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+
+
           </table>
         </div>
       </Card>
