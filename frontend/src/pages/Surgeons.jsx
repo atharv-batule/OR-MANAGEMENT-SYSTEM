@@ -47,7 +47,7 @@ const handleEdit = (surgeon) => {
     surgeon_gender: surgeon.gender || '',
     surgeon_salary: surgeon.salary || '',
     surgeon_contact: surgeon.phone || '',
-    surgeon_experience_years: surgeon.surgeon_experience_years || '',
+    surgeon_experience_years: surgeon.experience || '',
     supervisor_id: surgeon.superid || '',
     surgeon_designation: surgeon.designation || '',
   };
@@ -133,13 +133,13 @@ const handleEdit = (surgeon) => {
           {surgeon.fname + " " + surgeon.lname}
         </td>
         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-          {surgeon.surgeon_experience_years || 0} years
+          {surgeon.experience || 0} years
         </td>
         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.designation}</td>
         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.superid}</td>
         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.phone}</td>
         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.gender}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.dob}</td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.dob.split("T")[0]}</td>
         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.salary}</td>
         {(role=="admin"||role=="surgeon")&&
         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

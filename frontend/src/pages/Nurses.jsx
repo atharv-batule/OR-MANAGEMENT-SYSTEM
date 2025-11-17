@@ -108,7 +108,7 @@ const Nurses = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.nurse_shift || "Morning"} Shift</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.phone}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.gender}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.dob}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.dob.split("T")[0]}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{nurse.salary}</td>
                   {(role=="admin"||role=="surgeon")&&  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end space-x-2">

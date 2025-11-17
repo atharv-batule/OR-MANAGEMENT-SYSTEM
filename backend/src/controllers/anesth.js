@@ -26,6 +26,7 @@ async function displayAnesth()
     const result=await client.query(`
         SELECT * FROM Employees
          WHERE designation IN ('Anesthesiologist') 
+         order by empid asc
           `);
           return result.rows;
 } 
@@ -74,6 +75,7 @@ SET
   designation = $8,
   phone = $9,
 WHERE empid = $1;
+
     `,[empid, fname, lname, dob, salary, gender, superid, designation,phone]);
     }
 

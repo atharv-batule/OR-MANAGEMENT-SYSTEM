@@ -60,6 +60,7 @@ const or = await client.query(`
 async function displaySurg() {
   const result = await client.query(`
     SELECT * FROM surgery_details_view
+    order by surgery_id asc;
   `);
 
   const surgeries = result.rows;

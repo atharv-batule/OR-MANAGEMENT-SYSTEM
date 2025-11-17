@@ -14,7 +14,7 @@ const role = payload?.role;
 const Patients = () => {
 useEffect(() => {
     axios
-      .get("https://or-management-system.onrender.com/patients")
+      .get("http://localhost:3000/patients")
       .then(res => {
         console.log("Fetched patients:", res.data);
         setPatients(res.data);

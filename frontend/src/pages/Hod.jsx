@@ -143,7 +143,7 @@ const Hod = () => {
                     </td>
 
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {hod.start_date}
+                      {hod.start_date.split("T")[0]}
                     </td>
 
                    {(role=="admin"||role=="surgeon")&& <td className="px-6 py-4 text-right text-sm font-medium">

@@ -99,7 +99,7 @@ const Surgeries = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.patient_id}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.or_id}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.procedure}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_date}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_date.split("T")[0]}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_start}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_end}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgery.surgery_notes}</td>

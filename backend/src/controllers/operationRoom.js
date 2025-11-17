@@ -62,6 +62,7 @@ async function displayOR()
 {
     const result=await client.query(`
     SELECT * FROM or_table 
+    order by orid asc;
     `);
     return result.rows;
 }

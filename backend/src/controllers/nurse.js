@@ -26,6 +26,7 @@ async function displayNurse()
     const result=await client.query(`
         SELECT * FROM Employees
          WHERE designation IN ('Nurse') 
+         order by empid asc;
           `);
           return result.rows;
 } 

@@ -25,7 +25,6 @@ const Register = () => {
 
   const validateForm = () => {
     const { id, email, role, fname, lname, password } = formData;
-
     if (!id || !email || !role || !fname || !lname || !password) {
       setError("All fields are required.");
       return false;
@@ -41,7 +40,10 @@ const Register = () => {
     setError('');
 
     try {
-      const res = await axios.post('http://localhost:3000/register', formData);
+      // Ensure id is an integer before sending
+      const payload = { ...formData, id: parseInt(formData.id, 10) };
+
+      const res = await axios.post('http://localhost:3000/register', payload);
       if (res.data.success) {
         alert('Registration successful! Please login.');
         window.location.replace('/login');
@@ -70,7 +72,6 @@ const Register = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <section className="space-y-4">
 
-              {/* ID */}
               <Input
                 label="User ID"
                 type="number"
@@ -80,7 +81,6 @@ const Register = () => {
                 required
               />
 
-              {/* First Name */}
               <Input
                 label="First Name"
                 type="text"
@@ -90,7 +90,6 @@ const Register = () => {
                 required
               />
 
-              {/* Last Name */}
               <Input
                 label="Last Name"
                 type="text"
@@ -100,7 +99,6 @@ const Register = () => {
                 required
               />
 
-              {/* Email */}
               <Input
                 label="Email"
                 type="email"
@@ -110,7 +108,6 @@ const Register = () => {
                 required
               />
 
-              {/* Role Dropdown */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Role
@@ -130,7 +127,6 @@ const Register = () => {
                 </select>
               </div>
 
-              {/* Password */}
               <Input
                 label="Password"
                 type="password"
