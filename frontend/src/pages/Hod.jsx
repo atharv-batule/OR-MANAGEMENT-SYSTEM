@@ -131,8 +131,7 @@ const Hod = () => {
                     </td>
 
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {/* Backend does NOT store name, so show "HOD #id" */}
-                      HOD #{hod.hod_id}
+                      {hod.fname} {hod.lname}
                     </td>
 
                     <td className="px-6 py-4 text-sm text-gray-900">
