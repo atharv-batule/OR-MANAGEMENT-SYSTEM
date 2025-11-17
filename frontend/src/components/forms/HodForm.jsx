@@ -32,7 +32,8 @@ const HodForm = ({ isOpen, onClose, hod = null }) => {
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [hod1, setHod] = useState([]);
+  const [emp, setEmp] = useState([]);
   
   const validateForm = () => {
     const newErrors = {};
@@ -55,7 +56,17 @@ const HodForm = ({ isOpen, onClose, hod = null }) => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/hod")
+      .then((res) => {
+        console.log("Fetched HOD:", res.data);
+        setHod(res.data.hodData);
+        setEmp(res.data.emp)
 
+      })
+      .catch((err) => console.error(err));
+  }, []);
   
   useEffect(() => {
     if (hod) {
