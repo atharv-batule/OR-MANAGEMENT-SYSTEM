@@ -47,7 +47,7 @@ const Hod = () => {
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this HOD?")) {
       axios
-        .delete("https://or-management-system.onrender.com/hod", {
+        .delete("http://localhost:3000/hod", {
           data: { hod_id: parseInt(id) },
         })
         .then(() => {
