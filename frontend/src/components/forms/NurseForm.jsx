@@ -99,7 +99,7 @@ const NurseForm = ({ isOpen, onClose, nurse = null }) => {
         nurse_contact: formData.nurse_contact,
       };
     if (isEditing) {
-      console.log("Update logic pending");
+      
       await axios.put(`https://or-management-system.onrender.com/nurses`, payload);
       // await updateNurse(nurse.empid, formData); // when ready
     } else {

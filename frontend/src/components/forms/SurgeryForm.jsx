@@ -123,10 +123,7 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
     setIsSubmitting(true);
 
     try {
-      if (isEditing) {
-        //updateSurgery(formData.surgery_id, formData);
-      } else {
-        const payload={
+      const payload={
         surgery_id: parseInt(formData.surgery_id),
         patient_id: parseInt(formData.patient_id),
         or_id: parseInt(formData.or_id),
@@ -141,6 +138,10 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
         anesthesiologist_id: parseInt(formData.anesthesiologist),
         procedure: formData.procedure
         };
+      if (isEditing) {
+        await axios.put(`http://localhost:3000/surgery`, payload);
+      } else {
+        
         await axios.post("https://or-management-system.onrender.com/surgery", payload);
         //await axios.post("http://localhost:3000/surgery", payload);
         console.log("✅ Surgeon added successfully");

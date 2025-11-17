@@ -155,6 +155,92 @@ async function addSurg(
     throw err;
   }
 }
+//put
+
+router.put("/",async(req,res)=>{
+  try{
+  const temp=await updateSurg(
+parseInt(req.body.surgery_id),
+parseInt(req.body.patient_id),
+parseInt(req.body.or_id),
+req.body.surgery_date,
+req.body.surgery_start,
+req.body.surgery_end,
+req.body.surgery_notes,
+parseInt(req.body.attending_id),
+parseInt(req.body.resident_id),
+parseInt(req.body.intern_id),
+parseInt(req.body.nurse_id),
+parseInt(req.body.anesthesiologist_id),
+req.body.procedure
+
+  );
+//   if (temp.rowCount === 0) {
+//       return res.status(409).json({
+//         success: false,
+//         message: "Surgery could not be scheduled. The selected OR is already booked during this time.",
+//       });
+// }
+  
+  console.log("Insert result:", temp);
+    res.json({ success: true, temp });
+
+  } catch (err) {
+    console.error("Error in POST /surgery:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }finally{}
+
+})
+async function updateSurg(
+  surgery_id, patient_id, or_id, surgery_date, surgery_start, surgery_end,
+  surgery_notes, attending_id, resident_id, intern_id, nurse_id, anesthesiologist_id, procedure
+) {
+  await client.query("BEGIN");
+  try {
+   
+    await client.query(
+      `UPDATE surgery
+       SET or_id = $1,
+           surgery_date = $2,
+           surgery_start = $3,
+           surgery_end = $4,
+           surgery_notes = $5,
+           procedure = $6
+       WHERE surgery_id = $7
+         AND patient_id = $8`,
+      [or_id, surgery_date, surgery_start, surgery_end, surgery_notes, procedure, surgery_id, patient_id]
+    );
+
+    
+    await client.query(
+      `DELETE FROM surgery_staff WHERE surgery_id = $1`,
+      [surgery_id]
+    );
+
+    
+    const staffIds = [attending_id, resident_id, intern_id, nurse_id, anesthesiologist_id].filter(Boolean); 
+    for (const emp_id of staffIds) {
+      await client.query(
+        `INSERT INTO surgery_staff (surgery_id, emp_id) VALUES ($1, $2)`,
+        [surgery_id, emp_id]
+      );
+    }
+
+    await client.query("COMMIT");
+    return { success: true };
+  } catch (err) {
+    await client.query("ROLLBACK");
+    console.error("Update surgery failed:", err.message);
+    throw err;
+  }
+}
+
+
+
+
+
+
+
 async function empName(empid) {
   const result = await client.query(`
     SELECT
