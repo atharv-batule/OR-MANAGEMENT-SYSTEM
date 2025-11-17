@@ -7,9 +7,12 @@ import { Link } from 'react-router-dom';
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: ''
+    id: "",
+    email: "",
+    role: "",
+    fname: "",
+    lname: "",
+    password: ""
   });
 
   const [error, setError] = useState('');
@@ -21,8 +24,10 @@ const Register = () => {
   };
 
   const validateForm = () => {
-    if (!formData.name || !formData.email || !formData.password) {
-      setError('All fields are required.');
+    const { id, email, role, fname, lname, password } = formData;
+
+    if (!id || !email || !role || !fname || !lname || !password) {
+      setError("All fields are required.");
       return false;
     }
     return true;
@@ -53,23 +58,49 @@ const Register = () => {
   return (
     <>
       <div className="pt-10 shadow-blue-300 bg-gray-100 px-4 bg-gradient-to-bl from-[#fdfdb1] to-[#85edff]">  
-      <h2 className="text-2xl font-bold text-gray-800 text-center">OR Management System</h2>
+        <h2 className="text-2xl font-bold text-gray-800 text-center">
+          OR Management System
+        </h2>
       </div>
 
       <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 bg-gradient-to-bl from-[#85edff] to-[#fdfdb1]">
-      <Card className="max-w-md w-full p-8 shadow-xl shadow-blue-200">
+        <Card className="max-w-md w-full p-8 shadow-xl shadow-blue-200">
           <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Register</h2>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <section className="space-y-4">
+
+              {/* ID */}
               <Input
-                label="Full Name"
-                type="text"
-                value={formData.name}
-                onChange={(e) => handleInputChange('name', e.target.value)}
-                placeholder="Enter your full name"
+                label="User ID"
+                type="number"
+                value={formData.id}
+                onChange={(e) => handleInputChange('id', e.target.value)}
+                placeholder="Enter user ID"
                 required
               />
+
+              {/* First Name */}
+              <Input
+                label="First Name"
+                type="text"
+                value={formData.fname}
+                onChange={(e) => handleInputChange('fname', e.target.value)}
+                placeholder="Enter first name"
+                required
+              />
+
+              {/* Last Name */}
+              <Input
+                label="Last Name"
+                type="text"
+                value={formData.lname}
+                onChange={(e) => handleInputChange('lname', e.target.value)}
+                placeholder="Enter last name"
+                required
+              />
+
+              {/* Email */}
               <Input
                 label="Email"
                 type="email"
@@ -78,6 +109,28 @@ const Register = () => {
                 placeholder="Enter your email"
                 required
               />
+
+              {/* Role Dropdown */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Role
+                </label>
+                <select
+                  value={formData.role}
+                  onChange={(e) => handleInputChange('role', e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-400"
+                  required
+                >
+                  <option value="">Select Role</option>
+                  <option value="Admin">Admin</option>
+                  <option value="Surgeon">Surgeon</option>
+                  <option value="Nurse">Nurse</option>
+                  <option value="Anesthesiologist">Anesthesiologist</option>
+                  <option value="Staff">Staff</option>
+                </select>
+              </div>
+
+              {/* Password */}
               <Input
                 label="Password"
                 type="password"
@@ -86,6 +139,7 @@ const Register = () => {
                 placeholder="Create a password"
                 required
               />
+
             </section>
 
             {error && (
