@@ -25,7 +25,7 @@ const Hod = () => {
       .get("http://localhost:3000/hod")
       .then((res) => {
         console.log("Fetched HOD:", res.data);
-        setHod(res.data);
+        setHod(res.data.hodData);
       })
       .catch((err) => console.error(err));
   }, []);

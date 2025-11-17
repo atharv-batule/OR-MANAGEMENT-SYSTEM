@@ -19,8 +19,11 @@ router.get("/", async (req, res) => {
         FROM department
         ORDER BY dnumber ASC
       `);
-  
-      res.json(result.rows);
+      const temp= await client.query(`
+        select empid,fname,lname from employees`)
+        const hodData=result.rows
+        const emp=temp.rows;
+      res.json({hodData,emp});
     } catch (err) {
       console.error("GET HOD Error:", err);
       res.status(500).send("Failed to fetch HOD data");
