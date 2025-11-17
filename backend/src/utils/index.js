@@ -11,7 +11,7 @@ import surgRoutes from "../controllers/surgery.js"
 import orInfo from "../controllers/dashboard.js"
 import authRoutes from "../route/auth.js";
 import hodRoutes from "../controllers/hod.js";
-
+import regRoutes from "../controllers/register.js"
 dotenev.config();
 
 const app=express();
@@ -53,7 +53,7 @@ app.use("/surgery",surgRoutes );
 app.use("/dashboard",orInfo );
 app.use("/login", authRoutes);
 app.use("/hod", hodRoutes);
-
+app.use("/register",regRoutes);
 //server running 
 app.listen(port,()=>
 {
