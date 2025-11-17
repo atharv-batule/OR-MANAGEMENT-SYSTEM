@@ -1,3 +1,21 @@
+
+import { Client } from 'pg';
+
+const client = new Client({
+  connectionString: 'postgresql://postgres.glkubgmswyjawlcgxspw:DmbgELe4GarxXkS5@aws-1-ap-south-1.pooler.supabase.com:5432/postgres',
+  ssl: { rejectUnauthorized: false } // Required for Supabase
+});
+
+client.connect()
+  .then(() => console.log('Connected to PostgreSQL'))
+  .catch(err => console.error('Connection error', err));
+
+export { client };
+
+
+//discarded:
+
+
 // import { Client } from 'pg';
 
 // const client = new Client({
@@ -15,16 +33,3 @@
 //   })
 
   //export {client};
-import { Client } from 'pg';
-
-const client = new Client({
-  connectionString: 'postgresql://postgres.glkubgmswyjawlcgxspw:DmbgELe4GarxXkS5@aws-1-ap-south-1.pooler.supabase.com:5432/postgres',
-  ssl: { rejectUnauthorized: false } // Required for Supabase
-});
-
-client.connect()
-  .then(() => console.log('Connected to PostgreSQL'))
-  .catch(err => console.error('Connection error', err));
-
-export { client };
-

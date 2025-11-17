@@ -117,17 +117,11 @@ router.put("/",async(req,res)=>{
           `);
           return result.rows;
     }  
-    //addEmployee(11,"Atharv","Batule","2005-07-05",20000,"male",1234,"Attending");
-    //updateEmployee(11,"Sameer","Naik","2005-07-05",20000,"male",1234,"Attending");
 
     const result=await client.query(`
     select * from Employees
     `); 
-    // const alt=client.query(`
-    //   ALTER TABLE Employees
-    //   ADD Phone VARCHAR (255)
-
-    //   `)
+  
     console.log(result.rows)
     console.log("Employees table created successfully");
 

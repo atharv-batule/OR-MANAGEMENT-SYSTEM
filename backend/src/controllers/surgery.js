@@ -96,12 +96,7 @@ parseInt(req.body.anesthesiologist_id),
 req.body.procedure
 
   );
-//   if (temp.rowCount === 0) {
-//       return res.status(409).json({
-//         success: false,
-//         message: "Surgery could not be scheduled. The selected OR is already booked during this time.",
-//       });
-// }
+
   
   console.log("Insert result:", temp);
     res.json({ success: true, temp });
@@ -175,12 +170,7 @@ parseInt(req.body.anesthesiologist_id),
 req.body.procedure
 
   );
-//   if (temp.rowCount === 0) {
-//       return res.status(409).json({
-//         success: false,
-//         message: "Surgery could not be scheduled. The selected OR is already booked during this time.",
-//       });
-// }
+
   
   console.log("Insert result:", temp);
     res.json({ success: true, temp });
@@ -234,12 +224,6 @@ async function updateSurg(
     throw err;
   }
 }
-
-
-
-
-
-
 
 async function empName(empid) {
   const result = await client.query(`

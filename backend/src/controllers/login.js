@@ -16,22 +16,21 @@ const password = req.body.password ? req.body.password : null;
     console.log(email, password);
     if (!email || !password)
       return res.status(400).json({ message: "Email and password required" });
-// console.log(email,password);
-    // Query user by email
+
     const result = await client.query("SELECT * FROM users WHERE email = $1", [email]);
     if(!result){console.log("faltu error here")}
     const user = result.rows[0];
     console.log(user)
-// console.log(user.email, user.password);
+
     if (!user)
       return res.status(401).json({ message: "Invalid email or password" });
 
-    // Compare hashed password
+    
     const validPassword = await bcrypt.compare(password, user.password);
     if (password !== user.password)
       return res.status(401).json({ message: "Invalid email or password" });
 
-    // Generate JWT
+    
     const token = jwt.sign(
       { id: user.id, role: user.role },
       process.env.JWT_SECRET,
