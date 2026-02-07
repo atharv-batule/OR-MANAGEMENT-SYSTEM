@@ -20,10 +20,7 @@ const LayoutWithSidebar = ({ children }) => {
     <div className="flex h-screen bg-gray-100">
       <Sidebar />
       <div className="flex-1 overflow-auto">
-        <div className="p-8">
-          <h1 className="text-3xl font-bold mb-6">OR Management System</h1>
-          {children}
-        </div>
+        {children}
       </div>
     </div>
   );
