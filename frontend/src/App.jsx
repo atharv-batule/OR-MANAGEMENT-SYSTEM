@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import Sidebar from './components/layout/Sidebar';
 import Dashboard from './pages/Dashboard';
@@ -10,36 +10,48 @@ import Nurses from './pages/Nurses';
 import OperationRooms from './pages/OperationRooms';
 import Surgeries from './pages/Surgeries';
 import DisplayName from './components/forms/sample';
-//import SurgeonTableContainer from './components/tables/SurgeonTable';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Hod from './pages/Hod';
 
 function App() {
-
-  
   return (
     <AppProvider>
       <Router>
-        <div className="flex h-screen bg-gray-50">
-          <Sidebar />
-          <div className="flex-1 flex flex-col overflow-hidden ml-64">
-            <header className="bg-white shadow-sm border-b border-gray-200">
-              <div className="px-6 py-4">
-                <h2 className="text-2xl font-semibold text-gray-800">OR Management System</h2>
+        <Routes>
+          {/* Redirect root to login */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          
+          {/* Login and Register pages (no sidebar) */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          {/* All other pages (with sidebar) */}
+          <Route
+            path="/*"
+            element={
+              <div className="flex h-screen bg-gray-100">
+                <Sidebar />
+                <div className="flex-1 overflow-auto">
+                  <div className="p-8">
+                    <h1 className="text-3xl font-bold mb-6">OR Management System</h1>
+                    <Routes>
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/patients" element={<Patients />} />
+                      <Route path="/surgeons" element={<Surgeons />} />
+                      <Route path="/anesthesiologists" element={<Anesthesiologists />} />
+                      <Route path="/nurses" element={<Nurses />} />
+                      <Route path="/operation-rooms" element={<OperationRooms />} />
+                      <Route path="/surgeries" element={<Surgeries />} />
+                      <Route path="/displayname" element={<DisplayName />} />
+                      <Route path="/hod" element={<Hod />} />
+                    </Routes>
+                  </div>
+                </div>
               </div>
-            </header>
-            <main className="flex-1 overflow-y-auto p-6">
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/patients" element={<Patients />} />
-                <Route path="/surgeons" element={<Surgeons />} />
-                <Route path="/anesthesiologists" element={<Anesthesiologists />} />
-                <Route path="/nurses" element={<Nurses />} />
-                <Route path="/operation-rooms" element={<OperationRooms />} />
-                <Route path="/surgeries" element={<Surgeries />} />
-                <Route path="/registration" element={<DisplayName />} />
-              </Routes>
-            </main>
-          </div>
-        </div>
+            }
+          />
+        </Routes>
       </Router>
     </AppProvider>
   );
