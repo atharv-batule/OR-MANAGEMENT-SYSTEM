@@ -9,7 +9,7 @@ const port=process.env.PORT||3000;
 router.use(express.json())
 router.use(cors())
 
-//get router
+
 router.get("/", async (req, res) => {
    try {
     const result = await displayPatient(); // fetch data (e.g., from DB)
