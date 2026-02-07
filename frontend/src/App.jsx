@@ -14,6 +14,21 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Hod from './pages/Hod';
 
+// Layout component with sidebar
+const LayoutWithSidebar = ({ children }) => {
+  return (
+    <div className="flex h-screen bg-gray-100">
+      <Sidebar />
+      <div className="flex-1 overflow-auto">
+        <div className="p-8">
+          <h1 className="text-3xl font-bold mb-6">OR Management System</h1>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 function App() {
   return (
     <AppProvider>
@@ -27,30 +42,15 @@ function App() {
           <Route path="/register" element={<Register />} />
 
           {/* All other pages (with sidebar) */}
-          <Route
-            path="/*"
-            element={
-              <div className="flex h-screen bg-gray-100">
-                <Sidebar />
-                <div className="flex-1 overflow-auto">
-                  <div className="p-8">
-                    <h1 className="text-3xl font-bold mb-6">OR Management System</h1>
-                    <Routes>
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/patients" element={<Patients />} />
-                      <Route path="/surgeons" element={<Surgeons />} />
-                      <Route path="/anesthesiologists" element={<Anesthesiologists />} />
-                      <Route path="/nurses" element={<Nurses />} />
-                      <Route path="/operation-rooms" element={<OperationRooms />} />
-                      <Route path="/surgeries" element={<Surgeries />} />
-                      <Route path="/displayname" element={<DisplayName />} />
-                      <Route path="/hod" element={<Hod />} />
-                    </Routes>
-                  </div>
-                </div>
-              </div>
-            }
-          />
+          <Route path="/dashboard" element={<LayoutWithSidebar><Dashboard /></LayoutWithSidebar>} />
+          <Route path="/patients" element={<LayoutWithSidebar><Patients /></LayoutWithSidebar>} />
+          <Route path="/surgeons" element={<LayoutWithSidebar><Surgeons /></LayoutWithSidebar>} />
+          <Route path="/anesthesiologists" element={<LayoutWithSidebar><Anesthesiologists /></LayoutWithSidebar>} />
+          <Route path="/nurses" element={<LayoutWithSidebar><Nurses /></LayoutWithSidebar>} />
+          <Route path="/operation-rooms" element={<LayoutWithSidebar><OperationRooms /></LayoutWithSidebar>} />
+          <Route path="/surgeries" element={<LayoutWithSidebar><Surgeries /></LayoutWithSidebar>} />
+          <Route path="/displayname" element={<LayoutWithSidebar><DisplayName /></LayoutWithSidebar>} />
+          <Route path="/hod" element={<LayoutWithSidebar><Hod /></LayoutWithSidebar>} />
         </Routes>
       </Router>
     </AppProvider>
