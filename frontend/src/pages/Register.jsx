@@ -43,7 +43,7 @@ const Register = () => {
       // Ensure id is an integer before sending
       const payload = { ...formData, id: parseInt(formData.id, 10) };
 
-      const res = await axios.post('http://localhost:3000/register', payload);
+      const res = await axios.post('https://or-management-system.onrender.com/register', payload);
       if (res.data.success) {
         alert('Registration successful! Please login.');
         window.location.replace('/login');

@@ -5,7 +5,7 @@ function DisplayName() {
   const [names, setNames] = useState([]); // array instead of string
 
   useEffect(() => {
-    axios.get("http://localhost:3000/registration")
+    axios.get("https://or-management-system.onrender.com/registration")
       .then((res) => {
         console.log(res.data); // check if array
         setNames(res.data.map(user => user.name)); // store array of names

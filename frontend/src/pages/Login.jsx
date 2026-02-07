@@ -45,7 +45,7 @@ const Login = () => {
       console.log('Payload being sent:', payload);
 
       // POST request to backend
-      const res = await axios.post('http://localhost:3000/login', payload);
+      const res = await axios.post('https://or-management-system.onrender.com/login', payload);
       
       console.log('Login response:', res.data);
 

@@ -18,7 +18,7 @@ const OperationRooms = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/operation-rooms")
+      .get("https://or-management-system.onrender.com/operation-rooms")
       .then(res => {
         console.log("Fetched OR Details:", res.data);
         setOperationRooms(res.data);

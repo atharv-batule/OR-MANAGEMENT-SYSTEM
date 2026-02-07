@@ -58,7 +58,7 @@ const HodForm = ({ isOpen, onClose, hod = null }) => {
   };
   useEffect(() => {
     axios
-      .get("http://localhost:3000/hod")
+      .get("https://or-management-system.onrender.com/hod")
       .then((res) => {
         console.log("Fetched HOD:", res.data);
         setHod(res.data.hodData);
@@ -100,7 +100,7 @@ const HodForm = ({ isOpen, onClose, hod = null }) => {
       if (isEditing) {
 
         console.log('🩺 Updating HOD:', payload);
-        await axios.put(`http://localhost:3000/hod`, payload);
+        await axios.put(`https://or-management-system.onrender.com/hod`, payload);
         console.log('HOD updated successfully');
       }  else {
         const payload = {
@@ -113,7 +113,7 @@ const HodForm = ({ isOpen, onClose, hod = null }) => {
       };
       console.log("📤 Sending payload:", payload);
 
-      await axios.post("http://localhost:3000/hod", payload);
+      await axios.post("https://or-management-system.onrender.com/hod", payload);
       console.log(" HOD added successfully");
       }
       onClose();

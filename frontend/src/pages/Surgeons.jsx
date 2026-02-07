@@ -20,7 +20,7 @@ const Surgeons = () => {
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       }
     axios
-      .get("http://localhost:3000/surgeons")
+      .get("https://or-management-system.onrender.com/surgeons")
       .then(res => {
         console.log("Fetched surgeons:", res.data);
         setSurgeons(res.data);

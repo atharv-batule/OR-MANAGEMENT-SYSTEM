@@ -22,7 +22,7 @@ const Hod = () => {
   // Fetch HODs from backend
   useEffect(() => {
     axios
-      .get("http://localhost:3000/hod")
+      .get("https://or-management-system.onrender.com/hod")
       .then((res) => {
         console.log("Fetched HOD:", res.data);
         setHod(res.data.hodData);
@@ -47,7 +47,7 @@ const Hod = () => {
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this HOD?")) {
       axios
-        .delete("http://localhost:3000/hod", {
+        .delete("https://or-management-system.onrender.com/hod", {
           data: { hod_id: parseInt(id) },
         })
         .then(() => {

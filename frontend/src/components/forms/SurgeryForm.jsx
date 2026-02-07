@@ -139,11 +139,11 @@ const SurgeryForm = ({ isOpen, onClose, surgery = null
         procedure: formData.procedure
         };
       if (isEditing) {
-        await axios.put(`http://localhost:3000/surgery`, payload);
+        await axios.put(`https://or-management-system.onrender.com/surgery`, payload);
       } else {
         
         await axios.post("https://or-management-system.onrender.com/surgery", payload);
-        //await axios.post("http://localhost:3000/surgery", payload);
+        //await axios.post("https://or-management-system.onrender.com/surgery", payload);
         console.log("✅ Surgeon added successfully");
     
       }

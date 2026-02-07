@@ -20,7 +20,7 @@ const Surgeries = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/surgery")
+      .get("https://or-management-system.onrender.com/surgery")
       .then(res => {
         console.log("Fetched surgeries:", res.data);
         setSurgeries(res.data.result);
