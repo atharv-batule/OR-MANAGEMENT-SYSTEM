@@ -32,9 +32,10 @@ function App() {
             element={
               <>
                 <Sidebar />
-                <div className="md:ml-64">
-                  <div className="p-8">
-                    <h1 className="text-3xl font-bold mb-6">OR Management System</h1>
+                {/* Mobile: padding-top for navbar, Desktop: left margin for sidebar */}
+                <div className="pt-16 md:pt-0 md:ml-64 min-h-screen">
+                  <div className="p-4 sm:p-6 md:p-8">
+                    <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">OR Management System</h1>
                     <Routes>
                       <Route path="dashboard" element={<Dashboard />} />
                       <Route path="patients" element={<Patients />} />

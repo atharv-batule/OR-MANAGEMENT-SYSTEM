@@ -12,8 +12,8 @@ const port=process.env.PORT||3000;
 
 router.use(express.json())
 router.use(cors())
-
-router.get("/", authenticateToken,async (req, res) => {
+// authenticateToekn
+router.get("/", async (req, res) => {
    try {
     const result = await displaySurgeon(); // fetch data (e.g., from DB)
     res.json(result); // send it to frontend as JSON

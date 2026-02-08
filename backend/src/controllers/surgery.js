@@ -18,7 +18,8 @@ router.get("/", async (req, res) => {
   SELECT * FROM employees WHERE designation = 'Attending'
 `);
 
-const nurse = await client.query(`
+const nurse = await client.query(`git commit -m "Remove .env from repository"
+
   SELECT * FROM employees WHERE designation = 'Nurse'
 `);
 

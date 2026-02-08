@@ -111,6 +111,7 @@ WHERE patientid = $1;
     {
         const  result=await client.query(`
             SELECT * FROM patients
+            ORDER BY patientid ASC;
             `);
             return result.rows;
     }

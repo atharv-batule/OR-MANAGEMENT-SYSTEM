@@ -19,7 +19,10 @@ const OperationRoomForm = ({ isOpen, onClose, operationRoom = null }) => {
       setFormData({
         room_number: operationRoom.orid,
         availability_status: operationRoom.status,
-        equipment_list: operationRoom.equipments.join(', ')
+        equipment_list: Array.isArray(operationRoom.equipments)
+  ? operationRoom.equipments.join(', ')
+  : operationRoom.equipments || ''
+
       });
     } else {
       setFormData({
