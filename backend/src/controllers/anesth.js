@@ -31,21 +31,23 @@ async function displayAnesth()
           return result.rows;
 } 
 
-router.put("/",async(req,res)=>{
+router.put("/", async (req, res) => {
   try {
-    const empid = parseInt(req.body.employee_id);
-   // const salary = parseInt(req.body.surgeon_salary);
-    //const srgid = parseInt(req.body.surgery_id);
-    const phone=parseInt(req.body.anaesth_contact)
+    const empid = Number(req.body.employee_id);
+    const salary = Number(req.body.anaesth_salary);
+    const superid = Number(req.body.supervisor_id);
+    const phone = req.body.anaesth_contact?.toString() || "";
 
-    if (isNaN(empid) ) {
-      return res.status(400).send("Employee ID, Salary, and Supervisor ID must be numbers");
+    if (isNaN(empid) || isNaN(salary) || isNaN(superid)) {
+      return res.status(400).send("Invalid numeric fields");
     }
+
+    const [fname, lname = ""] = req.body.anaesth_name.split(" ");
 
     await updateAnaesth(
       empid,
-      req.body.anaesth_name.split(" ")[0], // lname
-      req.body.anaesth_name.split(" ")[1],// fname
+      fname,
+      lname,
       req.body.anaesth_dob,
       salary,
       req.body.anaesth_gender,
@@ -54,31 +56,41 @@ router.put("/",async(req,res)=>{
       phone
     );
 
-    res.send("anaesth added successfully");
+    res.send("Anesthesiologist updated successfully");
   } catch (err) {
-    console.error(err);
+    console.error("UPDATE ERROR:", err);
     res.status(500).send("Internal Server Error");
   }
-})
+});
 
-async function updateAnaesth(empid, fname, lname, dob, salary, gender, superid, designation,phone)
-    {
-    const upSur= await client.query(`
-UPDATE employees
-SET 
-  fname = $2,
-  lname = $3,
-  dob = $4,
-  salary = $5
-  gender = $6,
-  superid = $7,
-  designation = $8,
-  phone = $9,
-WHERE empid = $1;
-
-    `,[empid, fname, lname, dob, salary, gender, superid, designation,phone]);
-    }
-
+async function updateAnaesth(
+  empid,
+  fname,
+  lname,
+  dob,
+  salary,
+  gender,
+  superid,
+  designation,
+  phone
+) {
+  await client.query(
+    `
+    UPDATE Employees
+    SET 
+      fname = $2,
+      lname = $3,
+      dob = $4,
+      salary = $5,
+      gender = $6,
+      superid = $7,
+      designation = $8,
+      phone = $9
+    WHERE empid = $1;
+    `,
+    [empid, fname, lname, dob, salary, gender, superid, designation, phone]
+  );
+}
 
 
 router.post("/",async(req,res)=>{
