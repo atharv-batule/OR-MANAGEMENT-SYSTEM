@@ -19,7 +19,7 @@ const OperationRooms = () => {
   // Fetch operation rooms
   const fetchOperationRooms = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/operation-rooms");
+      const res = await axios.get("https://or-management-system.onrender.com/operation-rooms");
       console.log("Fetched OR Details:", res.data);
       setOperationRooms(res.data);
     } catch (err) {
@@ -57,7 +57,7 @@ const OperationRooms = () => {
     
     try {
       await axios.delete(
-        "http://localhost:3000/operation-rooms",
+        "https://or-management-system.onrender.com/operation-rooms",
         { data: { orid } }
       );
       

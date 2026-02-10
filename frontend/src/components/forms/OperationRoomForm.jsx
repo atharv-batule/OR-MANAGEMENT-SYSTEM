@@ -40,11 +40,11 @@ const OperationRoomForm = ({ isOpen, onClose, operationRoom }) => {
     try {
       if (operationRoom) {
         // Update existing operation room
-        await axios.put("http://localhost:3000/operation-rooms", formData);
+        await axios.put("https://or-management-system.onrender.com/operation-rooms", formData);
         console.log("✅ Operation room updated successfully");
       } else {
         // Create new operation room
-        await axios.post("http://localhost:3000/operation-rooms", formData);
+        await axios.post("https://or-management-system.onrender.com/operation-rooms", formData);
         console.log("✅ Operation room created successfully");
       }
       

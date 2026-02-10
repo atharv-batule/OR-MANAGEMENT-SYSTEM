@@ -130,7 +130,7 @@ const payload = {
 
   try {
     if (isEditing) {
-      await axios.put(`http://localhost:3000/surgeons`, payload);
+      await axios.put(`hhttps://or-management-system.onrender.com/surgeons`, payload);
       // Update not yet implemented on backend
       console.log("Update logic pending");
     } else {

@@ -19,7 +19,7 @@ const Surgeries = () => {
   /* ================= FETCH SURGERIES ================= */
   useEffect(() => {
     axios
-      .get("http://localhost:3000/surgery")
+      .get("https://or-management-system.onrender.com/surgery")
       .then(res => {
         setSurgeries(res.data.result || []);
       })
@@ -38,7 +38,7 @@ const Surgeries = () => {
     if (!window.confirm("Are you sure you want to delete this surgery?")) return;
 
     try {
-      await axios.delete("http://localhost:3000/surgery", {
+      await axios.delete("https://or-management-system.onrender.com/surgery", {
         data: { surgery_id: surgeryId }
       });
 
