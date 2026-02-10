@@ -1,76 +1,89 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import SurgeonForm from '../components/forms/SurgeonForm';
 import axios from 'axios';
-import{ jwtDecode }from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 const token = localStorage.getItem("token");
 const payload = token ? jwtDecode(token) : null;
 const role = payload?.role;
-console.log(role)
-console.log(token)
 
 const Surgeons = () => {
-  useEffect(() => {
-    //   if (token) {
-    // // Apply token to all future requests
-    // axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    //   }
-    axios
-      .get("https://or-management-system.onrender.com/surgeons")
-      .then(res => {
-        console.log("Fetched surgeons:", res.data);
-        setSurgeons(res.data);
-      })
-      .catch(err => console.error(err));
-  }, []);
   const [surgeons1, setSurgeons] = useState([]);
   const { surgeons, deleteSurgeon } = useApp();
   const [showForm, setShowForm] = useState(false);
   const [editingSurgeon, setEditingSurgeon] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredSurgeons = surgeons1.filter(surgeon =>
-  surgeon.empid.toString().includes(searchTerm.toLowerCase()) ||
-  (surgeon.surgeon_speciality?.toLowerCase().includes(searchTerm.toLowerCase()))
-);
-
-const handleEdit = (surgeon) => {
-  const mappedSurgeon = {
-    employee_id: surgeon.empid || '',
-    dept_no: surgeon.dno || '',
-    surgeon_name: `${surgeon.fname || ''} ${surgeon.lname || ''}`.trim(),
-    surgeon_dob: surgeon.dob || '',
-    surgeon_gender: surgeon.gender || '',
-    surgeon_salary: surgeon.salary || '',
-    surgeon_contact: surgeon.phone || '',
-    surgeon_experience_years: surgeon.experience || '',
-    supervisor_id: surgeon.superid || '',
-    surgeon_designation: surgeon.designation || '',
-  };
-  setEditingSurgeon(mappedSurgeon);
-  setShowForm(true);
-};
-
-  const handleDelete = (surgeonId) => {
-    try{
-    if (window.confirm('Are you sure you want to delete this patient?')) {
-      console.log(surgeonId)
-      console.log(isNaN(surgeonId))
-      axios.delete("https://or-management-system.onrender.com/surgeons",{ data: { employee_id: parseInt(surgeonId) } })
+  // Fetch surgeons
+  const fetchSurgeons = async () => {
+    try {
+      const res = await axios.get("https://or-management-system.onrender.com/surgeons");
+      console.log("Fetched surgeons:", res.data);
+      setSurgeons(res.data);
+    } catch (err) {
+      console.error(err);
     }
-  }
-  catch(err){console.log(err)}
-    //  window.location.reload();
-    
   };
 
-  const handleCloseForm = () => {
+  useEffect(() => {
+    fetchSurgeons();
+  }, []);
+
+  // Filter surgeons
+  const filteredSurgeons = surgeons1.filter(surgeon => {
+    const s = searchTerm.toLowerCase();
+    return (
+      surgeon.empid?.toString().includes(s) ||
+      `${surgeon.fname} ${surgeon.lname}`.toLowerCase().includes(s) ||
+      surgeon.designation?.toLowerCase().includes(s) ||
+      surgeon.experience?.toString().includes(s) ||
+      surgeon.dno?.toString().includes(s) ||
+      surgeon.phone?.includes(searchTerm)
+    );
+  });
+
+  const handleEdit = (surgeon) => {
+    const mappedSurgeon = {
+      employee_id: surgeon.empid || '',
+      dept_no: surgeon.dno || '',
+      surgeon_name: `${surgeon.fname || ''} ${surgeon.lname || ''}`.trim(),
+      surgeon_dob: surgeon.dob || '',
+      surgeon_gender: surgeon.gender || '',
+      surgeon_salary: surgeon.salary || '',
+      surgeon_contact: surgeon.phone || '',
+      surgeon_experience_years: surgeon.experience || '',
+      supervisor_id: surgeon.superid || '',
+      surgeon_designation: surgeon.designation || '',
+    };
+    setEditingSurgeon(mappedSurgeon);
+    setShowForm(true);
+  };
+
+  const handleDelete = async (surgeonId) => {
+    if (!window.confirm('Are you sure you want to delete this surgeon?')) return;
+
+    try {
+      await axios.delete("https://or-management-system.onrender.com/surgeons", {
+        data: { employee_id: parseInt(surgeonId) }
+      });
+
+      // Update state instead of reloading
+      setSurgeons(prev => prev.filter(s => s.empid !== surgeonId));
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("Failed to delete surgeon");
+    }
+  };
+
+  const handleCloseForm = async () => {
     setShowForm(false);
     setEditingSurgeon(null);
+    // Refresh data instead of reloading page
+    await fetchSurgeons();
   };
 
   return (
@@ -88,10 +101,12 @@ const handleEdit = (surgeon) => {
             />
           </div>
         </div>
-       {(role=="admin" ||role=="surgeon") && <Button onClick={() => setShowForm(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Surgeon
-        </Button>}
+        {(role === "admin" || role === "surgeon") && (
+          <Button onClick={() => setShowForm(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Surgeon
+          </Button>
+        )}
       </div>
 
       <Card>
@@ -109,61 +124,65 @@ const handleEdit = (surgeon) => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DOB</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Salary</th>
-                {(role=="admin"||role=="surgeon")&&<th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>}
+                {(role === "admin" || role === "surgeon") && (
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                )}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-  {surgeons1
-    .filter(surgeon => {
-      const s = searchTerm.toLowerCase();
-      return (
-        surgeon.empid?.toString().includes(s) ||
-        `${surgeon.fname} ${surgeon.lname}`.toLowerCase().includes(s) ||
-        surgeon.designation?.toLowerCase().includes(s) ||
-        surgeon.surgeon_experience_years?.toString().includes(s) ||
-        surgeon.dno?.toString().includes(s) ||
-        surgeon.phone?.includes(searchTerm)
-      );
-    })
-    .map(surgeon => (
-      <tr key={surgeon.empid} className="hover:bg-gray-50">
-        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{surgeon.empid}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{surgeon.dno}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-          {surgeon.fname + " " + surgeon.lname}
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-          {surgeon.experience || 0} years
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.designation}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.superid}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.phone}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.gender}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.dob.split("T")[0]}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{surgeon.salary}</td>
-        {(role=="admin"||role=="surgeon")&&
-        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-          <div className="flex justify-end space-x-2">
-            <button
-              onClick={() => handleEdit(surgeon)}
-              className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
-            >
-              <Edit className="w-4 h-4" />
-            </button>
-
-            <button
-              onClick={() => handleDelete(surgeon.empid)}
-              className="p-2 text-gray-400 hover:text-red-600 transition-colors"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
-        </td>
-      }
-      </tr>
-    ))}
-</tbody>
-
+              {filteredSurgeons.map(surgeon => (
+                <tr key={surgeon.empid} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {surgeon.empid}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {surgeon.dno}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {surgeon.fname} {surgeon.lname}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {surgeon.experience || 0} years
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {surgeon.designation}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {surgeon.superid || "-"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {surgeon.phone}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {surgeon.gender}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {surgeon.dob.split("T")[0]}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {surgeon.salary}
+                  </td>
+                  {(role === "admin" || role === "surgeon") && (
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex justify-end space-x-2">
+                        <button
+                          onClick={() => handleEdit(surgeon)}
+                          className="p-2 text-gray-400 hover:text-blue-600"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(surgeon.empid)}
+                          className="p-2 text-gray-400 hover:text-red-600"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
       </Card>

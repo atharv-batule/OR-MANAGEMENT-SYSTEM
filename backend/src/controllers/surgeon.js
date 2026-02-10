@@ -24,37 +24,39 @@ router.get("/", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch data" });
   }
 });
-
-router.put("/",async(req,res)=>{
+router.put("/", async (req, res) => {
   try {
-   const empid = parseInt(req.body.employee_id);
+    const empid = parseInt(req.body.employee_id);
     const salary = parseInt(req.body.surgeon_salary);
     const superid = parseInt(req.body.supervisor_id);
+    const deptNo = parseInt(req.body.dept_no) || 0;
 
-     if (isNaN(empid) || isNaN(salary) || isNaN(superid)) {
-      return res.status(400).send("Employee ID, Salary, and Supervisor ID must be numbers");
+    if (isNaN(empid) || isNaN(salary) || isNaN(superid)) {
+      return res.status(400).send("Invalid numeric fields");
     }
+
+    const [fname, lname = ""] = req.body.surgeon_name.split(" ");
 
     await updateSurgeon(
       empid,
-      req.body.surgeon_name.split(" ")[0], // lname
-      req.body.surgeon_name.split(" ")[1] || "",// fname
+      fname,
+      lname,
       req.body.surgeon_dob,
       salary,
       req.body.surgeon_gender,
       superid,
       req.body.surgeon_designation,
-      phone,
-      req.body.dept_no || 0,
-      req.body.surgeon_experience_years || 0
+      req.body.surgeon_contact, // ✅ FIXED
+      deptNo,
+      req.body.surgeon_experience_years || "0"
     );
 
     res.send("Surgeon updated successfully");
   } catch (err) {
-    console.error(err);
+    console.error("UPDATE ERROR:", err);
     res.status(500).send("Internal Server Error");
   }
-})
+});
 
  const emp=await client.query(`
     CREATE TABLE  IF NOT EXISTS Employees(
