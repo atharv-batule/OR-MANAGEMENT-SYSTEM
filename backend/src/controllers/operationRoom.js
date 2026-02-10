@@ -1,99 +1,78 @@
-import express from "express"
-import cors from "cors"
-import dotenev from "dotenv"
-//import {app} from "./src/utils/index.js"
+import express from "express";
 import { client } from "../db/db.js";
-dotenev.config();
-const router=express.Router()
-const port=process.env.PORT||3000;
 
-router.use(express.json())
-router.use(cors())
+const router = express.Router();
 
-
+// GET all operation rooms
 router.get("/", async (req, res) => {
-   try {
-    const result = await displayOR(); // fetch data (e.g., from DB)
-    res.json(result); // send it to frontend as JSON
-    console.log();
-    console.log("in here")
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch data" });
-  }
-});
-
- router.post("/", async (req, res) => {
   try {
-    const orid = parseInt(req.body.room_number);
-    if (isNaN(orid) ) {
-      return res.status(400).send("Employee ID, Salary,phone no. and Supervisor ID must be numbers");
-    }
- const { equipment_list, availability_status } = req.body;
-
-    console.log("POST payload:", { orid, equipment_list, availability_status });
-    await addOr(
-      orid,
-      req.body.equipment_list,
-      req.body.availability_status
+    const result = await client.query(
+      "SELECT * FROM or_table ORDER BY orid"
     );
-
-    res.send("Surgeon added successfully");
+    res.json(result.rows);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Internal Server Error");
+    res.status(500).json({ error: "Failed to fetch operation rooms" });
   }
 });
 
-async function updateOR(orid, equipmentlist, status)
-{
-   const updateOR = await client.query(
-   ` UPDATE or_table
-     SET 
-       equipmentlist = $2,
-       status = $3,
-     WHERE orid = $1
-     `
-     ,[orid, equipmentlist, status] );
-}
-
-
-async function displayOR()
-{
-    const result=await client.query(`
-    SELECT * FROM or_table 
-    order by orid asc;
-    `);
-    return result.rows;
-}
-
-async function addOr(orid, equipmentlist, status) {
+// POST - Create new operation room
+router.post("/", async (req, res) => {
   try {
-    const result = await client.query(`
-      INSERT INTO or_table (orid, equipments, status)
-      VALUES ($1, $2, $3)
-    `, [orid, equipmentlist, status]);
-
-    console.log(`OR ${orid} added/updated successfully`);
-    return result;
+    const { orid, status, equipments } = req.body;
+    
+    const result = await client.query(
+      "INSERT INTO or_table (orid, status, equipments) VALUES ($1, $2, $3) RETURNING *",
+      [orid, status || "Available", equipments]
+    );
+    
+    res.status(201).json(result.rows[0]);
   } catch (err) {
-    console.error('Error adding/updating OR:', err);
-    throw err;
+    console.error(err);
+    res.status(500).json({ error: "Failed to create operation room" });
   }
-}
+});
 
-router.delete("/",async(req,res)=>{
-  try{
-  await deleteOr(parseInt(req.body.orid))
-  }catch(err){console.log(err)}
-  })
+// PUT - Update operation room
+router.put("/", async (req, res) => {
+  try {
+    const { orid, status, equipments } = req.body;
+    
+    const result = await client.query(
+      "UPDATE or_table SET status = $1, equipments = $2 WHERE orid = $3 RETURNING *",
+      [status, equipments, orid]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Operation room not found" });
+    }
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to update operation room" });
+  }
+});
 
-  async function deleteOr(orid)
- {
-    const deleteOr = await client.query(
-    ` DELETE FROM or_table
-      WHERE orid = $1 `
-      ,[orid]);
-} 
+// DELETE - Delete operation room
+router.delete("/", async (req, res) => {
+  try {
+    const { orid } = req.body;
+    
+    const result = await client.query(
+      "DELETE FROM or_table WHERE orid = $1 RETURNING *",
+      [orid]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Operation room not found" });
+    }
+    
+    res.json({ message: "Operation room deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to delete operation room" });
+  }
+});
 
 export default router;
