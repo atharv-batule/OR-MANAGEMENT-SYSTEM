@@ -1,35 +1,88 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import AnesthesiologistForm from '../components/forms/AnesthesiologistForm';
+import axios from 'axios';
+import { jwtDecode } from "jwt-decode";
+
+const token = localStorage.getItem("token");
+const payload = token ? jwtDecode(token) : null;
+const role = payload?.role;
 
 const Anesthesiologists = () => {
+  const [anesthesiologists1, setAnesthesiologists] = useState([]);
   const { anesthesiologists, deleteAnesthesiologist } = useApp();
   const [showForm, setShowForm] = useState(false);
   const [editingAnesthesiologist, setEditingAnesthesiologist] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredAnesthesiologists = anesthesiologists.filter(anaesth =>
-    anaesth.anaesth_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    anaesth.anaesth_certification.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleEdit = (anesthesiologist) => {
-    setEditingAnesthesiologist(anesthesiologist);
-    setShowForm(true);
-  };
-
-  const handleDelete = (anesthId) => {
-    if (window.confirm('Are you sure you want to delete this anesthesiologist?')) {
-      deleteAnesthesiologist(anesthId);
+  // Fetch anesthesiologists
+  const fetchAnesthesiologists = async () => {
+    try {
+      const res = await axios.get('https://or-management-system.onrender.com/anesthesiologists');
+      console.log("Fetched Anesthesiologists:", res.data);
+      setAnesthesiologists(res.data);
+    } catch (err) {
+      console.error("Fetch failed:", err);
     }
   };
 
-  const handleCloseForm = () => {
+  useEffect(() => {
+    fetchAnesthesiologists();
+  }, []);
+
+  // Filter anesthesiologists
+  const filteredAnesthesiologists = anesthesiologists1.filter(ana => {
+    const s = searchTerm.toLowerCase();
+    return (
+      ana.empid?.toString().includes(s) ||
+      `${ana.fname} ${ana.lname}`.toLowerCase().includes(s) ||
+      ana.superid?.toString().includes(s) ||
+      ana.phone?.includes(searchTerm) ||
+      ana.gender?.toLowerCase().includes(s)
+    );
+  });
+
+  const handleEdit = (anesthesiologist) => {
+    const mapped = {
+      empid: anesthesiologist.empid || '',
+      anaesth_name: `${anesthesiologist.fname || ''} ${anesthesiologist.lname || ''}`.trim(),
+      anaesth_dob: anesthesiologist.dob ? anesthesiologist.dob.split("T")[0] : '',
+      anaesth_gender: anesthesiologist.gender || '',
+      anaesth_salary: anesthesiologist.salary || '',
+      anaesth_contact: anesthesiologist.phone || '',
+      anaesth_supervisor_id: anesthesiologist.superid || '',
+      anaesth_certification: anesthesiologist.anaesth_certification || '',
+      anaesth_experience_years: anesthesiologist.anaesth_experience_years || ''
+    };
+  
+    setEditingAnesthesiologist(mapped);
+    setShowForm(true);
+  };
+
+  const handleDelete = async (empid) => {
+    if (!window.confirm('Are you sure you want to delete this anesthesiologist?')) return;
+
+    try {
+      await axios.delete('https://or-management-system.onrender.com/anesthesiologists', {
+        data: { empid: empid }
+      });
+
+      // Update state instead of reloading
+      setAnesthesiologists(prev => prev.filter(a => a.empid !== empid));
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("Failed to delete anesthesiologist");
+    }
+  };
+
+  const handleCloseForm = async () => {
     setShowForm(false);
     setEditingAnesthesiologist(null);
+    // Refresh data instead of reloading page
+    await fetchAnesthesiologists();
   };
 
   return (
@@ -45,53 +98,73 @@ const Anesthesiologists = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Button onClick={() => setShowForm(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Anesthesiologist
-        </Button>
+        {(role === "admin" || role === "surgeon") && (
+          <Button onClick={() => setShowForm(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Anesthesiologist
+          </Button>
+        )}
       </div>
-
-      
 
       <Card>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Emp Id</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Emp Id</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Certification</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Experience</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supervisor Id</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DOB</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Salary</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                {(role === "admin" || role === "surgeon") && (
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                )}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredAnesthesiologists.map((anesthesiologist) => (
-                <tr key={anesthesiologist.anaesth_id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{anesthesiologist.employee_id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{anesthesiologist.anaesth_name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_certification}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_experience_years} years</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_supervisor_id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_contact}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_gender}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_dob}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{anesthesiologist.anaesth_salary}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex justify-end space-x-2">
-                      <button onClick={() => handleEdit(anesthesiologist)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => handleDelete(anesthesiologist.anaesth_id)} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
+              {filteredAnesthesiologists.map(anesthesiologist => (
+                <tr key={anesthesiologist.empid} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {anesthesiologist.empid}
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {anesthesiologist.fname} {anesthesiologist.lname}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {anesthesiologist.superid || "-"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {anesthesiologist.phone}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {anesthesiologist.gender}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {anesthesiologist.dob.split("T")[0]}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {anesthesiologist.salary}
+                  </td>
+                  {(role === "admin" || role === "surgeon") && (
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex justify-end space-x-2">
+                        <button
+                          onClick={() => handleEdit(anesthesiologist)}
+                          className="p-2 text-gray-400 hover:text-blue-600"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(anesthesiologist.empid)}
+                          className="p-2 text-gray-400 hover:text-red-600"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -99,7 +172,11 @@ const Anesthesiologists = () => {
         </div>
       </Card>
 
-      <AnesthesiologistForm isOpen={showForm} onClose={handleCloseForm} anesthesiologist={editingAnesthesiologist} />
+      <AnesthesiologistForm 
+        isOpen={showForm} 
+        onClose={handleCloseForm} 
+        anesthesiologist={editingAnesthesiologist} 
+      />
     </div>
   );
 };

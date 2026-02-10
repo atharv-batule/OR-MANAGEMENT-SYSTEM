@@ -25,11 +25,11 @@ const SurgeonForm = ({ isOpen, onClose, surgeon = null }) => {
 
   const [formData, setFormData] = useState({
     employee_id: '',
+    dept_no: '',
     surgeon_name: '',
     surgeon_dob: '',
     surgeon_gender: '',
     surgeon_salary: '',
-    surgeon_speciality: '',
     surgeon_contact: '',
     surgeon_experience_years: '',
     supervisor_id: '',
@@ -38,16 +38,17 @@ const SurgeonForm = ({ isOpen, onClose, surgeon = null }) => {
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [admin,setAdmin] = useState(false);
 
   useEffect(() => {
     if (surgeon) {
       setFormData({
         employee_id: surgeon.employee_id || '',
         surgeon_name: surgeon.surgeon_name || '',
-        surgeon_dob: surgeon.surgeon_dob || '',
+        dept_no: surgeon.dept_no || '',
+        surgeon_dob: surgeon.surgeon_dob.split("T")[0] || '',
         surgeon_gender: surgeon.surgeon_gender || '',
         surgeon_salary: surgeon.surgeon_salary || '',
-        surgeon_speciality: surgeon.surgeon_speciality || '',
         surgeon_contact: surgeon.surgeon_contact || '',
         surgeon_experience_years: surgeon.surgeon_experience_years || '',
         supervisor_id: surgeon.supervisor_id || '',
@@ -56,11 +57,11 @@ const SurgeonForm = ({ isOpen, onClose, surgeon = null }) => {
     } else {
       setFormData({
         employee_id: '',
+        dept_no: '',
         surgeon_name: '',
         surgeon_dob: '',
         surgeon_gender: '',
         surgeon_salary: '',
-        surgeon_speciality: '',
         surgeon_contact: '',
         surgeon_experience_years: '',
         supervisor_id: '',
@@ -73,17 +74,17 @@ const SurgeonForm = ({ isOpen, onClose, surgeon = null }) => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.employee_id.trim()) newErrors.employee_id = 'Employee ID is required';
+   // if (!formData.employee_id.trim()) newErrors.employee_id = 'Employee ID is required';
+    if (!formData.dept_no.trim() || formData.dept_no <= 0) newErrors.dept_no = 'Department Number is required';
     if (!formData.surgeon_name.trim()) newErrors.surgeon_name = 'Name is required';
     if (!formData.surgeon_dob.trim()) newErrors.surgeon_dob = 'Date of Birth is required';
     if (!formData.surgeon_gender.trim()) newErrors.surgeon_gender = 'Gender is required';
     if (!formData.surgeon_salary || formData.surgeon_salary <= 0) newErrors.surgeon_salary = 'Valid salary is required';
-    if (!formData.surgeon_speciality.trim()) newErrors.surgeon_speciality = 'Speciality is required';
     if (!formData.surgeon_contact.trim() || formData.surgeon_contact.length < 10 || formData.surgeon_contact.length > 13)
       newErrors.surgeon_contact = 'Valid contact number required';    
     if (!formData.surgeon_experience_years || formData.surgeon_experience_years < 0)
       newErrors.surgeon_experience_years = 'Valid experience years required';
-    if (!formData.supervisor_id.trim()) newErrors.supervisor_id = 'Supervisor ID is required';
+    //if (!formData.supervisor_id.trim()) newErrors.supervisor_id = 'Supervisor ID is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -113,22 +114,28 @@ const handleSubmit = async (e) => {
   if (!validateForm()) return;
 
   setIsSubmitting(true);
-
-  try {
-    if (isEditing) {
-      // Update not yet implemented on backend
-      console.log("Update logic pending");
-    } else {
-       const payload = {
+const payload = {
   employee_id: parseInt(formData.employee_id),
+  dept_no: parseInt(formData.dept_no),
   surgeon_salary: parseInt(formData.surgeon_salary),
   supervisor_id: parseInt(formData.supervisor_id),
   surgeon_name: formData.surgeon_name,
   surgeon_dob: formData.surgeon_dob,
   surgeon_gender: formData.surgeon_gender,
   surgeon_designation: formData.surgeon_designation,
+  surgeon_contact:formData.surgeon_contact,
+  surgeon_experience_years:parseInt(formData.surgeon_experience_years)
 };
-await axios.post("http://localhost:3000/surgeons", payload);
+
+
+  try {
+    if (isEditing) {
+      await axios.put(`hhttps://or-management-system.onrender.com/surgeons`, payload);
+      // Update not yet implemented on backend
+      console.log("Update logic pending");
+    } else {
+       
+await axios.post("https://or-management-system.onrender.com/surgeons", payload);
       console.log("✅ Surgeon added successfully");
     }
 
@@ -161,7 +168,16 @@ await axios.post("http://localhost:3000/surgeons", payload);
             value={formData.employee_id}
             onChange={(e) => handleInputChange('employee_id', e.target.value)}
             error={errors.employee_id}
-            placeholder="EMP001"
+            placeholder="001"
+          />
+
+          <Input
+            label="Department Number"
+            required
+            value={formData.dept_no}
+            onChange={(e) => handleInputChange('dept_no', e.target.value)}
+            error={errors.dept_no}
+            placeholder="01"
           />
 
           <Input
@@ -238,7 +254,7 @@ await axios.post("http://localhost:3000/surgeons", payload);
             type="number"
             required
             value={formData.surgeon_experience_years}
-            onChange={(e) => handleInputChange('surgeon_experience_years', parseInt(e.target.value) || '')}
+            onChange={(e) => handleInputChange('surgeon_experience_years', e.target.value || '')}
             error={errors.surgeon_experience_years}
             placeholder="Years of experience"
             min="0"
@@ -246,16 +262,8 @@ await axios.post("http://localhost:3000/surgeons", payload);
           />
 
           <Input
-            label="Speciality"
-            required
-            value={formData.surgeon_speciality}
-            onChange={(e) => handleInputChange('surgeon_speciality', e.target.value)}
-            error={errors.surgeon_speciality}
-            placeholder="e.g., Cardiothoracic Surgery"
-          />
-
-          <Input
             label="Contact No."
+            type="tel"
             required
             value={formData.surgeon_contact}
             onChange={(e) => handleInputChange('surgeon_contact', e.target.value)}

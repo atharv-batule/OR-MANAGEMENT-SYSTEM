@@ -22,7 +22,7 @@ function App() {
           {/* Redirect root to login */}
           <Route path="/" element={<Navigate to="/login" replace />} />
           
-          {/* Login and Register pages (no sidebar) */}
+          {/* Login page (no sidebar, appears first) */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
@@ -30,25 +30,26 @@ function App() {
           <Route
             path="/*"
             element={
-              <div className="flex h-screen bg-gray-100">
+              <>
                 <Sidebar />
-                <div className="flex-1 overflow-auto">
-                  <div className="p-8">
-                    <h1 className="text-3xl font-bold mb-6">OR Management System</h1>
+                {/* Mobile: padding-top for navbar, Desktop: left margin for sidebar */}
+                <div className="pt-16 md:pt-0 md:ml-64 min-h-screen">
+                  <div className="p-4 sm:p-6 md:p-8">
+                    <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">OR Management System</h1>
                     <Routes>
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/patients" element={<Patients />} />
-                      <Route path="/surgeons" element={<Surgeons />} />
-                      <Route path="/anesthesiologists" element={<Anesthesiologists />} />
-                      <Route path="/nurses" element={<Nurses />} />
-                      <Route path="/operation-rooms" element={<OperationRooms />} />
-                      <Route path="/surgeries" element={<Surgeries />} />
-                      <Route path="/displayname" element={<DisplayName />} />
-                      <Route path="/hod" element={<Hod />} />
+                      <Route path="dashboard" element={<Dashboard />} />
+                      <Route path="patients" element={<Patients />} />
+                      <Route path="surgeons" element={<Surgeons />} />
+                      <Route path="anesthesiologists" element={<Anesthesiologists />} />
+                      <Route path="nurses" element={<Nurses />} />
+                      <Route path="operation-rooms" element={<OperationRooms />} />
+                      <Route path="surgeries" element={<Surgeries />} />
+                      <Route path="displayname" element={<DisplayName />} />
+                      <Route path="hod" element={<Hod />} />
                     </Routes>
                   </div>
                 </div>
-              </div>
+              </>
             }
           />
         </Routes>

@@ -1,17 +1,37 @@
-import React from 'react';
+import {React, useEffect, useState} from 'react';
 import { useApp } from '../context/AppContext';
-import { Users, UserPlus, Stethoscope, Shield, Building, FileText, Calendar, Activity, Clock } from 'lucide-react';
+import { Users, FileText } from 'lucide-react';
 import Card from '../components/ui/Card';
+import axios from 'axios';
 
 const Dashboard = () => {
-  const { patients, surgeons, anesthesiologists, nurses, operationRooms, surgeries } = useApp();
-  const [selectedOR, setSelectedOR] = React.useState(null);
+  const { patients, surgeons, anesthesiologists, nurses } = useApp();
+  const [selectedOR, setSelectedOR] = useState(null);
+  const [operationRooms, setOperationRoom] = useState([]);
+  //const patient_age=2025-parseInt(surgery.patient_dob)
+  useEffect(() => {
+    axios
+      .get("https://or-management-system.onrender.com/dashboard")
+      .then(res => {
+        console.log("Fetched Surgery Data:", res.data);
+        setOperationRoom(res.data);
+      })
+      .catch(err => console.error(err));
+  }, []);
 
-
-  const availableRooms = operationRooms.filter(room => room.availability_status === 'Available');
-  const occupiedRooms = operationRooms.filter(room => room.availability_status === 'Occupied');
-  const scheduledSurgeries = surgeries.filter(surgery => surgery.status === 'Scheduled');
-  const inProgressSurgeries = surgeries.filter(surgery => surgery.status === 'In Progress');
+  // Calculate duration in minutes from start and end times
+  const calculateDuration = (startTime, endTime) => {
+    const [startHour, startMin] = startTime.split(':').map(Number);
+    const [endHour, endMin] = endTime.split(':').map(Number);
+    
+    const startMinutes = startHour * 60 + startMin;
+    const endMinutes = endHour * 60 + endMin;
+    
+    let duration = endMinutes - startMinutes;
+    if (duration < 0) duration += 24 * 60; // Handle overnight surgeries
+    
+    return duration;
+  };
 
   const newsItems = [
     "New cardiac surgery unit opening next month",
@@ -22,64 +42,64 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
-
-    <div className="flex-1 mx-8 ">
-    <header className="bg-white shadow-sm border-b border-gray-200 rounded-2xl">
-          <div className="bg-blue-50 p-3 rounded-2xl px-6 py-4">
-            <marquee className="text-blue-700 font-medium">
-              {newsItems.join(' • ')}
-            </marquee>
-          </div>
+      <header className="text-shadow-sm border-b border-gray-200 overflow-hidden bg-blue-50 p-3 rounded-2xl px-1 py-4 sm:p-3 bg-[linear-gradient(135deg,#daf0ff,#dee4fb,#daf0ff)] shadow-[0px_1rem_1.5rem_-0.9rem_#000000e1]"> 
+        <marquee className="text-blue-700 font-medium text-base overflow-hidden">
+          {newsItems.join(' • ')}
+        </marquee>
       </header>
-        </div>
-      
-      
 
-        {/* OR Schedule Board */}
-      <Card>
+      {/* OR Schedule Board */}
+      <Card className="overflow-hidden">
         <Card.Header>
-          <Card.Title>Operation Room Schedule</Card.Title>
+          <Card.Title className="text-base text-center font-semibold">Operation Room Schedule</Card.Title>
         </Card.Header>
-        <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse border border-gray-300">
-            <thead className="bg-gray-100">
+        
+        {/* Desktop View - Normal Horizontal Table */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="min-w-full bg-white rounded-xl overflow-hidden shadow-md">
+            <thead className="bg-gradient-to-r from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase">
               <tr>
-                <th className="border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700">OR</th>
-                <th className="border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700">Surgery Hours</th>
-                <th className="border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700">Patient</th>
-                <th className="border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700">Procedure</th>
-                <th className="border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700">Surgeon</th>
-                <th className="border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700">Anest.</th>
+                <th className="px-4 py-3 text-center font-semibold">OR</th>
+                <th className="px-4 py-3 text-center font-semibold">Date</th>
+                <th className="px-4 py-3 text-center font-semibold">Surgery Hours</th>
+                <th className="px-4 py-3 text-center font-semibold">Patient</th>
+                <th className="px-4 py-3 text-center font-semibold">Procedure</th>
+                <th className="px-4 py-3 text-center font-semibold">Surgeon</th>
+                <th className="px-4 py-3 text-center font-semibold">Anest.</th>
               </tr>
             </thead>
             <tbody>
-              {operationRooms.map((room) => {
-                const surgery = surgeries.find(s => s.or_id === room.or_id);
-                const patient = patients.find(p => p.patient_id === surgery?.patient_id);
-                const surgeon = surgeons.find(s => s.surgeon_id === surgery?.surgeon_id);
-                const anesth = anesthesiologists.find(a => a.anaesth_id === surgery?.anaesth_id);
-
+              {operationRooms.map((surgery) => {
+                const patient = patients.find(p => p.patient_id === surgery.patient_id);
+                const surgeon = surgeons.find(s => s.surgeon_id === surgery.attending_id);
+                const anesth = anesthesiologists.find(a => a.anaesth_id === surgery.anesthesiologist_id);
+                const duration = calculateDuration(surgery.surgery_start, surgery.surgery_end);
+                
                 return (
                   <tr 
-                    key={room.or_id} 
-                    className="hover:bg-blue-50 cursor-pointer"
-                    onClick={() => setSelectedOR(room.or_id)}
+                    key={surgery.surgery_id} 
+                    className="hover:bg-gradient-to-r hover:from-[#f6f8ff] hover:to-[#eaf0ff] transition-all duration-200 hover:scale-[1.01] cursor-pointer"
+                    onClick={() => setSelectedOR(surgery.surgery_id)}
                   >
-                    <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">{room.room_number}</td>
+                    <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">{surgery.or_id}</td>
                     <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">
-                      {surgery ? `${surgery.surgery_time} (${surgery.surgery_duration} mins)` : "CLOSED"}
+                      {`${surgery.surgery_date.split("T")[0]}`}
                     </td>
                     <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">
-                      {patient?.patient_name || (surgery ? "Unknown Patient" : "-")}
+                      {`${surgery.surgery_start} :${surgery.surgery_end}`}
+                    </td>
+                    
+                    <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">
+                      {patient?.patient_name || surgery.patient_id || "Unknown Patient"}
                     </td>
                     <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">
-                      {surgery?.surgery_type || "-"}
+                      {surgery.procedure || "N/A"}
                     </td>
                     <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">
-                      {surgeon?.surgeon_name || "-"}
+                      {surgery?.attending_name || "-"}
                     </td>
                     <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">
-                      {anesth?.anaesth_name || "-"}
+                      {surgery?.anesthesiologist_name || "-"}
                     </td>
                   </tr>
                 );
@@ -87,68 +107,160 @@ const Dashboard = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Mobile View */}
+        <div className="md:hidden overflow-x-auto">
+          <table className="bg-white rounded-xl overflow-hidden shadow-md">
+            <tbody>
+              <tr className="hover:bg-gray-50">
+                <th className="px-4 py-3 text-center font-semibold sticky left-0 bg-gradient-to-bl from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase border-gray-300">OR</th>
+                {operationRooms.map((surgery) => (
+                  <td key={surgery.surgery_id} className="border border-gray-300 px-4 py-2 text-center font-base whitespace-nowrap">
+                    {surgery.or_id}
+                  </td>
+                ))}
+              </tr>
+
+              <tr className="hover:bg-gray-50">
+                <td className="px-4 py-3 text-center font-semibold sticky left-0 bg-gradient-to-bl from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase border-gray-300">Date</td>
+                {operationRooms.map((surgery) => {
+                  const duration = calculateDuration(surgery.surgery_start, surgery.surgery_end);
+                  return (
+                    <td key={surgery.surgery_id} className="border border-gray-300 px-4 py-2 text-center font-base whitespace-nowrap cursor-pointer" onClick={() => setSelectedOR(surgery.surgery_id)}>
+                      {`${surgery.surgery_date.split("T")[0]}`}
+                    </td>
+                  );
+                })}
+              </tr>
+              
+              <tr className="hover:bg-gray-50">
+                <td className="px-4 py-3 text-center font-semibold sticky left-0 bg-gradient-to-bl from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase border-gray-300">Surgery Hours</td>
+                {operationRooms.map((surgery) => {
+                  const duration = calculateDuration(surgery.surgery_start, surgery.surgery_end);
+                  return (
+                    <td key={surgery.surgery_id} className="border border-gray-300 px-4 py-2 text-center font-base whitespace-nowrap cursor-pointer" onClick={() => setSelectedOR(surgery.surgery_id)}>
+                      {`${surgery.surgery_start} :${surgery.surgery_end}`}
+                    </td>
+                  );
+                })}
+              </tr>
+
+              <tr className="hover:bg-gray-50">
+                <td className="px-4 py-3 text-center font-semibold sticky left-0 bg-gradient-to-bl from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase border-gray-300">Patient</td>
+                {operationRooms.map((surgery) => {
+                  const patient = patients.find(p => p.patient_id === surgery.patient_id);
+                  return (
+                    <td key={surgery.surgery_id} className="border border-gray-300 px-4 py-2 text-center font-base whitespace-nowrap cursor-pointer" onClick={() => setSelectedOR(surgery.surgery_id)}>
+                      {patient?.patient_name || surgery.patient_id || "Unknown Patient"}
+                    </td>
+                  );
+                })}
+              </tr>
+
+              <tr className="hover:bg-gray-50">
+                <td className="px-4 py-3 text-center font-semibold sticky left-0 bg-gradient-to-bl from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase border-gray-300">Procedure</td>
+                {operationRooms.map((surgery) => {
+                  const patient = patients.find(p => p.patient_id === surgery.patient_id);
+                  return (
+                    <td key={surgery.surgery_id} className="border border-gray-300 px-4 py-2 text-center font-base whitespace-nowrap cursor-pointer" onClick={() => setSelectedOR(surgery.surgery_id)}>
+                      {surgery.procedure || "N/A"}
+                    </td>
+                  );
+                })}
+              </tr>
+
+              <tr className="hover:bg-gray-50">
+                <td className="px-4 py-3 text-center font-semibold sticky left-0 bg-gradient-to-bl from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase border-gray-300">Surgeon</td>
+                {operationRooms.map((surgery) => {
+                  const surgeon = surgeons.find(s => s.surgeon_id === surgery.attending_id);
+                  return (
+                    <td key={surgery.surgery_id} className="border border-gray-300 px-4 py-2 text-center font-base whitespace-nowrap cursor-pointer" onClick={() => setSelectedOR(surgery.surgery_id)}>
+                      {surgery?.attending_name || "-"}
+                    </td>
+                  );
+                })}
+              </tr>
+
+              <tr className="hover:bg-gray-50">
+                <td className="px-4 py-3 text-center font-semibold sticky left-0 bg-gradient-to-bl from-[#c7def6] to-[#bedeff] text-[#2d3a6a] uppercase border-gray-300">Anest.</td>
+                {operationRooms.map((surgery) => {
+                  const anesth = anesthesiologists.find(a => a.anaesth_id === surgery.anesthesiologist_id);
+                  return (
+                    <td key={surgery.surgery_id} className="border border-gray-300 px-4 py-2 text-center font-base whitespace-nowrap cursor-pointer" onClick={() => setSelectedOR(surgery.surgery_id)}>
+                      {surgery?.anesthesiologist_name || "-"}
+                    </td>
+                  );
+                })}
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </Card>
           
       {/* Detailed View Section */}
       {selectedOR && (() => {
-        const room = operationRooms.find(r => r.or_id === selectedOR);
-        const surgery = surgeries.find(s => s.or_id === selectedOR);
+        const surgery = operationRooms.find(s => s.surgery_id === selectedOR);
         const patient = patients.find(p => p.patient_id === surgery?.patient_id);
-        const surgeon = surgeons.find(s => s.surgeon_id === surgery?.surgeon_id);
-        const anesth = anesthesiologists.find(a => a.anaesth_id === surgery?.anaesth_id);
-        const nursesList = nurses.filter(n => surgery?.nurse_ids?.includes(n.nurse_id));
+        const surgeon = surgeons.find(s => s.surgeon_id === surgery?.attending_id);
+        const anesth = anesthesiologists.find(a => a.anaesth_id === surgery?.anesthesiologist_id);
+        const assignedNurse = nurses.find(n => n.nurse_id === surgery?.nurse_id);
+        const duration = surgery ? calculateDuration(surgery.surgery_start, surgery.surgery_end) : 0;
 
         return (
           <Card>
             <Card.Header>
-              <div className="flex justify-between items-center">
-                <Card.Title>Details: {room?.or_name}</Card.Title>
+              <div className="relative flex items-center justify-center">
+                <Card.Title className="text-base text-center font-semibold">
+                  Details
+                </Card.Title>
                 <button
                   onClick={() => setSelectedOR(null)}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="absolute right-0 bubble-button hover:bg-blue-400 hover:text-blue-800 px-[19px] py-[4px] rounded-[6px] border-none text-white cursor-pointer bg-blue-500 transition-all duration-200 ease-linear active:scale-95 overflow-hidden"
                 >
-                  ✕
+                  Close
                 </button>
               </div>
             </Card.Header>
+
             <Card.Content>
               {surgery ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-hidden">
                   {/* Patient Information */}
-                  <div className="border rounded-lg p-4">
-                  <h3 className="font-bold text-gray-900 flex items-center gap-2 mb-3">
-                  <FileText className="w-5 h-5" />
-                  PATIENT'S DETAILS
-                </h3>
+                  <div className="rounded-lg p-4 bg-linear-30 bg-blue-50 bg-[linear-gradient(135deg,#c7d2f6,#dee4fb,#fdfefe)] shadow-[0px_1rem_1.5rem_-0.9rem_#000000e1]">
+                    <h3 className="font-bold text-gray-900 flex items-center gap-2 mb-3">
+                      <FileText className="w-5 h-5" />
+                      PATIENT'S DETAILS
+                    </h3>
                     <div className="space-y-2">
                       <div>
                         <span className="font-medium text-gray-600">Name:</span>
-                        <span className="ml-2 text-gray-900">{patient?.patient_name || 'Unknown'}</span>
+                        <span className="ml-2 text-gray-900">{surgery?.patient_name || 'Unknown'}</span>
                       </div>
-                      <div>
+                      {/* <div>
                         <span className="font-medium text-gray-600">Bed Number:</span>
                         <span className="ml-2 text-gray-900">{patient?.patient_number || 'N/A'}</span>
-                      </div>
+                      </div> */}
                       <div>
+                        
                         <span className="font-medium text-gray-600">Age:</span>
-                        <span className="ml-2 text-gray-900">{patient?.patient_age || 'N/A'}</span>
+                        <span className="ml-2 text-gray-900">{new Date().getFullYear()-parseInt(surgery.patient_dob) || 'N/A'}</span>
                       </div>
                       <div>
                         <span className="font-medium text-gray-600">Gender:</span>
-                        <span className="ml-2 text-gray-900">{patient?.patient_gender || 'N/A'}</span>
+                        <span className="ml-2 text-gray-900">{surgery?.patient_gender || 'N/A'}</span>
                       </div>
                       <div>
                         <span className="font-medium text-gray-600">Diagnosis:</span>
-                        <span className="ml-2 text-gray-900">{patient?.patient_diagonosis || 'N/A'}</span>
+                        <span className="ml-2 text-gray-900">{surgery?.patient_medical || 'N/A'}</span>
                       </div>
                       <div>
                         <span className="font-medium text-gray-600">Contact:</span>
-                        <span className="ml-2 text-gray-900">{patient?.patient_contact || 'N/A'}</span>
+                        <span className="ml-2 text-gray-900">{surgery?.patient_phone || 'N/A'}</span>
                       </div>
-                      <div>
+                      {/* <div>
                         <span className="font-medium text-gray-600">Emergency Contact:</span>
                         <span className="ml-2 text-gray-900">{patient?.patient_emergency_contact || 'N/A'}</span>
-                      </div>
+                      </div> */}
                       {patient?.patient_medical_history && (
                         <div>
                           <span className="font-medium text-gray-600">Medical History:</span>
@@ -161,42 +273,48 @@ const Dashboard = () => {
                   {/* Surgery & Team Information */}
                   <div className="space-y-4">
                     {/* Surgery Details */}
-                    <div className="border rounded-lg p-4">
-                    <h3 className="font-bold text-gray-900 flex items-center gap-2 mb-3">
-                  <FileText className="w-5 h-5" />
-                  SURGERY DETAILS
-                </h3>
+                    <div className="rounded-lg p-4 bg-linear-30 bg-blue-50 bg-[linear-gradient(135deg,#c7d2f6,#dee4fb,#fdfefe)] shadow-[0px_1rem_1.5rem_-0.9rem_#000000e1]">
+                      <h3 className="font-bold text-gray-900 flex items-center gap-2 mb-3">
+                        <FileText className="w-5 h-5" />
+                        SURGERY DETAILS
+                      </h3>
                       <div className="space-y-2">
                         <div>
-                          <span className="font-medium text-gray-600">Procedure:</span>
-                          <span className="ml-2 text-gray-900">{surgery.surgery_type}</span>
+                          <span className="font-medium text-gray-600">Date:</span>
+                          <span className="ml-2 text-gray-900">
+                            {new Date(surgery.surgery_date).toLocaleDateString()}
+                          </span>
                         </div>
                         <div>
-                          <span className="font-medium text-gray-600">Time:</span>
-                          <span className="ml-2 text-gray-900">{surgery.surgery_time}</span>
+                          <span className="font-medium text-gray-600">Start Time:</span>
+                          <span className="ml-2 text-gray-900">{surgery.surgery_start}</span>
+                        </div>
+                        <div>
+                          <span className="font-medium text-gray-600">End Time:</span>
+                          <span className="ml-2 text-gray-900">{surgery.surgery_end}</span>
                         </div>
                         <div>
                           <span className="font-medium text-gray-600">Duration:</span>
-                          <span className="ml-2 text-gray-900">{surgery.surgery_duration} minutes</span>
+                          <span className="ml-2 text-gray-900">{duration} minutes</span>
                         </div>
                         <div>
-                          <span className="font-medium text-gray-600">Status:</span>
-                          <span className="ml-2 text-gray-900">{surgery.status}</span>
+                          <span className="font-medium text-gray-600">Notes:</span>
+                          <span className="ml-2 text-gray-900">{surgery.surgery_notes || 'N/A'}</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Surgical Team */}
-                    <div className="border rounded-lg p-4">
-                    <h3 className="font-bold text-gray-900 flex items-center gap-2 mb-3">
-                  <Users className="w-5 h-5" />
-                  SURGICAL TEAM
-                </h3>
+                    <div className="rounded-lg p-4 bg-linear-30 bg-blue-50 bg-[linear-gradient(135deg,#c7d2f6,#dee4fb,#fdfefe)] shadow-[0px_1rem_1.5rem_-0.9rem_#000000e1]">
+                      <h3 className="font-bold text-gray-900 flex items-center gap-2 mb-3">
+                        <Users className="w-5 h-5" />
+                        SURGICAL TEAM
+                      </h3>
                       <div className="space-y-2">
                         <div>
-                          <span className="font-medium text-gray-600">Surgeon:</span>
+                          <span className="font-medium text-gray-600">Attending Surgeon:</span>
                           <span className="ml-2 text-gray-900">
-                            {surgeon?.surgeon_name || 'Not assigned'}
+                            {surgery?.attending_name || 'Not assigned'}
                           </span>
                           {surgeon?.surgeon_speciality && (
                             <span className="ml-1 text-sm text-gray-500">
@@ -207,19 +325,25 @@ const Dashboard = () => {
                         <div>
                           <span className="font-medium text-gray-600">Anesthesiologist:</span>
                           <span className="ml-2 text-gray-900">
-                            {anesth?.anaesth_name || 'Not assigned'}
+                            {surgery?.anesthesiologist_name || 'Not assigned'}
                           </span>
                         </div>
-                        {nurses.length > 0 && (
+                        {surgery.nurse_id && (
                           <div>
-                            <span className="font-medium text-gray-600">Nurses:</span>
-                            <div className="ml-2 mt-1">
-                              {nurses.map((nurse, idx) => (
-                                <div key={nurse.nurse_id} className="text-gray-900">
-                                  {idx + 1}. {nurse.nurse_name}
-                                </div>
-                              ))}
-                            </div>
+                            <span className="font-medium text-gray-600">Nurse:</span>
+                            <span className="ml-2 text-gray-900">{surgery.nurse_name}</span>
+                          </div>
+                        )}
+                        {surgery.resident_id && (
+                          <div>
+                            <span className="font-medium text-gray-600">Resident::</span>
+                            <span className="ml-2 text-gray-900">{surgery.resident_name}</span>
+                          </div>
+                        )}
+                        {surgery.intern_id && (
+                          <div>
+                            <span className="font-medium text-gray-600">Intern:</span>
+                            <span className="ml-2 text-gray-900">{surgery.intern_name}</span>
                           </div>
                         )}
                       </div>
@@ -228,17 +352,13 @@ const Dashboard = () => {
                 </div>
               ) : (
                 <div className="text-center py-8 text-gray-500">
-                  <p>This operation room is currently closed!!</p>
-                  <p className="text-sm mt-2">No surgery scheduled.</p>
+                  <p>Surgery details not found!</p>
                 </div>
               )}
             </Card.Content>
           </Card>
         );
       })()}
-
-    
-      
     </div>
   );
 };

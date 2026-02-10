@@ -1,34 +1,51 @@
-import React, { useState } from 'react';
-import { useApp } from '../context/AppContext';
-import { Plus, Search, Edit, Trash2, Calendar } from 'lucide-react';
-import Button from '../components/ui/Button';
-import Card from '../components/ui/Card';
-import SurgeryForm from '../components/forms/SurgeryForm';
+import React, { useState, useEffect } from "react";
+import { Plus, Search, Edit, Trash2 } from "lucide-react";
+import Button from "../components/ui/Button";
+import Card from "../components/ui/Card";
+import SurgeryForm from "../components/forms/SurgeryForm";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+
+const token = localStorage.getItem("token");
+const payload = token ? jwtDecode(token) : null;
+const role = payload?.role;
 
 const Surgeries = () => {
-  const { surgeries, deleteSurgery, patients, surgeons, operationRooms } = useApp();
   const [showForm, setShowForm] = useState(false);
   const [editingSurgery, setEditingSurgery] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [surgeries, setSurgeries] = useState([]);
 
-  const filteredSurgeries = surgeries.filter(surgery => {
-    const patient = patients.find(p => p.patient_id === surgery.patient_id);
-    const surgeon = surgeons.find(s => s.surgeon_id === surgery.surgeon_id);
-    return (
-      surgery.surgery_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      patient?.patient_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      surgeon?.surgeon_name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+  /* ================= FETCH SURGERIES ================= */
+  useEffect(() => {
+    axios
+      .get("https://or-management-system.onrender.com/surgery")
+      .then(res => {
+        setSurgeries(res.data.result || []);
+      })
+      .catch(err => {
+        console.error("Failed to fetch surgeries:", err);
+      });
+  }, []);
 
+  /* ================= HANDLERS ================= */
   const handleEdit = (surgery) => {
     setEditingSurgery(surgery);
     setShowForm(true);
   };
 
-  const handleDelete = (surgeryId) => {
-    if (window.confirm('Are you sure you want to delete this surgery?')) {
-      deleteSurgery(surgeryId);
+  const handleDelete = async (surgeryId) => {
+    if (!window.confirm("Are you sure you want to delete this surgery?")) return;
+
+    try {
+      await axios.delete("https://or-management-system.onrender.com/surgery", {
+        data: { surgery_id: surgeryId }
+      });
+
+      setSurgeries(prev => prev.filter(s => s.surgery_id !== surgeryId));
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("Failed to delete surgery");
     }
   };
 
@@ -37,126 +54,124 @@ const Surgeries = () => {
     setEditingSurgery(null);
   };
 
-  const getPatientName = (patientId) => {
-    return patients.find(p => p.patient_id === patientId)?.patient_name || 'Unknown Patient';
+  /* ================= SEARCH ================= */
+  const matchesSearch = (surgery) => {
+    const term = searchTerm.toLowerCase();
+
+    return [
+      surgery.surgery_id,
+      surgery.patient_id,
+      surgery.or_id,
+      surgery.procedure,
+      surgery.attending_name,
+      surgery.intern_name,
+      surgery.resident_name,
+      surgery.nurse_name,
+      surgery.anesthesiologist_name
+    ]
+      .filter(Boolean)
+      .some(v => v.toString().toLowerCase().includes(term));
   };
 
-  const getSurgeonName = (surgeonId) => {
-    return surgeons.find(s => s.surgeon_id === surgeonId)?.surgeon_name || 'Unknown Surgeon';
-  };
-
-  const getOperationRoom = (orId) => {
-    return operationRooms.find(or => or.or_id === orId)?.room_number || 'Unknown OR';
-  };
-
+  /* ================= UI ================= */
   return (
     <div className="space-y-6">
+      {/* Search + Add */}
       <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input
-              type="text"
-              placeholder="Search surgeries..."
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <input
+            type="text"
+            placeholder="Search surgeries..."
+            className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
-        <Button onClick={() => setShowForm(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Schedule Surgery
-        </Button>
+
+        {(role === "admin" || role === "surgeon") && (
+          <Button onClick={() => setShowForm(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Surgery
+          </Button>
+        )}
       </div>
 
-      {/* Surgery Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {filteredSurgeries.map((surgery) => (
-          <Card key={surgery.surgery_id} hover>
-            <Card.Content>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-900">{surgery.surgery_type}</h3>
-                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                  surgery.status === 'Scheduled' ? 'bg-blue-100 text-blue-800' :
-                  surgery.status === 'In Progress' ? 'bg-orange-100 text-orange-800' :
-                  surgery.status === 'Completed' ? 'bg-green-100 text-green-800' :
-                  'bg-red-100 text-red-800'
-                }`}>
-                  {surgery.status}
-                </span>
-              </div>
+      {/* Table */}
+      <Card>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                {[
+                  "Surgery ID", "Patient ID", "OR ID", "Procedure",
+                  "Date", "Start", "End", "Notes",
+                  "Attending", "Intern", "Resident", "Nurse", "Anesthesiologist"
+                ].map(col => (
+                  <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    {col}
+                  </th>
+                ))}
+                {(role === "admin" || role === "surgeon") && (
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Actions
+                  </th>
+                )}
+              </tr>
+            </thead>
 
-              <div className="space-y-2 mb-4">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Patient:</span>
-                  <span className="font-medium text-gray-900">{getPatientName(surgery.patient_id)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Surgeon:</span>
-                  <span className="font-medium text-gray-900">{getSurgeonName(surgery.surgeon_id)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Operation Room:</span>
-                  <span className="font-medium text-gray-900">{getOperationRoom(surgery.or_id)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Date & Time:</span>
-                  <span className="font-medium text-gray-900">{surgery.surgery_date} at {surgery.surgery_time}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Duration:</span>
-                  <span className="font-medium text-gray-900">{surgery.surgery_duration} minutes</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Duration:</span>
-                  <span className="font-medium text-gray-900">{surgery.surgery_duration} minutes</span>
-                </div>
-              </div>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {surgeries.filter(matchesSearch).map(surgery => (
+                <tr key={surgery.surgery_id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4">{surgery.surgery_id}</td>
+                  <td className="px-6 py-4">{surgery.patient_id}</td>
+                  <td className="px-6 py-4">{surgery.or_id}</td>
+                  <td className="px-6 py-4">{surgery.procedure}</td>
+                  <td className="px-6 py-4">
+                    {surgery.surgery_date
+                      ? new Date(surgery.surgery_date).toISOString().split("T")[0]
+                      : "-"}
+                  </td>
+                  <td className="px-6 py-4">{surgery.surgery_start}</td>
+                  <td className="px-6 py-4">{surgery.surgery_end}</td>
+                  <td className="px-6 py-4">{surgery.surgery_notes}</td>
+                  <td className="px-6 py-4">{surgery.attending_name}</td>
+                  <td className="px-6 py-4">{surgery.intern_name}</td>
+                  <td className="px-6 py-4">{surgery.resident_name}</td>
+                  <td className="px-6 py-4">{surgery.nurse_name}</td>
+                  <td className="px-6 py-4">{surgery.anesthesiologist_name}</td>
 
-              {surgery.surgery_notes && (
-                <div className="mb-4">
-                  <span className="text-sm text-gray-500">Notes:</span>
-                  <p className="text-sm text-gray-900 mt-1 line-clamp-2">{surgery.surgery_notes}</p>
-                </div>
-              )}
+                  {(role === "admin" || role === "surgeon") && (
+                    <td className="px-6 py-4">
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handleEdit(surgery)}
+                          className="p-2 text-gray-400 hover:text-blue-600"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(surgery.surgery_id)}
+                          className="p-2 text-gray-400 hover:text-red-600"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
 
-              <div className="flex justify-end space-x-2 pt-4 border-t">
-                <button
-                  onClick={() => handleEdit(surgery)}
-                  className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
-                  title="Edit"
-                >
-                  <Edit className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => handleDelete(surgery.surgery_id)}
-                  className="p-2 text-gray-400 hover:text-red-600 transition-colors"
-                  title="Delete"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            </Card.Content>
-          </Card>
-        ))}
-      </div>
-
-      {filteredSurgeries.length === 0 && (
-        <Card>
-          <Card.Content>
-            <div className="text-center py-12">
-              <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No surgeries found</h3>
-              <p className="text-gray-500">
-                {searchTerm ? 'Try adjusting your search criteria.' : 'Get started by scheduling a new surgery.'}
-              </p>
-            </div>
-          </Card.Content>
-        </Card>
-      )}
-
-      <SurgeryForm isOpen={showForm} onClose={handleCloseForm} surgery={editingSurgery} />
+      {/* Modal */}
+      <SurgeryForm
+        isOpen={showForm}
+        onClose={handleCloseForm}
+        surgery={editingSurgery}
+      />
     </div>
   );
 };
