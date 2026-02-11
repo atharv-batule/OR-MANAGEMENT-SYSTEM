@@ -14,15 +14,7 @@ router.use(express.json())
 router.use(cors())
 // authenticateToekn
 router.get("/", async (req, res) => {
-   try {
-    const result = await displaySurgeon(); // fetch data (e.g., from DB)
-    res.json(result); // send it to frontend as JSON
-    console.log();
-    console.log("in here")
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch data" });
-  }
+  
 });
 router.put("/", async (req, res) => {
   try {
@@ -112,11 +104,21 @@ router.put("/", async (req, res) => {
 
     async function displaySurgeon()
      {
+      try {
+        //const result = await displaySurgeon(); // fetch data (e.g., from DB)
         const result=await client.query(`
-        SELECT * FROM Employees
-         WHERE designation IN ('Attending', 'Intern', 'Resident') 
-         ORDER BY dno,empid ASC;
-          `);
+          SELECT * FROM Employees
+           WHERE designation IN ('Attending', 'Intern', 'Resident') 
+           ORDER BY dno,empid ASC;
+        `);
+        res.json(result); // send it to frontend as JSON
+        console.log();
+        console.log("in here")
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to fetch data" });
+      }
+        
           return result.rows;
     }  
 
@@ -162,19 +164,19 @@ router.put("/", async (req, res) => {
 async function updateSurgeon(empid, fname, lname, dob, salary, gender, superid, designation,phone,dno,experience)
     {
     const upSur= await client.query(`
-UPDATE employees
-SET 
-  fname = $2,
-  lname = $3,
-  dob = $4,
-  salary = $5,
-  gender = $6,
-  superid = $7,
-  designation = $8,
-  phone = $9,
-  dno = $10,
-  experience = $11
-WHERE empid = $1;
+      UPDATE employees
+      SET 
+        fname = $2,
+        lname = $3,
+        dob = $4,
+        salary = $5,
+        gender = $6,
+        superid = $7,
+        designation = $8,
+        phone = $9,
+        dno = $10,
+        experience = $11
+      WHERE empid = $1;
     `,[empid, fname, lname, dob, salary, gender, superid, designation,phone,dno,experience]);
     }
 
@@ -193,5 +195,5 @@ WHERE empid = $1;
   }
 });
 
-
-    export default router;
+export {displaySurgeon};
+  //export default router;
