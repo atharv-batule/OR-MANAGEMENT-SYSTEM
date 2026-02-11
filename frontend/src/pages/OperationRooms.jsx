@@ -4,7 +4,7 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import OperationRoomForm from '../components/forms/OperationRoomForm';
 import axios from 'axios';
-import{ jwtDecode }from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 const token = localStorage.getItem("token");
 const payload = token ? jwtDecode(token) : null;
@@ -16,15 +16,29 @@ const OperationRooms = () => {
   const [editingRoom, setEditingRoom] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Fetch operation rooms
+  const fetchOperationRooms = async () => {
+    try {
+      const res = await axios.get("https://or-management-system.onrender.com/operation-rooms");
+      console.log("Fetched OR Details:", res.data);
+      setOperationRooms(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
-    axios
-      .get("https://or-management-system.onrender.com/operation-rooms")
-      .then(res => {
-        console.log("Fetched OR Details:", res.data);
-        setOperationRooms(res.data);
-      })
-      .catch(err => console.error(err));
+    fetchOperationRooms();
   }, []);
+
+  // Filtered rooms based on search
+  const filteredRooms = operationRooms1.filter(room => {
+    if (!searchTerm) return true;
+    const s = searchTerm.toLowerCase();
+    const orNumberMatch = (room.orid || "").toString().toLowerCase().includes(s);
+    const equipmentsMatch = (room.equipments || "").toLowerCase().includes(s);
+    return orNumberMatch || equipmentsMatch;
+  });
 
   const handleEdit = (room) => {
     const mappedRoom = {
@@ -40,20 +54,26 @@ const OperationRooms = () => {
 
   const handleDelete = async (orid) => {
     if (!window.confirm("Are you sure you want to delete this OR?")) return;
+    
     try {
       await axios.delete(
         "https://or-management-system.onrender.com/operation-rooms",
         { data: { orid } }
       );
+      
+      // Update state instead of reloading
       setOperationRooms(prev => prev.filter(r => r.orid !== orid));
     } catch (err) {
-      console.error(err);
+      console.error("Delete failed:", err);
+      alert("Failed to delete operation room");
     }
   };
 
-  const handleCloseForm = () => {
+  const handleCloseForm = async () => {
     setShowForm(false);
     setEditingRoom(null);
+    // Refresh data instead of reloading page
+    await fetchOperationRooms();
   };
 
   const getStatusColor = (status) => {
@@ -64,16 +84,6 @@ const OperationRooms = () => {
       default: return "bg-gray-100 text-gray-800";
     }
   };
-
-  // Filtered rooms based on search
-  const filteredRooms = operationRooms1.filter(room => {
-    if (!searchTerm) return true;
-
-    const orNumberMatch = (room.orid || "").toString().toLowerCase().includes(searchTerm.toLowerCase());
-    const equipmentsMatch = (room.equipments || "").toLowerCase().includes(searchTerm.toLowerCase());
-
-    return orNumberMatch || equipmentsMatch;
-  });
 
   return (
     <div className="space-y-6">
@@ -90,10 +100,12 @@ const OperationRooms = () => {
           />
         </div>
 
-       {(role=="admin"||role=="surgeon")&& <Button onClick={() => setShowForm(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Operation Room
-        </Button>}
+        {(role === "admin" || role === "surgeon") && (
+          <Button onClick={() => setShowForm(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Operation Room
+          </Button>
+        )}
       </div>
 
       {/* Table */}
@@ -102,47 +114,58 @@ const OperationRooms = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">OR Number</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Equipment List</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Status</th>
-                {(role=="admin"||role=="surgeon")&&<th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Action</th>}
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">OR Number</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipment List</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                {(role === "admin" || role === "surgeon") && (
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                )}
               </tr>
             </thead>
 
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredRooms.map((room) => (
                 <tr key={room.orid} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">{room.orid}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {room.orid}
+                  </td>
 
-                  <td className="px-6 py-4">
-                    <ul className="text-sm text-gray-600 list-disc list-inside">
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    <ul className="list-disc list-inside">
                       {(room.equipments || "")
                         .split(",")
-                        .map((eq, index) => <li key={index}>{eq}</li>)}
+                        .map((eq, index) => <li key={index}>{eq.trim()}</li>)}
                     </ul>
                   </td>
 
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(room.status)}`}>
                       {room.status}
                     </span>
                   </td>
 
-                  {(role=="admin"||role=="surgeon")&&<td className="px-6 py-4 text-right">
-                    <div className="flex justify-end space-x-2">
-                      <button onClick={() => handleEdit(room)} className="p-2 text-gray-400 hover:text-blue-600">
-                        <Edit className="w-4 h-4" />
-                      </button>
+                  {(role === "admin" || role === "surgeon") && (
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex justify-end space-x-2">
+                        <button
+                          onClick={() => handleEdit(room)}
+                          className="p-2 text-gray-400 hover:text-blue-600"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
 
-                      <button onClick={() => handleDelete(room.orid)} className="p-2 text-gray-400 hover:text-red-600">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>}
+                        <button
+                          onClick={() => handleDelete(room.orid)}
+                          className="p-2 text-gray-400 hover:text-red-600"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
-
           </table>
         </div>
       </Card>

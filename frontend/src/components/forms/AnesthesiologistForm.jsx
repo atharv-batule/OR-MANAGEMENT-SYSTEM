@@ -116,7 +116,7 @@ const AnesthesiologistForm = ({ isOpen, onClose, anesthesiologist = null }) => {
 
       if (isEditing) {
         console.log('🩺 Updating anesthesiologist:', payload);
-        await axios.put('http://localhost:3000/anesthesiologists', payload);
+        await axios.put('https://or-management-system.onrender.com/anesthesiologists', payload);
         console.log('✅ Anesthesiologist updated successfully');
       } else {
         console.log('📤 Sending payload:', payload);

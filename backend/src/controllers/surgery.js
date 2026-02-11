@@ -1,241 +1,170 @@
-import express from "express"
-import cors from "cors"
-import dotenev from "dotenv"
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
 import { client } from "../db/db.js";
-dotenev.config();
-const router=express.Router()
-const port=process.env.PORT||3000;
 
+dotenv.config();
+const router = express.Router();
 
-router.use(express.json())
-router.use(cors())
+router.use(express.json());
+router.use(cors());
 
-
+/* ========================= GET SURGERIES ========================= */
 router.get("/", async (req, res) => {
-   try {
-    const result = await displaySurg(); 
-    const attending = await client.query(`
-  SELECT * FROM employees WHERE designation = 'Attending'
-`);
+  try {
+    const [
+      surgeries,
+      attending,
+      nurse,
+      anesthesiologist,
+      resident,
+      intern,
+      patient,
+      or
+    ] = await Promise.all([
+      getSurgeries(),
+      client.query(`SELECT * FROM employees WHERE designation = 'Attending'`),
+      client.query(`SELECT * FROM employees WHERE designation = 'Nurse'`),
+      client.query(`SELECT * FROM employees WHERE designation = 'Anesthesiologist'`),
+      client.query(`SELECT * FROM employees WHERE designation = 'Resident'`),
+      client.query(`SELECT * FROM employees WHERE designation = 'Intern'`),
+      client.query(`SELECT * FROM patients`),
+      client.query(`SELECT * FROM or_table`)
+    ]);
 
-const nurse = await client.query(`git commit -m "Remove .env from repository"
+    res.json({
+      result: surgeries,
+      attending: attending.rows,
+      nurse: nurse.rows,
+      anesthesiologist: anesthesiologist.rows,
+      resident: resident.rows,
+      intern: intern.rows,
+      patient: patient.rows,
+      or: or.rows
+    });
 
-  SELECT * FROM employees WHERE designation = 'Nurse'
-`);
-
-const anesthesiologist = await client.query(`
-  SELECT * FROM employees WHERE designation = 'Anesthesiologist'
-`);
-
-const resident = await client.query(`
-  SELECT * FROM employees WHERE designation = 'Resident'
-`);
-
-const intern = await client.query(`
-  SELECT * FROM employees WHERE designation = 'Intern'
-`);
-const patient = await client.query(`
-  SELECT * FROM patients 
-`);
-const or = await client.query(`
-  SELECT * FROM or_table 
-`);
-  res.json(
-  {result,
-  attending: attending.rows,
-  nurse: nurse.rows,
-  anesthesiologist: anesthesiologist.rows,
-  resident: resident.rows,
-  intern: intern.rows,
-  patient:patient.rows,
-  or:or.rows
-    }); 
-    console.log();
-    console.log("in here")
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch data" });
+    console.error("❌ GET /surgery failed:", err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
-async function displaySurg() {
+/* ========================= QUERY ========================= */
+async function getSurgeries() {
   const result = await client.query(`
-    SELECT * FROM surgery_details_view
-    order by surgery_id asc;
+    SELECT
+      s.surgery_id,
+      s.patient_id,
+      s.or_id,
+      s.surgery_date,
+      s.surgery_start,
+      s.surgery_end,
+      s.surgery_notes,
+      s.procedure,
+
+      MAX(CASE WHEN e.designation='Attending' THEN e.fname || ' ' || e.lname END) AS attending_name,
+      MAX(CASE WHEN e.designation='Resident' THEN e.fname || ' ' || e.lname END) AS resident_name,
+      MAX(CASE WHEN e.designation='Intern' THEN e.fname || ' ' || e.lname END) AS intern_name,
+      MAX(CASE WHEN e.designation='Nurse' THEN e.fname || ' ' || e.lname END) AS nurse_name,
+      MAX(CASE WHEN e.designation='Anesthesiologist' THEN e.fname || ' ' || e.lname END) AS anesthesiologist_name
+
+    FROM surgery s
+    LEFT JOIN surgery_staff ss ON ss.surgery_id = s.surgery_id
+    LEFT JOIN employees e ON e.empid = ss.emp_id
+    GROUP BY s.surgery_id
+    ORDER BY s.surgery_id ASC;
   `);
 
-  const surgeries = result.rows;
-  const updatedSurgeries = await Promise.all(
-  surgeries.map(async (surgery) => {
-    return {
-      ...surgery,
-      anesthesiologist_name: (await empName(surgery.anesthesiologist_id))[0]?.fname + " " + (await empName(surgery.anesthesiologist_id))[0]?.lname,
-      attending_name: (await empName(surgery.attending_id))[0]?.fname + " " + (await empName(surgery.attending_id))[0]?.lname,
-      intern_name: surgery.intern_id ? (await empName(surgery.intern_id))[0]?.fname + " " + (await empName(surgery.intern_id))[0]?.lname : null,
-      nurse_name: surgery.nurse_id ? (await empName(surgery.nurse_id))[0]?.fname + " " + (await empName(surgery.nurse_id))[0]?.lname : null,
-      resident_name: surgery.resident_id ? (await empName(surgery.resident_id))[0]?.fname + " " + (await empName(surgery.resident_id))[0]?.lname : null
-    };
-  })
-);
-
-return (updatedSurgeries);
+  return result.rows;
 }
-router.post("/",async(req,res)=>{
-  try{
-  const temp=await addSurg(
-parseInt(req.body.surgery_id),
-parseInt(req.body.patient_id),
-parseInt(req.body.or_id),
-req.body.surgery_date,
-req.body.surgery_start,
-req.body.surgery_end,
-req.body.surgery_notes,
-parseInt(req.body.attending_id),
-parseInt(req.body.resident_id),
-parseInt(req.body.intern_id),
-parseInt(req.body.nurse_id),
-parseInt(req.body.anesthesiologist_id),
-req.body.procedure
 
-  );
-
-  
-  console.log("Insert result:", temp);
-    res.json({ success: true, temp });
-
-  } catch (err) {
-    console.error("Error in POST /surgery:", err);
-    res.status(500).json({ success: false, error: err.message });
-  }finally{}
-
-})
-async function addSurg(
-  surgery_id, patient_id, or_id, surgery_date, surgery_start, surgery_end,
-  surgery_notes, attending_id, resident_id, intern_id, nurse_id, anesthesiologist_id, procedure
-) {
+/* ========================= ADD SURGERY ========================= */
+router.post("/", async (req, res) => {
   await client.query("BEGIN");
   try {
-    const query = `
-      WITH conflict AS (
-        SELECT COUNT(*) AS cnt
-        FROM surgery
-        WHERE surgery_date = $4
-          AND or_id = $3
-          AND (surgery_start, surgery_end) OVERLAPS ($5::time, $6::time)
-      ),
-      ins_surgery AS (
-        INSERT INTO surgery (surgery_id, patient_id, or_id, surgery_date, surgery_start, surgery_end, surgery_notes, procedure)
-        SELECT $1, $2, $3, $4, $5, $6, $7, $13
-        WHERE (SELECT cnt FROM conflict) = 0
-        RETURNING surgery_id
-      )
-      INSERT INTO surgery_staff (surgery_id, emp_id)
-      SELECT surgery_id, emp_id
-      FROM ins_surgery,
-      LATERAL (VALUES ($8::int), ($9::int), ($10::int), ($11::int), ($12::int)) AS v(emp_id)
+    const {
+      surgery_id, patient_id, or_id,
+      surgery_date, surgery_start, surgery_end,
+      surgery_notes, procedure,
+      attending_id, resident_id, intern_id,
+      nurse_id, anesthesiologist_id
+    } = req.body;
 
-    `;
+    await client.query(`
+      INSERT INTO surgery
+      (surgery_id, patient_id, or_id, surgery_date, surgery_start, surgery_end, surgery_notes, procedure)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+    `, [
+      surgery_id, patient_id, or_id,
+      surgery_date, surgery_start, surgery_end,
+      surgery_notes, procedure
+    ]);
 
-    const params = [
-      surgery_id, patient_id, or_id, surgery_date, surgery_start, surgery_end,
-      surgery_notes, attending_id, resident_id, intern_id, nurse_id, anesthesiologist_id, procedure
-    ];
-    console.log(params);
+    const staff = [
+      attending_id, resident_id, intern_id, nurse_id, anesthesiologist_id
+    ].filter(id => id && !isNaN(id));
 
-
-    const result = await client.query(query, params);
-    await client.query("COMMIT");
-    return result.rowCount;
-  } catch (err) {
-    console.error('Query failed:', err.message);
-    await client.query("ROLLBACK");
-    throw err;
-  }
-}
-//put
-
-router.put("/",async(req,res)=>{
-  try{
-  const temp=await updateSurg(
-parseInt(req.body.surgery_id),
-parseInt(req.body.patient_id),
-parseInt(req.body.or_id),
-req.body.surgery_date,
-req.body.surgery_start,
-req.body.surgery_end,
-req.body.surgery_notes,
-parseInt(req.body.attending_id),
-parseInt(req.body.resident_id),
-parseInt(req.body.intern_id),
-parseInt(req.body.nurse_id),
-parseInt(req.body.anesthesiologist_id),
-req.body.procedure
-
-  );
-
-  
-  console.log("Insert result:", temp);
-    res.json({ success: true, temp });
-
-  } catch (err) {
-    console.error("Error in POST /surgery:", err);
-    res.status(500).json({ success: false, error: err.message });
-  }finally{}
-
-})
-async function updateSurg(
-  surgery_id, patient_id, or_id, surgery_date, surgery_start, surgery_end,
-  surgery_notes, attending_id, resident_id, intern_id, nurse_id, anesthesiologist_id, procedure
-) {
-  await client.query("BEGIN");
-  try {
-   
-    await client.query(
-      `UPDATE surgery
-       SET or_id = $1,
-           surgery_date = $2,
-           surgery_start = $3,
-           surgery_end = $4,
-           surgery_notes = $5,
-           procedure = $6
-       WHERE surgery_id = $7
-         AND patient_id = $8`,
-      [or_id, surgery_date, surgery_start, surgery_end, surgery_notes, procedure, surgery_id, patient_id]
-    );
-
-    
-    await client.query(
-      `DELETE FROM surgery_staff WHERE surgery_id = $1`,
-      [surgery_id]
-    );
-
-    
-    const staffIds = [attending_id, resident_id, intern_id, nurse_id, anesthesiologist_id].filter(Boolean); 
-    for (const emp_id of staffIds) {
+    for (const emp_id of staff) {
       await client.query(
-        `INSERT INTO surgery_staff (surgery_id, emp_id) VALUES ($1, $2)`,
+        `INSERT INTO surgery_staff (surgery_id, emp_id) VALUES ($1,$2)`,
         [surgery_id, emp_id]
       );
     }
 
     await client.query("COMMIT");
-    return { success: true };
+    res.json({ success: true });
+
   } catch (err) {
     await client.query("ROLLBACK");
-    console.error("Update surgery failed:", err.message);
-    throw err;
+    console.error("❌ POST /surgery failed:", err.message);
+    res.status(500).json({ error: err.message });
   }
-}
+});
 
-async function empName(empid) {
-  const result = await client.query(`
-    SELECT
-        fname,lname
-    FROM employees
-    where empid=$1
-  `,[empid]);
+/* ========================= UPDATE SURGERY ========================= */
+router.put("/", async (req, res) => {
+  await client.query("BEGIN");
+  try {
+    const {
+      surgery_id, patient_id, or_id,
+      surgery_date, surgery_start, surgery_end,
+      surgery_notes, procedure,
+      attending_id, resident_id, intern_id,
+      nurse_id, anesthesiologist_id
+    } = req.body;
 
-  return result.rows;
-}
+    await client.query(`
+      UPDATE surgery
+      SET or_id=$1, surgery_date=$2, surgery_start=$3,
+          surgery_end=$4, surgery_notes=$5, procedure=$6
+      WHERE surgery_id=$7 AND patient_id=$8
+    `, [
+      or_id, surgery_date, surgery_start,
+      surgery_end, surgery_notes, procedure,
+      surgery_id, patient_id
+    ]);
+
+    await client.query(`DELETE FROM surgery_staff WHERE surgery_id=$1`, [surgery_id]);
+
+    const staff = [
+      attending_id, resident_id, intern_id, nurse_id, anesthesiologist_id
+    ].filter(id => id && !isNaN(id));
+
+    for (const emp_id of staff) {
+      await client.query(
+        `INSERT INTO surgery_staff (surgery_id, emp_id) VALUES ($1,$2)`,
+        [surgery_id, emp_id]
+      );
+    }
+
+    await client.query("COMMIT");
+    res.json({ success: true });
+
+  } catch (err) {
+    await client.query("ROLLBACK");
+    console.error("❌ PUT /surgery failed:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 export default router;
